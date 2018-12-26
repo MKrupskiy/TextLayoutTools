@@ -1,0 +1,65 @@
+<resources>
+    <string name="app_name">Text Layout Tools</string>
+    <string name="action_settings">Настройки</string>
+    <string name="descr_accessibility_service">Разрешение требуется для отслеживания нажатия комбинации клавиш. Введенный текст не сохраняется и не передается сторонним сервисам.</string>
+
+    <string name="title_activity_settings">Настройки</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+    <string name="pref_header_shortcut">Быстрая Клавиша</string>
+
+    <string name="setting_shortcut_enabled_key">Setting_Enabled</string>
+    <string name="setting_control_key">Setting_Control</string>
+    <string name="setting_shortcut_key">Setting_Shortcut</string>
+    <string name="pref_title_shortcut_enabled">Переключение по комбинации клавиш</string>
+    <string name="pref_description_shortcut_enabled">Смена раскладки при нажатии Ctrl+&lt;key&gt;</string>
+
+    <string name="pref_title_control_key">Клавиша Ctrl</string>
+    <string-array name="pref_control_key_titles">
+        <item>Right Shift</item>
+        <item>Left Shift</item>
+    </string-array>
+    <string-array name="pref_control_key_values">
+        <item>129</item>
+        <item>65</item>
+    </string-array>
+
+    <string name="pref_title_shortcut">Быстрая Клавиша</string>
+    <string-array name="pref_shortcut_titles">
+        <item>Q</item>
+        <item>Y</item>
+        <item>U</item>
+        <item>I</item>
+        <item>O</item>
+        <item>J</item>
+        <item>K</item>
+        <item>L</item>
+        <item>M</item>
+    </string-array>
+    <string-array name="pref_shortcut_values">
+        <item>45</item>
+        <item>53</item>
+        <item>49</item>
+        <item>37</item>
+        <item>43</item>
+        <item>38</item>
+        <item>39</item>
+        <item>40</item>
+        <item>41</item>
+    </string-array>
+
+    <string name="pref_title_system_accessibility_settings">System Accessibility settings</string>
+
+    <!-- Example settings for Corrections -->
+    <string name="pref_header_corrections">Слова-Исключения</string>
+    <string name="dialog_ok">Сохранить</string>
+    <string name="dialog_cancel">Отменить</string>
+    <string name="dialog_error_empty_input">Поле не должно быть пустым</string>
+
+    <string name="dialog_delete_title">Действительно удалить?</string>
+    <string name="dialog_yes">Да</string>
+    <string name="dialog_no">Нет</string>
+
+</resources>

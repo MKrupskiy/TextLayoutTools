@@ -1,0 +1,17 @@
+<preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- These settings headers are only used on tablets. -->
+
+    <header
+        android:fragment="by.mkr.blackberry.textlayouttools.SettingsActivity$ShortcutPreferenceFragment"
+        android:icon="@drawable/ic_keyboard_black_24dp"
+        android:title="@string/pref_header_shortcut" />
+
+    <header
+        android:icon="@drawable/ic_sync_black_24dp"
+        android:title="@string/pref_header_corrections" >
+        <intent android:targetPackage="by.mkr.blackberry.textlayouttools"
+            android:targetClass="by.mkr.blackberry.textlayouttools.CorrectionsActivity"/>
+    </header>
+
+</preference-headers>
