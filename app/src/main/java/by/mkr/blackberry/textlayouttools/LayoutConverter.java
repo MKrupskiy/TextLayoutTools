@@ -97,7 +97,7 @@ public class LayoutConverter {
         */
 
 
-        AppDatabase db = App.getInstance().getDatabase();
+        AppDatabase db = App.getDatabase();
         CorrectionDao correctionDao = db.correctionDao();
 
         for (Correction corr : correctionDao.getAll()) {

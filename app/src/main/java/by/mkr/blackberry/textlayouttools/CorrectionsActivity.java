@@ -29,7 +29,7 @@ public class CorrectionsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_corrections);
 
-        final AppDatabase db = App.getInstance().getDatabase();
+        final AppDatabase db = App.getDatabase();
         final CorrectionDao correctionDao = db.correctionDao();
 
         final List<CorrectionItem> values = mapDbToViewItems(correctionDao.getAll());
@@ -44,7 +44,7 @@ public class CorrectionsActivity extends AppCompatActivity {
                 // itemIndex always eq -1
                 Correction corr = new Correction(0, newFromText, newToText);
                 long actualId = correctionDao.insert(corr);
-                // TODO update the repo and get actual id
+                // update the repo and get actual id
                 values.add(new CorrectionItem(actualId, newFromText, newToText));
                 correctionAdapter.notifyDataSetChanged();
             }
@@ -55,7 +55,7 @@ public class CorrectionsActivity extends AppCompatActivity {
                 values.get(itemIndex).toText = newToText;
                 correctionAdapter.notifyDataSetChanged();
                 Log.d("ReplacerLog", "edited: " + values.get(itemIndex).fromText + " => " + values.get(itemIndex).toText);
-                // TODO update the repo
+                // update the repo
                 Correction corr = new Correction(values.get(itemIndex).id, newFromText, newToText);
                 correctionDao.update(corr);
             }
@@ -66,7 +66,7 @@ public class CorrectionsActivity extends AppCompatActivity {
                 long itemId = values.get(itemIndex).id;
                 values.remove(itemIndex);
                 correctionAdapter.notifyDataSetChanged();
-                // TODO update the repo
+                // update the repo
                 correctionDao.deleteById(itemId);
             }
         });

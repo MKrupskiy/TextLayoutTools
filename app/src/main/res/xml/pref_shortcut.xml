@@ -24,5 +24,10 @@
     <Preference android:title="@string/pref_title_system_accessibility_settings">
         <intent android:action="android.settings.ACCESSIBILITY_SETTINGS" />
     </Preference>
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="@string/setting_select_replaced"
+        android:summary="@string/pref_description_select_replaced"
+        android:title="@string/pref_title_select_replaced" />
 
 </PreferenceScreen>

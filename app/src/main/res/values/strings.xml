@@ -5,6 +5,12 @@
 
     <string name="title_activity_settings">Настройки</string>
 
+    <!-- Strings related to Main Activity -->
+    <string name="main_description">v 1.1 Приложение для смены раскладки выделенного текста.</string>
+    <string name="main_examples">Ctrl+G - смена раскладки\nAlt+Enter - смена раскладки со сменой языка</string>
+    <string name="main_service_description">Переключение также возможно при помощи комбинации клавиш. Для этого требуется включить поддержку в меню настроек Специальные Возможности</string>
+    <string name="main_button_accessibility">Открыть Специальные Возможности</string>
+
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->
@@ -13,8 +19,9 @@
     <string name="setting_shortcut_enabled_key">Setting_Enabled</string>
     <string name="setting_control_key">Setting_Control</string>
     <string name="setting_shortcut_key">Setting_Shortcut</string>
+    <string name="setting_select_replaced">Setting_Select_Replaced</string>
     <string name="pref_title_shortcut_enabled">Переключение по комбинации клавиш</string>
-    <string name="pref_description_shortcut_enabled">Смена раскладки при нажатии Ctrl+&lt;key&gt;</string>
+    <string name="pref_description_shortcut_enabled">Смена раскладки при нажатии Ctrl+&lt;key&gt; и Alt+Enter</string>
 
     <string name="pref_title_control_key">Клавиша Ctrl</string>
     <string-array name="pref_control_key_titles">
@@ -50,7 +57,9 @@
         <item>41</item>
     </string-array>
 
-    <string name="pref_title_system_accessibility_settings">System Accessibility settings</string>
+    <string name="pref_title_system_accessibility_settings">Открыть Специальные Возможности</string>
+    <string name="pref_title_select_replaced">Выделять замененный текст</string>
+    <string name="pref_description_select_replaced">Выделять замененный текст в поле ввода после смены раскладки</string>
 
     <!-- Example settings for Corrections -->
     <string name="pref_header_corrections">Слова-Исключения</string>

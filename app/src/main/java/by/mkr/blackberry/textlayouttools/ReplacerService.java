@@ -39,9 +39,14 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
             String selectedCtrlMod = sharedPrefs.getString(getString(R.string.setting_control_key), "129");
             String selectedShortCut = sharedPrefs.getString(getString(R.string.setting_shortcut_key), "" + KeyEvent.KEYCODE_Q);
 
+            Log.d(LOG_TAG, "mod=" + keyMod + "; code=" + keyCode + "; action=" + pressAction);
+            // Ctrl+G: mod=18; code=66; action=0 - alt+enter
 
-            if (keyMod.equals(selectedCtrlMod) && keyCode.equals(selectedShortCut)) {
-                Log.d(LOG_TAG, "Ctrl+G: mod=" + keyMod + "; code=" + keyCode + "; action=" + pressAction);
+            if (keyMod.equals(selectedCtrlMod) && keyCode.equals(selectedShortCut)
+                || keyMod.equals("18") && keyCode.equals("" + KeyEvent.KEYCODE_ENTER)
+            ) {
+
+                Log.d(LOG_TAG, "Ctrl+G: mod=" + keyMod + "; code=" + keyCode + "; action=" + pressAction + "; text=" + _inputText + ";" + _startSelection + ";" + _endSelection);
                 try {
                     if (_nodeInfo != null && _inputText != null && _inputText != "" && _startSelection != _endSelection) {
                         // Get selected text
@@ -62,12 +67,18 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                         );
 
                         // Select replaced text
+                        boolean isSelectReplaced = sharedPrefs.getBoolean(getString(R.string.setting_select_replaced), false);
                         Bundle selectArguments = new Bundle();
-                        selectArguments.putInt(AccessibilityNodeInfo.ACTION_ARGUMENT_SELECTION_START_INT, _startSelection);
-                        selectArguments.putInt(AccessibilityNodeInfo.ACTION_ARGUMENT_SELECTION_END_INT, _startSelection + replacedText.length());
-
+                        if (isSelectReplaced) {
+                            selectArguments.putInt(AccessibilityNodeInfo.ACTION_ARGUMENT_SELECTION_START_INT, _startSelection);
+                            selectArguments.putInt(AccessibilityNodeInfo.ACTION_ARGUMENT_SELECTION_END_INT, _startSelection + replacedText.length());
+                        } else {
+                            selectArguments.putInt(AccessibilityNodeInfo.ACTION_ARGUMENT_SELECTION_START_INT, _startSelection + replacedText.length());
+                            selectArguments.putInt(AccessibilityNodeInfo.ACTION_ARGUMENT_SELECTION_END_INT, _startSelection + replacedText.length());
+                        }
                         _nodeInfo.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, replaceArguments);
                         _nodeInfo.performAction(AccessibilityNodeInfo.ACTION_SET_SELECTION, selectArguments);
+
 
 
                         _nodeInfo = null;
@@ -99,6 +110,10 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
             final int selectBegin = event.getSource().getTextSelectionStart();
             final int selectEnd = event.getSource().getTextSelectionEnd();
             if (selectBegin == selectEnd) {
+                _nodeInfo = null;
+                _inputText = null;
+                _startSelection = 0;
+                _endSelection = 0;
                 return;
             }
             Log.d(LOG_TAG,"text=" + event.getText());

@@ -17,9 +17,9 @@ import DataBase.Correction;
 public class App extends Application/* implements LifecycleOwner*/ {
     /*private LifecycleRegistry _reg;*/
 
-    public static App instance;
+    //public static App instance;
 
-    private AppDatabase database;
+    private static AppDatabase database;
 
     /*
     @NonNull
@@ -33,7 +33,7 @@ public class App extends Application/* implements LifecycleOwner*/ {
     @Override
     public void onCreate() {
         super.onCreate();
-        instance = this;
+        //instance = this;
         database = Room
                 .databaseBuilder(this, AppDatabase.class, "text_tools_db")
                 .allowMainThreadQueries()
@@ -48,7 +48,8 @@ public class App extends Application/* implements LifecycleOwner*/ {
                                         new Correction(0, "ожон", "оддон"),
                                         new Correction(0, "ожан", "оддан"),
                                         new Correction(0, "ожерж", "оддерж"),
-                                        new Correction(0, "ожуб", "оддуб")
+                                        new Correction(0, "ожуб", "оддуб"),
+                                        new Correction(0, "уюот", "уббот")
                                 });
                             }
                         });
@@ -65,11 +66,11 @@ public class App extends Application/* implements LifecycleOwner*/ {
         */
     }
 
-    public static App getInstance() {
+    /*public static App getInstance() {
         return instance;
-    }
+    }*/
 
-    public AppDatabase getDatabase() {
+    public static AppDatabase getDatabase() {
         return database;
     }
 }
