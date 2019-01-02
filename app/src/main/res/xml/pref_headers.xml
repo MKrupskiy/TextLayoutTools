@@ -3,8 +3,13 @@
     <!-- These settings headers are only used on tablets. -->
 
     <header
-        android:fragment="by.mkr.blackberry.textlayouttools.SettingsActivity$ShortcutPreferenceFragment"
+        android:fragment="by.mkr.blackberry.textlayouttools.SettingsActivity$LanguagesPreferenceFragment"
         android:icon="@drawable/ic_keyboard_black_24dp"
+        android:title="@string/pref_header_languages" />
+
+    <header
+        android:fragment="by.mkr.blackberry.textlayouttools.SettingsActivity$ShortcutPreferenceFragment"
+        android:icon="@drawable/ic_keyboard_google_black_24dp"
         android:title="@string/pref_header_shortcut" />
 
     <header

@@ -1,16 +1,15 @@
 package by.mkr.blackberry.textlayouttools;
 
 import android.app.Application;
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.LifecycleOwner;
-import android.arch.lifecycle.LifecycleRegistry;
+//import android.arch.lifecycle.Lifecycle;
+//import android.arch.lifecycle.LifecycleOwner;
+//import android.arch.lifecycle.LifecycleRegistry;
 import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import java.util.concurrent.Executors;
-
 import DataBase.AppDatabase;
 import DataBase.Correction;
 
@@ -19,7 +18,7 @@ public class App extends Application/* implements LifecycleOwner*/ {
 
     //public static App instance;
 
-    private static AppDatabase database;
+    private static AppDatabase _database;
 
     /*
     @NonNull
@@ -34,7 +33,7 @@ public class App extends Application/* implements LifecycleOwner*/ {
     public void onCreate() {
         super.onCreate();
         //instance = this;
-        database = Room
+        _database = Room
                 .databaseBuilder(this, AppDatabase.class, "text_tools_db")
                 .allowMainThreadQueries()
                 .addCallback(new RoomDatabase.Callback() {
@@ -44,7 +43,7 @@ public class App extends Application/* implements LifecycleOwner*/ {
                         Executors.newSingleThreadScheduledExecutor().execute(new Runnable() {
                             @Override
                             public void run() {
-                                database.correctionDao().insertAll(new Correction[]{
+                                _database.correctionDao().insertAll(new Correction[]{
                                         new Correction(0, "ожон", "оддон"),
                                         new Correction(0, "ожан", "оддан"),
                                         new Correction(0, "ожерж", "оддерж"),
@@ -71,6 +70,6 @@ public class App extends Application/* implements LifecycleOwner*/ {
     }*/
 
     public static AppDatabase getDatabase() {
-        return database;
+        return _database;
     }
 }

@@ -2,6 +2,7 @@ package by.mkr.blackberry.textlayouttools;
 
 
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.content.Intent;
 import android.util.Log;
@@ -22,6 +23,9 @@ public class ReplacerActivity extends AppCompatActivity {
                 .getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT);
         boolean readonly = intent
                 .getBooleanExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, false);
+        boolean isTranslit = PreferenceManager
+                .getDefaultSharedPreferences(this)
+                .getString(getString(R.string.setting_input_method), "0").equals("0") ? false : true;
         /*
         Boolean isEnabled = PreferenceManager
                 .getDefaultSharedPreferences(this)
@@ -33,7 +37,7 @@ public class ReplacerActivity extends AppCompatActivity {
 
         if (isEnabled) {
             // process the text
-            Language textLanguage = LayoutConverter.getTextLanguage(text);
+            Language textLanguage = LayoutConverter.getTextLanguage(text, isTranslit);
             String replacedText = LayoutConverter.getReplacedText(text, textLanguage);
             Log.d("ReplacerLog", "original=" + text + "; replaced=" + replacedText);
 

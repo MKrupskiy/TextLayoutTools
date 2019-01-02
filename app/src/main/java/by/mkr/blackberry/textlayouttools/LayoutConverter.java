@@ -1,15 +1,15 @@
 package by.mkr.blackberry.textlayouttools;
 
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.LifecycleOwner;
-import android.arch.lifecycle.LifecycleRegistry;
-import android.arch.lifecycle.Observer;
-import android.arch.persistence.room.Room;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+//import android.arch.lifecycle.Lifecycle;
+//import android.arch.lifecycle.LifecycleOwner;
+//import android.arch.lifecycle.LifecycleRegistry;
+//import android.arch.lifecycle.Observer;
+//import android.arch.persistence.room.Room;
+//import android.support.annotation.NonNull;
+//import android.support.annotation.Nullable;
+//import java.util.List;
 import android.util.Log;
 import java.util.HashMap;
-import java.util.List;
 
 import DataBase.AppDatabase;
 import DataBase.Correction;
@@ -18,7 +18,9 @@ import DataBase.CorrectionDao;
 
 enum Language {
     En,
-    Ru
+    Ru,
+    RuTrans,
+    EnTrans
 }
 
 public class LayoutConverter {
@@ -39,15 +41,15 @@ public class LayoutConverter {
 
     public static String getReplacedText(CharSequence textToReplace, Language fromLanguage) {
         String text = "";
-        //Log.d("ReplacerLog", textToReplace.toString());
+        Log.d("ReplacerLog", textToReplace.toString() + "; lang=" + fromLanguage);
 
         switch (fromLanguage) {
             case En: {
                 textToReplace = textToReplace.toString().replaceAll("\\$\\$", "Á");
-                textToReplace = textToReplace.toString().replaceAll("ll", "Ç");
-                textToReplace = textToReplace.toString().replaceAll("oo", "È");
-                textToReplace = textToReplace.toString().replaceAll("pp", "Ñ");
-                textToReplace = textToReplace.toString().replaceAll("mm", "Ò");
+                textToReplace = textToReplace.toString().replaceAll("(?i)ll", "Ç");
+                textToReplace = textToReplace.toString().replaceAll("(?i)oo", "È");
+                textToReplace = textToReplace.toString().replaceAll("(?i)pp", "Ñ");
+                textToReplace = textToReplace.toString().replaceAll("(?i)mm", "Ò");
 
                 for (int i = 0; i < textToReplace.length(); i++) {
                     if (charsMapEnRu.containsKey(textToReplace.charAt(i))) {
@@ -71,8 +73,40 @@ public class LayoutConverter {
                 }
                 break;
             }
+
+            case RuTrans: {
+                //Log.d("ReplacerLog", textToReplace.toString());
+
+                for (int i = 0; i < textToReplace.length(); i++) {
+                    if (charsMapRuTransEn.containsKey(textToReplace.charAt(i))) {
+                        text += charsMapRuTransEn.get(textToReplace.charAt(i));
+                    } else {
+                        text += textToReplace.charAt(i);
+                    }
+                }
+                break;
+            }
+
+            case EnTrans: {
+                //Log.d("ReplacerLog", textToReplace.toString());
+                textToReplace = textToReplace.toString().replaceAll("(?i)ww", "Ç");
+                textToReplace = textToReplace.toString().replaceAll("(?i)ee", "È");
+                textToReplace = textToReplace.toString().replaceAll("(?i)uu", "Ñ");
+                textToReplace = textToReplace.toString().replaceAll("(?i)zz", "Ò");
+
+                for (int i = 0; i < textToReplace.length(); i++) {
+                    if (charsMapEnRuTrans.containsKey(textToReplace.charAt(i))) {
+                        text += charsMapEnRuTrans.get(textToReplace.charAt(i));
+                    } else {
+                        text += textToReplace.charAt(i);
+                    }
+                }
+                break;
+            }
+
             default: {
                 Log.d("ReplacerLog", "Unexpected language");
+                text = textToReplace.toString();
                 break;
             }
         }
@@ -117,16 +151,16 @@ public class LayoutConverter {
         return text;
     }
 
-    public static Language getTextLanguage(CharSequence text) {
+    public static Language getTextLanguage(CharSequence text, boolean isTranslit) {
         Language targetLang = Language.En;
         String lowered = text.toString().toLowerCase();
 
         for (int i = 0; i < lowered.length(); i++) {
             if (lowered.charAt(i) >= 'a' && lowered.charAt(i) <= 'z') {
-                targetLang = Language.En;
+                targetLang = isTranslit ? Language.EnTrans : Language.En;
                 break;
             } else if (lowered.charAt(i) >= 'а' && lowered.charAt(i) <= 'я') {
-                targetLang = Language.Ru;
+                targetLang = isTranslit ? Language.RuTrans : Language.Ru;
                 break;
             }
         }
@@ -196,5 +230,69 @@ public class LayoutConverter {
         put('т',"n");                       put('Т',"N");
         put('ь',"m"); put('ъ',"mm");        put('Ь',"M"); put('Ъ',"Mm");
         put('б',"$"); put('ю',"$$");        put('Б',"$"); put('Ю',"$$");
+    }};
+
+    private static final HashMap<Character, String> charsMapEnRuTrans = new HashMap<Character, String>() {{
+        put('q',"я");                       put('Q',"Я");
+        put('w',"ш"); put('Ç',"щ");         put('W',"Ш"); //put('Ç',"Щ");
+        put('e',"е"); put('È',"э");         put('E',"Е"); //put('È',"Э");
+        put('r',"р");                       put('R',"Р");
+        put('t',"т");                       put('T',"Т");
+        put('y',"ы");                       put('Y',"Ы");
+        put('u',"у"); put('Ñ',"ю");         put('U',"У"); //put('Ñ',"Ю");
+        put('i',"и");                       put('I',"И");
+        put('o',"о");                       put('O',"О");
+        put('p',"п");                       put('P',"П");
+
+        put('a',"а");                       put('A',"А");
+        put('s',"с");                       put('S',"С");
+        put('d',"д");                       put('D',"Д");
+        put('f',"ф");                       put('F',"Ф");
+        put('g',"г");                       put('G',"Г");
+        put('h',"ч");                       put('H',"Ч");
+        put('j',"й");                       put('J',"Й");
+        put('k',"к");                       put('K',"К");
+        put('l',"л");                       put('L',"Л");
+
+        put('z',"ж"); put('Ò',"з");         put('Z',"Ж"); //put('Ò',"З");
+        put('x',"х");                       put('X',"Х");
+        put('c',"ц");                       put('C',"Ц");
+        put('v',"в");                       put('V',"В");
+        put('b',"б");                       put('B',"Б");
+        put('n',"н");                       put('N',"Н");
+        put('m',"м");                       put('M',"М");
+        put('$',"ь");                       //put('$',"Ь");
+    }};
+
+    private static final HashMap<Character, String> charsMapRuTransEn = new HashMap<Character, String>() {{
+        put('я',"q");                       put('Я',"Q");
+        put('ш',"w"); put('щ',"ww");        put('Ш',"W"); put('Щ',"Ww");
+        put('е',"e"); put('э',"ee");        put('Е',"E"); put('Э',"Ee");
+        put('р',"r");                       put('Р',"R");
+        put('т',"t");                       put('Т',"T");
+        put('ы',"y");                       put('Ы',"Y");
+        put('у',"u"); put('ю',"uu");        put('У',"U"); put('Ю',"Uu");
+        put('и',"i");                       put('И',"I");
+        put('о',"o");                       put('О',"O");
+        put('п',"p");                       put('П',"P");
+
+        put('а',"a");                       put('А',"A");
+        put('с',"s");                       put('С',"S");
+        put('д',"d");                       put('Д',"D");
+        put('ф',"f");                       put('Ф',"F");
+        put('г',"g");                       put('Г',"G");
+        put('ч',"h");                       put('Ч',"H");
+        put('й',"j");                       put('Й',"J");
+        put('к',"k");                       put('К',"K");
+        put('л',"l");                       put('Л',"L");
+
+        put('ж',"z"); put('з',"zz");        put('Ж',"Z"); put('З',"Zz");
+        put('х',"x");                       put('Х',"X");
+        put('ц',"c");                       put('Ц',"C");
+        put('в',"v");                       put('В',"V");
+        put('б',"b");                       put('Б',"B");
+        put('н',"n");                       put('Н',"N");
+        put('м',"m");                       put('М',"M");
+        put('ь',"$");                       put('Ь',"$");
     }};
 }

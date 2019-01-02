@@ -1,17 +1,18 @@
 package by.mkr.blackberry.textlayouttools;
 
 
-import android.arch.persistence.room.Room;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
-import DataBase.AppDatabase;
-import DataBase.CorrectionDao;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 
 public class ReplacerService extends android.accessibilityservice.AccessibilityService {
 
@@ -38,8 +39,11 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
             String keyMod = "" + event.getModifiers();
             String selectedCtrlMod = sharedPrefs.getString(getString(R.string.setting_control_key), "129");
             String selectedShortCut = sharedPrefs.getString(getString(R.string.setting_shortcut_key), "" + KeyEvent.KEYCODE_Q);
+            boolean isTranslit = sharedPrefs.getString(getString(R.string.setting_input_method), "0").equals("0") ? false : true;
+            char display = event.getDisplayLabel();
 
-            Log.d(LOG_TAG, "mod=" + keyMod + "; code=" + keyCode + "; action=" + pressAction);
+            Log.d(LOG_TAG, "mod=" + keyMod + "; code=" + keyCode + "; action=" + pressAction + "; display=" + display);
+            //logToFile("mod=" + keyMod + "; code=" + keyCode + "; action=" + pressAction + "; display=" + display);
             // Ctrl+G: mod=18; code=66; action=0 - alt+enter
 
             if (keyMod.equals(selectedCtrlMod) && keyCode.equals(selectedShortCut)
@@ -56,7 +60,7 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                         Log.d(LOG_TAG, "1=" + beforeText + "; t=" + selectedText + "; a=" + afterText);
 
                         // Get converted text
-                        Language textLanguage = LayoutConverter.getTextLanguage(selectedText);
+                        Language textLanguage = LayoutConverter.getTextLanguage(selectedText, isTranslit);
                         String replacedText = LayoutConverter.getReplacedText(selectedText, textLanguage);
 
                         // Replace selected text
@@ -134,6 +138,25 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
     @Override
     public void onInterrupt() {
         Log.d(LOG_TAG,"Interrupt");
+    }
+
+    private static void logToFile(String text) {
+        File sdCard = Environment.getExternalStorageDirectory();
+        try {
+            File file = new File(sdCard, "tlt_log.txt");
+            if (!file.exists())
+            {
+                file.createNewFile();
+            }
+            FileOutputStream fOut = new FileOutputStream(file, true);
+            OutputStreamWriter osw = new OutputStreamWriter(fOut);
+
+            osw.write(text + "\n");
+            osw.flush();
+            osw.close();
+        } catch (Exception ex) {
+            Log.d("ReplacerLog", "Ex: " + ex.getMessage());
+        }
     }
 }
 

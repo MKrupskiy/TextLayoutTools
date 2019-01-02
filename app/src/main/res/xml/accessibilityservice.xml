@@ -3,9 +3,8 @@
     android:accessibilityEventTypes="typeViewTextSelectionChanged"
     android:accessibilityFeedbackType="feedbackGeneric"
     android:accessibilityFlags="flagIncludeNotImportantViews|flagRequestFilterKeyEvents"
-    android:settingsActivity="by.mkr.blackberry.textlayouttools.ReplacerActivity"
+    android:settingsActivity="by.mkr.blackberry.textlayouttools.MainActivity"
     android:canRetrieveWindowContent="true"
-    android:canRequestTouchExplorationMode="true"
     android:canRequestFilterKeyEvents="true"
     android:description="@string/descr_accessibility_service"
     />
