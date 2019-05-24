@@ -1,10 +1,10 @@
 package by.mkr.blackberry.textlayouttools;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 

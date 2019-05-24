@@ -1,13 +1,13 @@
 <resources>
     <string name="app_name">Text Layout Tools</string>
     <string name="action_settings">Настройки</string>
-    <string name="descr_accessibility_service">Разрешение требуется для отслеживания нажатия комбинации клавиш. Введенный текст не сохраняется и не передается сторонним сервисам.</string>
+    <string name="descr_accessibility_service">Разрешение требуется для отслеживания нажатия комбинации клавиш и замены текста. Введенный текст не сохраняется и не передается сторонним сервисам.</string>
 
     <string name="title_activity_settings">Настройки</string>
 
     <!-- Strings related to Main Activity -->
-    <string name="main_description">v 1.2 Приложение для смены раскладки выделенного текста.</string>
-    <string name="main_examples">Ctrl+G - смена раскладки\nAlt+Enter - смена раскладки со сменой языка</string>
+    <string name="main_description">v 1.5 Приложение для смены раскладки выделенного текста.</string>
+    <string name="main_examples">Ctrl+Q - смена раскладки\nAlt+Enter - смена раскладки со сменой языка</string>
     <string name="main_service_description">Переключение также возможно при помощи комбинации клавиш. Для этого требуется включить поддержку в меню настроек Специальные Возможности</string>
     <string name="main_button_accessibility">Открыть Специальные Возможности</string>
 
@@ -87,5 +87,15 @@
     <string name="dialog_delete_title">Действительно удалить?</string>
     <string name="dialog_yes">Да</string>
     <string name="dialog_no">Нет</string>
+
+    <!-- Example settings for Corrections -->
+    <string name="pref_header_additional">Дополнительные</string>
+    <string name="setting_is_correct_double_letters">Setting_Correct_Doubled</string>
+    <string name="pref_description_is_correct_double_letters">Заменять двойные буквы на альтернативные (дд > ж)</string>
+    <string name="pref_title_is_correct_double_letters">Исправлять двойные нажатия</string>
+
+    <string name="setting_is_show_icon">Setting_Show_Icon</string>
+    <string name="pref_description_is_show_icon">Показывать иконку-флаг в строке уведомлений</string>
+    <string name="pref_title_is_show_icon">Показывать иконку</string>
 
 </resources>

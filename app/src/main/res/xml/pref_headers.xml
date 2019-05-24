@@ -19,4 +19,9 @@
             android:targetClass="by.mkr.blackberry.textlayouttools.CorrectionsActivity"/>
     </header>
 
+    <header
+        android:fragment="by.mkr.blackberry.textlayouttools.SettingsActivity$AdditionalPreferenceFragment"
+        android:icon="@drawable/ic_widgets_black_24dp"
+        android:title="@string/pref_header_additional" />
+
 </preference-headers>

@@ -1,22 +1,12 @@
 package by.mkr.blackberry.textlayouttools;
 
-//import android.arch.lifecycle.Lifecycle;
-//import android.arch.lifecycle.LifecycleOwner;
-//import android.arch.lifecycle.LifecycleRegistry;
-//import android.arch.lifecycle.Observer;
-//import android.arch.persistence.room.Room;
-//import android.support.annotation.NonNull;
-//import android.support.annotation.Nullable;
-//import java.util.List;
 import android.util.Log;
 import java.util.HashMap;
-
-import DataBase.AppDatabase;
 import DataBase.Correction;
-import DataBase.CorrectionDao;
 
 
 enum Language {
+    Unknown,
     En,
     Ru,
     RuTrans,
@@ -40,7 +30,7 @@ public class LayoutConverter {
 
 
     public static String getReplacedText(CharSequence textToReplace, Language fromLanguage) {
-        String text = "";
+        StringBuilder text = new StringBuilder();
         Log.d("ReplacerLog", textToReplace.toString() + "; lang=" + fromLanguage);
 
         switch (fromLanguage) {
@@ -53,9 +43,9 @@ public class LayoutConverter {
 
                 for (int i = 0; i < textToReplace.length(); i++) {
                     if (charsMapEnRu.containsKey(textToReplace.charAt(i))) {
-                        text += charsMapEnRu.get(textToReplace.charAt(i));
+                        text.append(charsMapEnRu.get(textToReplace.charAt(i)));
                     } else {
-                        text += textToReplace.charAt(i);
+                        text.append(textToReplace.charAt(i));
                     }
                 }
                 break;
@@ -66,9 +56,9 @@ public class LayoutConverter {
 
                 for (int i = 0; i < textToReplace.length(); i++) {
                     if (charsMapRuEn.containsKey(textToReplace.charAt(i))) {
-                        text += charsMapRuEn.get(textToReplace.charAt(i));
+                        text.append(charsMapRuEn.get(textToReplace.charAt(i)));
                     } else {
-                        text += textToReplace.charAt(i);
+                        text.append(textToReplace.charAt(i));
                     }
                 }
                 break;
@@ -79,9 +69,9 @@ public class LayoutConverter {
 
                 for (int i = 0; i < textToReplace.length(); i++) {
                     if (charsMapRuTransEn.containsKey(textToReplace.charAt(i))) {
-                        text += charsMapRuTransEn.get(textToReplace.charAt(i));
+                        text.append(charsMapRuTransEn.get(textToReplace.charAt(i)));
                     } else {
-                        text += textToReplace.charAt(i);
+                        text.append(textToReplace.charAt(i));
                     }
                 }
                 break;
@@ -96,9 +86,9 @@ public class LayoutConverter {
 
                 for (int i = 0; i < textToReplace.length(); i++) {
                     if (charsMapEnRuTrans.containsKey(textToReplace.charAt(i))) {
-                        text += charsMapEnRuTrans.get(textToReplace.charAt(i));
+                        text.append(charsMapEnRuTrans.get(textToReplace.charAt(i)));
                     } else {
-                        text += textToReplace.charAt(i);
+                        text.append(textToReplace.charAt(i));
                     }
                 }
                 break;
@@ -106,7 +96,7 @@ public class LayoutConverter {
 
             default: {
                 Log.d("ReplacerLog", "Unexpected language");
-                text = textToReplace.toString();
+                text = new StringBuilder(textToReplace.toString());
                 break;
             }
         }
@@ -130,12 +120,8 @@ public class LayoutConverter {
         }
         */
 
-
-        AppDatabase db = App.getDatabase();
-        CorrectionDao correctionDao = db.correctionDao();
-
-        for (Correction corr : correctionDao.getAll()) {
-            text = text.replaceAll("(?i)" + corr.fromText, corr.toText);
+        for (Correction corr : App.getCorrections()) {
+            text = new StringBuilder(text.toString().replaceAll("(?i)" + corr.fromText, corr.toText));
         }
 
 
@@ -148,11 +134,11 @@ public class LayoutConverter {
 
 
         //Log.d("ReplacerLog", text);
-        return text;
+        return text.toString();
     }
 
     public static Language getTextLanguage(CharSequence text, boolean isTranslit) {
-        Language targetLang = Language.En;
+        Language targetLang = Language.Unknown;
         String lowered = text.toString().toLowerCase();
 
         for (int i = 0; i < lowered.length(); i++) {
@@ -166,6 +152,56 @@ public class LayoutConverter {
         }
 
         return targetLang;
+    }
+
+    public static boolean isDoubled(char letter, Language language) {
+        String doubledChars = language == Language.Ru ? "дбхзьй" : "шеуж";
+        return doubledChars.indexOf(Character.toLowerCase(letter)) > -1;
+    }
+
+    public static char getSpareLetter(char letter, Language language) {
+        char spare = letter;
+
+        switch (language) {
+            case Ru: {
+                switch (letter) {
+                    case 'д': { spare = 'ж'; break; }
+                    case 'б': { spare = 'ю'; break; }
+                    case 'х': { spare = 'э'; break; }
+                    case 'з': { spare = 'щ'; break; }
+                    case 'ь': { spare = 'ъ'; break; }
+                    case 'й': { spare = 'ё'; break; }
+
+                    case 'Д': { spare = 'Ж'; break; }
+                    case 'Б': { spare = 'Ю'; break; }
+                    case 'Х': { spare = 'Э'; break; }
+                    case 'З': { spare = 'Щ'; break; }
+                    case 'Ь': { spare = 'Ъ'; break; }
+                    case 'Й': { spare = 'Ё'; break; }
+
+                    default: { break; }
+                }
+                break;
+            }
+            case RuTrans: {
+                switch (letter) {
+                    case 'ш': { spare = 'щ'; break; }
+                    case 'е': { spare = 'э'; break; }
+                    case 'у': { spare = 'ю'; break; }
+                    case 'ж': { spare = 'з'; break; }
+
+                    case 'Ш': { spare = 'Щ'; break; }
+                    case 'Е': { spare = 'Э'; break; }
+                    case 'У': { spare = 'Ю'; break; }
+                    case 'Ж': { spare = 'З'; break; }
+
+                    default: { break; }
+                }
+                break;
+            }
+            default: { break; } //Lang
+        }
+        return spare;
     }
 
     private static final HashMap<Character, String> charsMapEnRu = new HashMap<Character, String>() {{

@@ -1,15 +1,10 @@
 package by.mkr.blackberry.textlayouttools;
 
 import android.app.Application;
-//import android.arch.lifecycle.Lifecycle;
-//import android.arch.lifecycle.LifecycleOwner;
-//import android.arch.lifecycle.LifecycleRegistry;
-import android.arch.persistence.db.SupportSQLiteDatabase;
-import android.arch.persistence.room.Room;
-import android.arch.persistence.room.RoomDatabase;
-import android.support.annotation.NonNull;
 import android.util.Log;
-import java.util.concurrent.Executors;
+
+import java.util.List;
+
 import DataBase.AppDatabase;
 import DataBase.Correction;
 
@@ -18,7 +13,9 @@ public class App extends Application/* implements LifecycleOwner*/ {
 
     //public static App instance;
 
-    private static AppDatabase _database;
+    //private static AppDatabase _database;
+
+    private static List<Correction> _corrections;
 
     /*
     @NonNull
@@ -33,6 +30,7 @@ public class App extends Application/* implements LifecycleOwner*/ {
     public void onCreate() {
         super.onCreate();
         //instance = this;
+        /*
         _database = Room
                 .databaseBuilder(this, AppDatabase.class, "text_tools_db")
                 .allowMainThreadQueries()
@@ -55,6 +53,11 @@ public class App extends Application/* implements LifecycleOwner*/ {
                     }
                 })
                 .build();
+        */
+
+        // Initial corrections setup
+        updateCorrections(AppDatabase.getInstance(this).correctionDao().getAll());
+
         Log.d("ReplacerLog", "! App started");
 
         /*
@@ -69,7 +72,11 @@ public class App extends Application/* implements LifecycleOwner*/ {
         return instance;
     }*/
 
-    public static AppDatabase getDatabase() {
-        return _database;
+    public static List<Correction> getCorrections() {
+        return _corrections;
+    }
+
+    public static void updateCorrections(List<Correction> corrections) {
+        _corrections = corrections;
     }
 }

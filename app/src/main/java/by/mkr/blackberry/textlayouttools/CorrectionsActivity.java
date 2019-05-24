@@ -1,19 +1,12 @@
 package by.mkr.blackberry.textlayouttools;
 
-import android.app.AlertDialog;
-import android.arch.persistence.room.Database;
-import android.arch.persistence.room.Room;
-import android.content.DialogInterface;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +21,9 @@ public class CorrectionsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_corrections);
+        Log.d("ReplacerLog", "! onCreate");
 
-        final AppDatabase db = App.getDatabase();
+        final AppDatabase db = AppDatabase.getInstance(this);
         final CorrectionDao correctionDao = db.correctionDao();
 
         final List<CorrectionItem> values = mapDbToViewItems(correctionDao.getAll());
@@ -41,12 +35,12 @@ public class CorrectionsActivity extends AppCompatActivity {
         correctionAdapter.setListener(new CorrectionAdapter.CorrectionsListener() {
             @Override
             public void onItemAdded(int itemIndex, String newFromText, String newToText) {
-                // itemIndex always eq -1
                 Correction corr = new Correction(0, newFromText, newToText);
-                long actualId = correctionDao.insert(corr);
                 // update the repo and get actual id
+                long actualId = correctionDao.insert(corr);
                 values.add(new CorrectionItem(actualId, newFromText, newToText));
                 correctionAdapter.notifyDataSetChanged();
+                App.updateCorrections(correctionDao.getAll());
             }
 
             @Override
@@ -58,6 +52,7 @@ public class CorrectionsActivity extends AppCompatActivity {
                 // update the repo
                 Correction corr = new Correction(values.get(itemIndex).id, newFromText, newToText);
                 correctionDao.update(corr);
+                App.updateCorrections(correctionDao.getAll());
             }
 
             @Override
@@ -68,6 +63,7 @@ public class CorrectionsActivity extends AppCompatActivity {
                 correctionAdapter.notifyDataSetChanged();
                 // update the repo
                 correctionDao.deleteById(itemId);
+                App.updateCorrections(correctionDao.getAll());
             }
         });
         correctionsView.setAdapter(correctionAdapter);
@@ -82,6 +78,13 @@ public class CorrectionsActivity extends AppCompatActivity {
                 Log.d("ReplacerLog", "added new");
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("ReplacerLog", "! onDestroy");
+        AppDatabase.releaseDB();
     }
 
     private List<CorrectionItem> mapDbToViewItems(List<DataBase.Correction> items) {
