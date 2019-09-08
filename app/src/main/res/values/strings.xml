@@ -6,10 +6,11 @@
     <string name="title_activity_settings">Настройки</string>
 
     <!-- Strings related to Main Activity -->
-    <string name="main_description">v 1.5 Приложение для смены раскладки выделенного текста.</string>
+    <string name="main_description">v 1.6 Приложение для смены раскладки выделенного текста.</string>
     <string name="main_examples">Ctrl+Q - смена раскладки\nAlt+Enter - смена раскладки со сменой языка</string>
     <string name="main_service_description">Переключение также возможно при помощи комбинации клавиш. Для этого требуется включить поддержку в меню настроек Специальные Возможности</string>
     <string name="main_button_accessibility">Открыть Специальные Возможности</string>
+    <string name="main_edittext_placeholder">Попробовать в работе</string>
 
     <!-- Strings related to Settings -->
 
@@ -44,10 +45,14 @@
     <string-array name="pref_control_key_titles">
         <item>Right Shift</item>
         <item>Left Shift</item>
+        <item>Speed Key (Key2)</item>
+        <item>Currency Key (Key2)</item>
     </string-array>
     <string-array name="pref_control_key_values">
         <item>129</item>
         <item>65</item>
+        <item>8</item>
+        <item>12288</item>
     </string-array>
 
     <string name="pref_title_shortcut">Быстрая Клавиша</string>
@@ -88,14 +93,39 @@
     <string name="dialog_yes">Да</string>
     <string name="dialog_no">Нет</string>
 
-    <!-- Example settings for Corrections -->
+    <!-- Example settings Additional -->
     <string name="pref_header_additional">Дополнительные</string>
     <string name="setting_is_correct_double_letters">Setting_Correct_Doubled</string>
     <string name="pref_description_is_correct_double_letters">Заменять двойные буквы на альтернативные (дд > ж)</string>
     <string name="pref_title_is_correct_double_letters">Исправлять двойные нажатия</string>
 
     <string name="setting_is_show_icon">Setting_Show_Icon</string>
-    <string name="pref_description_is_show_icon">Показывать иконку-флаг в строке уведомлений</string>
+    <string name="pref_description_is_show_icon">Показывать иконку-флаг в строке уведомлений (после следующей смены языка)</string>
     <string name="pref_title_is_show_icon">Показывать иконку</string>
+
+    <!-- Example settings Experimental -->
+    <string name="pref_header_experimental">Экспериментальные</string>
+    <string name="setting_is_show_info">Setting_Show_Info</string>
+    <string name="pref_description_is_show_info">Показывать информацию о нажатой клавише</string>
+    <string name="pref_title_is_show_info">Показывать информацию</string>
+
+    <string name="setting_key2emulation_enabled">Setting_Key2Emulation_Enabled</string>
+    <string name="pref_description_key2emulation_enabled">Включить эмуляцию Ctrl на Speed Key (Только для Key2)</string>
+    <string name="pref_title_key2emulation_enabled">Включить эмуляцию Ctrl на Speed Key</string>
+
+    <string name="setting_is_auto_correct">Setting_Auto_Correct</string>
+    <string name="pref_description_is_auto_correct">Автоматически исправлять раскладку последнего введённого слова</string>
+    <string name="pref_title_is_auto_correct">Автоматически исправлять раскладку</string>
+
+    <string name="setting_is_log_to_sd">Setting_Auto_Log_To_SD</string>
+    <string name="pref_description_is_log_to_sd">Записывать логи событий в файл \'tlt_log.txt\' в корне внутренней памяти. Необхожимо предоставить разрешение на запись.\nВНИМАНИЕ! В файле будет содержаться введённый текст.</string>
+    <string name="pref_title_is_log_to_sd">Записывать логи событий в файл</string>
+
+    <string name="setting_open_app_settings">Открыть настройки приложения</string>
+
+    <string name="setting_user_dictionary">Setting_User_Dictionary</string>
+    <string name="pref_description_user_dictionary">Одно слово на строке</string>
+    <string name="pref_title_user_dictionary">Пользовательский словарь</string>
+    <string name="pref_user_dictionary_default_value">Привет\nМир</string>
 
 </resources>

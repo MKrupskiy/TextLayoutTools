@@ -24,4 +24,9 @@
         android:icon="@drawable/ic_widgets_black_24dp"
         android:title="@string/pref_header_additional" />
 
+    <header
+        android:fragment="by.mkr.blackberry.textlayouttools.SettingsActivity$ExperimentalPreferenceFragment"
+        android:icon="@drawable/ic_extension_black_24dp"
+        android:title="@string/pref_header_experimental" />
+
 </preference-headers>

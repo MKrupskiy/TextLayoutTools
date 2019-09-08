@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 
 
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -24,14 +25,14 @@ public class MainActivity extends AppCompatActivity {
 
 
         // Floating Action Button
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
                 String emailAction = "mailto:mike_113@mail.ru?subject=Text Layout Tools " + BuildConfig.VERSION_NAME;
                 emailIntent.setData(Uri.parse(emailAction));
-                startActivity(Intent.createChooser(emailIntent, "Отправить отзыв"));
+                startActivity(Intent.createChooser(emailIntent, "связаться с разработчиком"));
             }
         });
 

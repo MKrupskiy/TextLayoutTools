@@ -40,6 +40,7 @@ public class LayoutConverter {
                 textToReplace = textToReplace.toString().replaceAll("(?i)oo", "È");
                 textToReplace = textToReplace.toString().replaceAll("(?i)pp", "Ñ");
                 textToReplace = textToReplace.toString().replaceAll("(?i)mm", "Ò");
+                textToReplace = textToReplace.toString().replaceAll("(?i)qq", "Ž");
 
                 for (int i = 0; i < textToReplace.length(); i++) {
                     if (charsMapEnRu.containsKey(textToReplace.charAt(i))) {
@@ -205,7 +206,7 @@ public class LayoutConverter {
     }
 
     private static final HashMap<Character, String> charsMapEnRu = new HashMap<Character, String>() {{
-        put('q',"й");                       put('Q',"Й");
+        put('q',"й"); put('Ž',"ё");         put('Q',"Й");
         put('w',"ц");                       put('W',"Ц");
         put('e',"у");                       put('E',"У");
         put('r',"к");                       put('R',"К");
@@ -237,7 +238,7 @@ public class LayoutConverter {
     }};
 
     private static final HashMap<Character, String> charsMapRuEn = new HashMap<Character, String>() {{
-        put('й',"q");                       put('Й',"Q");
+        put('й',"q"); put('ё',"qq");        put('Й',"Q"); put('Ё',"Qq");
         put('ц',"w");                       put('Ц',"W");
         put('у',"e");                       put('У',"E");
         put('к',"r");                       put('К',"R");

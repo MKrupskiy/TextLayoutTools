@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
-    android:accessibilityEventTypes="typeViewTextSelectionChanged|typeViewTextChanged|typeNotificationStateChanged"
+    android:accessibilityEventTypes="typeViewTextSelectionChanged|typeViewTextChanged|typeNotificationStateChanged|typeWindowStateChanged|typeViewClicked|typeViewFocused"
     android:accessibilityFeedbackType="feedbackGeneric"
-    android:accessibilityFlags="flagIncludeNotImportantViews|flagRequestFilterKeyEvents"
+    android:accessibilityFlags="flagIncludeNotImportantViews|flagRequestFilterKeyEvents|flagRequestEnhancedWebAccessibility"
     android:settingsActivity="by.mkr.blackberry.textlayouttools.MainActivity"
     android:canRetrieveWindowContent="true"
     android:canRequestFilterKeyEvents="true"
+    android:notificationTimeout="0"
     android:description="@string/descr_accessibility_service"
     />
