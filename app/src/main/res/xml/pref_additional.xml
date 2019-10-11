@@ -1,15 +1,19 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <SwitchPreference
-        android:defaultValue="true"
-        android:key="@string/setting_is_correct_double_letters"
-        android:summary="@string/pref_description_is_correct_double_letters"
-        android:title="@string/pref_title_is_correct_double_letters" />
+    <PreferenceCategory android:title="@string/pref_h2_double_letters">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/setting_is_correct_double_letters"
+            android:summary="@string/pref_description_is_correct_double_letters"
+            android:title="@string/pref_title_is_correct_double_letters" />
+    </PreferenceCategory>
 
-    <SwitchPreference
-        android:defaultValue="true"
-        android:key="@string/setting_is_show_icon"
-        android:summary="@string/pref_description_is_show_icon"
-        android:title="@string/pref_title_is_show_icon" />
+    <PreferenceCategory android:title="@string/pref_h2_statusbar_icon">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="@string/setting_is_show_icon"
+            android:summary="@string/pref_description_is_show_icon"
+            android:title="@string/pref_title_is_show_icon" />
+    </PreferenceCategory>
 
 </PreferenceScreen>

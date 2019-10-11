@@ -1,23 +1,37 @@
 <resources>
     <string name="app_name">Text Layout Tools</string>
+    <string name="contact_email_title">Связаться с разработчиком</string>
     <string name="action_settings">Настройки</string>
+    <string name="action_about">О программе</string>
     <string name="descr_accessibility_service">Разрешение требуется для отслеживания нажатия комбинации клавиш и замены текста. Введенный текст не сохраняется и не передается сторонним сервисам.</string>
 
     <string name="title_activity_settings">Настройки</string>
 
     <!-- Strings related to Main Activity -->
-    <string name="main_description">v 1.6 Приложение для смены раскладки выделенного текста.</string>
-    <string name="main_examples">Ctrl+Q - смена раскладки\nAlt+Enter - смена раскладки со сменой языка</string>
-    <string name="main_service_description">Переключение также возможно при помощи комбинации клавиш. Для этого требуется включить поддержку в меню настроек Специальные Возможности</string>
+    <string name="main_app_name_version" translatable="false">Text Layout Tools 1.8</string>
+    <string name="main_description">Приложение для смены раскладки текста.</string>
+    <string name="main_examples">Автоматическая смена\nCtrl+Q - смена раскладки\nAlt+Enter - смена раскладки со сменой языка</string>
+    <!--<string name="main_service_description">Переключение также возможно при помощи комбинации клавиш. Для этого требуется включить поддержку в меню настроек Специальные Возможности</string>-->
+    <string name="main_service_description">Для работы приложения необходимо включить поддержку в меню настроек Специальные Возможности</string>
     <string name="main_button_accessibility">Открыть Специальные Возможности</string>
     <string name="main_edittext_placeholder">Попробовать в работе</string>
+    <string name="main_service_not_running_alert">Сервис не запущен</string>
+
+
+    <!-- Strings related to About Activity -->
+    <string name="title_activity_about">О программе</string>
+    <string name="about_text_support">Создано при поддержке форумчан 4pda.\nПожелания и идеи можно отправлять на 4pda или на электронный ящик.</string>
+    <string name="about_text_profile_link">Мой профиль на 4pda:\nhttps://4pda.ru/forum/index.php?showuser=1974942</string>
+    <string name="about_text_app_link">Тема программы:\nhttps://4pda.ru/forum/index.php?showtopic=965434</string>
+
 
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->
-    <string name="pref_header_languages">Языки ввода</string>
+    <string name="pref_header_languages">Язык Ввода</string>
+    <string name="pref_h2_input_type">Ввод</string>
 
-    <string name="setting_input_method">Setting_Input_Method</string>
+    <string name="setting_input_method" translatable="false">Setting_Input_Method</string>
 
     <string name="pref_title_input_method">Метод ввода для дополнительной (русской) раскладки</string>
     <string-array name="pref_input_method_titles">
@@ -33,11 +47,14 @@
 
     <!-- Example General settings -->
     <string name="pref_header_shortcut">Быстрая Клавиша</string>
+    <string name="pref_h2_shortcut">Комбинация Клавиш</string>
+    <string name="pref_h2_text_selection">Выделение</string>
 
-    <string name="setting_shortcut_enabled_key">Setting_Enabled</string>
-    <string name="setting_control_key">Setting_Control</string>
-    <string name="setting_shortcut_key">Setting_Shortcut</string>
-    <string name="setting_select_replaced">Setting_Select_Replaced</string>
+    <string name="setting_shortcut_enabled_key" translatable="false">Setting_Enabled</string>
+    <string name="setting_control_key" translatable="false">Setting_Control</string>
+    <string name="setting_shortcut_key" translatable="false">Setting_Shortcut</string>
+    <string name="setting_select_replaced" translatable="false">Setting_Select_Replaced</string>
+
     <string name="pref_description_shortcut_enabled">Смена раскладки при нажатии Ctrl+&lt;key&gt; и Alt+Enter</string>
     <string name="pref_title_shortcut_enabled">Переключение по комбинации клавиш</string>
 
@@ -45,12 +62,14 @@
     <string-array name="pref_control_key_titles">
         <item>Right Shift</item>
         <item>Left Shift</item>
+        <item>Sym</item>
         <item>Speed Key (Key2)</item>
         <item>Currency Key (Key2)</item>
     </string-array>
     <string-array name="pref_control_key_values">
         <item>129</item>
         <item>65</item>
+        <item>4</item>
         <item>8</item>
         <item>12288</item>
     </string-array>
@@ -80,8 +99,8 @@
     </string-array>
 
     <string name="pref_title_system_accessibility_settings">Открыть Специальные Возможности</string>
-    <string name="pref_title_select_replaced">Выделять замененный текст</string>
-    <string name="pref_description_select_replaced">Выделять замененный текст в поле ввода после смены раскладки</string>
+    <string name="pref_title_select_replaced">Выделять заменённый текст</string>
+    <string name="pref_description_select_replaced">Выделять заменённый текст в поле ввода после смены раскладки</string>
 
     <!-- Example settings for Corrections -->
     <string name="pref_header_corrections">Слова-Исключения</string>
@@ -93,39 +112,145 @@
     <string name="dialog_yes">Да</string>
     <string name="dialog_no">Нет</string>
 
-    <!-- Example settings Additional -->
-    <string name="pref_header_additional">Дополнительные</string>
-    <string name="setting_is_correct_double_letters">Setting_Correct_Doubled</string>
-    <string name="pref_description_is_correct_double_letters">Заменять двойные буквы на альтернативные (дд > ж)</string>
-    <string name="pref_title_is_correct_double_letters">Исправлять двойные нажатия</string>
 
-    <string name="setting_is_show_icon">Setting_Show_Icon</string>
-    <string name="pref_description_is_show_icon">Показывать иконку-флаг в строке уведомлений (после следующей смены языка)</string>
-    <string name="pref_title_is_show_icon">Показывать иконку</string>
+    <!-- Example settings Autocorrect -->
+    <string name="pref_header_autocorrect">Автоисправление</string>
+    <string name="pref_h2_autocorrect">Автоматическое Исправление</string>
 
-    <!-- Example settings Experimental -->
-    <string name="pref_header_experimental">Экспериментальные</string>
-    <string name="setting_is_show_info">Setting_Show_Info</string>
-    <string name="pref_description_is_show_info">Показывать информацию о нажатой клавише</string>
-    <string name="pref_title_is_show_info">Показывать информацию</string>
-
-    <string name="setting_key2emulation_enabled">Setting_Key2Emulation_Enabled</string>
-    <string name="pref_description_key2emulation_enabled">Включить эмуляцию Ctrl на Speed Key (Только для Key2)</string>
-    <string name="pref_title_key2emulation_enabled">Включить эмуляцию Ctrl на Speed Key</string>
-
-    <string name="setting_is_auto_correct">Setting_Auto_Correct</string>
+    <string name="setting_is_auto_correct" translatable="false">Setting_Auto_Correct</string>
     <string name="pref_description_is_auto_correct">Автоматически исправлять раскладку последнего введённого слова</string>
     <string name="pref_title_is_auto_correct">Автоматически исправлять раскладку</string>
 
-    <string name="setting_is_log_to_sd">Setting_Auto_Log_To_SD</string>
-    <string name="pref_description_is_log_to_sd">Записывать логи событий в файл \'tlt_log.txt\' в корне внутренней памяти. Необхожимо предоставить разрешение на запись.\nВНИМАНИЕ! В файле будет содержаться введённый текст.</string>
+    <string name="setting_user_dictionary" translatable="false">Setting_User_Dictionary</string>
+    <string name="pref_description_user_dictionary">Одно слово на строке</string>
+    <string name="pref_title_user_dictionary">Пользовательский словарь</string>
+    <string name="pref_user_dictionary_default_value">Привет\nМир</string>
+
+    <string name="setting_autocorrect_direction" translatable="false">Setting_Autocorrect_Direction</string>
+    <string name="pref_title_autocorrect_direction">Разрешить автоисправление</string>
+    <string-array name="pref_autocorrect_direction_key_titles">
+        <item>В обеих раскладках</item>
+        <item>В русской раскладке</item>
+        <item>В английской раскладке</item>
+    </string-array>
+    <string-array name="pref_autocorrect_direction_key_values">
+        <item>Unknown</item>
+        <item>Ru</item>
+        <item>En</item>
+    </string-array>
+
+
+    <!-- Example settings Notification -->
+    <string name="pref_header_notification">Индикация Событий</string>
+    <string name="pref_h2_sound">Звук</string>
+    <string name="pref_h2_vibration">Вибрация</string>
+
+    <string name="setting_vibration_intensity" translatable="false">Setting_Vibration_Intensity</string>
+    <string name="pref_description_vibration_intensity">Минимум - отключена</string>
+    <string name="pref_title_vibration_intensity">Интенсивность вибрации</string>
+    <string name="pref_hint_vibration_intensity">Невозможно настроить интенсивность вибрации</string>
+
+    <string name="setting_vibration_pattern_rus" translatable="false">Setting_Vibration_Pattern_Rus</string>
+    <string name="pref_title_vibration_pattern_rus">Переключение на русский</string>
+    <string-array name="pref_vibration_pattern_key_titles">
+        <item>Нет</item>
+        <item>Одиночная короткая</item>
+        <item>Одиночная</item>
+        <item>Одиночная длинная</item>
+        <item>Двойная короткая</item>
+        <item>Двойная</item>
+        <item>Тройная короткая</item>
+        <item>Тройная</item>
+        <item>Длинный-короткий</item>
+    </string-array>
+    <string-array name="pref_vibration_pattern_key_values">
+        <item>None</item>
+        <item>SingleShort</item>
+        <item>Single</item>
+        <item>SingleLong</item>
+        <item>DoubleShort</item>
+        <item>Double</item>
+        <item>TripleShort</item>
+        <item>Triple</item>
+        <item>ShortLong</item>
+    </string-array>
+    <string name="setting_vibration_pattern_eng" translatable="false">Setting_Vibration_Pattern_Eng</string>
+    <string name="pref_title_vibration_pattern_eng">Переключение на английский</string>
+
+    <string name="setting_sound_input_rus" translatable="false">Setting_Sound_Input_Rus</string>
+    <string name="pref_title_sound_input_rus">Смена языка ввода на русский</string>
+    <string-array name="pref_sound_key_titles">
+        <item>Нет</item>
+        <item>Английская буква</item>
+        <item>Русская буква</item>
+        <item>Переключение</item>
+        <item>Замена</item>
+        <item>Опечатка</item>
+        <item>Клик XP</item>
+        <item>Восклицание</item>
+        <item>Стоп</item>
+    </string-array>
+    <string-array name="pref_sound_key_values">
+        <item>None</item>
+        <item>En</item>
+        <item>Ru</item>
+        <item>Switch</item>
+        <item>Reverse</item>
+        <item>Misprint</item>
+        <item>ClickXP</item>
+        <item>Exclamation</item>
+        <item>Stop</item>
+    </string-array>
+    <string name="setting_sound_input_eng" translatable="false">Setting_Sound_Input_Eng</string>
+    <string name="pref_title_sound_input_eng">Смена языка ввода на английский</string>
+
+    <string name="setting_sound_correct_rus" translatable="false">Setting_Sound_Correct_Rus</string>
+    <string name="pref_title_sound_correct_rus">Исправление на русский</string>
+    <string name="setting_sound_correct_eng" translatable="false">Setting_Sound_Correct_Eng</string>
+    <string name="pref_title_sound_correct_eng">Исправление на английский</string>
+
+
+    <!-- Example settings Additional -->
+    <string name="pref_header_additional">Дополнительные</string>
+    <string name="pref_h2_double_letters">Двойные Буквы</string>
+    <string name="pref_h2_statusbar_icon">Индикатор Текущей Раскладки</string>
+
+    <string name="setting_is_correct_double_letters" translatable="false">Setting_Correct_Doubled</string>
+    <string name="pref_description_is_correct_double_letters">Заменять двойные буквы на альтернативные (дд > ж)</string>
+    <string name="pref_title_is_correct_double_letters">Исправлять двойные нажатия</string>
+
+    <string name="setting_is_show_icon" translatable="false">Setting_Show_Icon</string>
+    <string name="pref_description_is_show_icon">Показывать иконку-флаг в строке уведомлений (после следующей смены языка)</string>
+    <string name="pref_title_is_show_icon">Показывать иконку</string>
+
+
+    <!-- Example settings Experimental -->
+    <string name="pref_header_experimental">Экспериментальные</string>
+    <string name="pref_h2_ctrl_emulation">Эмуляция Ctrl</string>
+    <string name="pref_h2_logging">Логирование</string>
+
+    <string name="setting_is_show_info" translatable="false">Setting_Show_Info</string>
+    <string name="pref_description_is_show_info">Показывать информацию о нажатой клавише</string>
+    <string name="pref_title_is_show_info">Показывать информацию</string>
+
+    <string name="setting_key2emulation_enabled" translatable="false">Setting_Key2Emulation_Enabled</string>
+    <string name="pref_description_key2emulation_enabled">Включить эмуляцию действий Ctrl+A/C/V/X на выбранной клавише Ctrl</string>
+    <string name="pref_title_key2emulation_enabled">Включить эмуляцию Ctrl (Только для Key2)</string>
+
+    <string name="setting_is_log_to_sd" translatable="false">Setting_Auto_Log_To_SD</string>
+    <string name="pref_description_is_log_to_sd">Записывать логи событий в файл \'tlt_log.txt\' в корне внутренней памяти. Необхожимо предоставить разрешение на запись в Память и USB.\nВНИМАНИЕ! В файле будет содержаться введённый текст.</string>
     <string name="pref_title_is_log_to_sd">Записывать логи событий в файл</string>
 
     <string name="setting_open_app_settings">Открыть настройки приложения</string>
 
-    <string name="setting_user_dictionary">Setting_User_Dictionary</string>
-    <string name="pref_description_user_dictionary">Одно слово на строке</string>
-    <string name="pref_title_user_dictionary">Пользовательский словарь</string>
-    <string name="pref_user_dictionary_default_value">Привет\nМир</string>
+    <string name="setting_when_enable_notifications" translatable="false">Setting_When_Enable_Notifications</string>
+    <string name="text_btn_mute_1h">Без звука 1ч</string>
+    <string name="text_btn_mute_8h">Без звука 8ч</string>
+    <string name="text_btn_mute_enable">Включить</string>
+    <string name="text_toast_mute_general">Звук отключён до</string>
+    <string name="text_toast_mute_enable">Звук включён</string>
+    <string name="text_toast_word_added">Слово добавлено</string>
+    <string name="text_toast_word_in_dict_already">Слово уже в словаре</string>
+
 
 </resources>

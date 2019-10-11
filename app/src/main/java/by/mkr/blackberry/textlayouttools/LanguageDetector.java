@@ -9,49 +9,6 @@ import java.util.regex.Pattern;
 public class LanguageDetector {
     final static String LOG_TAG = "ReplacerLog";
 
-    private String[] _russianLemmas = {
-            "мам",
-            "пап",
-            "при",
-            "про",
-            "мыл",
-            "рам",
-            "пере",
-            "пре",
-            "про",
-            "выс",
-            "электро",
-            "лож",
-            "админ",
-            "афиш",
-            "банк",
-            "бар",
-            "библи",
-            "бизнес",
-            "вет",
-            "бирж",
-            "бокс",
-            "буч",
-            "велик",
-            "ветер",
-            "волок",
-            "встреч",
-            "выдач",
-            "галош",
-            "гей",
-            "генерал",
-            "горбуш",
-            "гор",
-            "госдач",
-            "грим",
-            "груш",
-            "грыж",
-            "дач",
-            "депеш",
-            "дилер",
-            "деле",
-
-    };
     private String[] _russianImpossibleLemmas = {
             "аъ", "аы", "аь",
             "бй",
@@ -87,8 +44,6 @@ public class LanguageDetector {
             "юу", "юь", "юы", "юъ",
             "яа", "яё", "яо", "яъ", "яы", "яь", "яэ"
     };
-
-    private String[] _englishLemmas = {"hello", "world"};
 
     private String[] _englishImpossibleLemmas = {
             "bq", "bz",
@@ -254,7 +209,7 @@ public class LanguageDetector {
     }
 
     public static WordWithBoundaries getLastWord(String text) {
-        Pattern p = Pattern.compile("\\W*([\\w\\$]+)$");
+        Pattern p = Pattern.compile("\\W*([\\w\\$\\€]+)$");
         Matcher m = p.matcher(text);
         int start = 0;
         int end = 0;
@@ -279,7 +234,7 @@ public class LanguageDetector {
             curWord = getLastWord(text);
         } else {
             // Get the word in the middle
-            final Pattern pattern = Pattern.compile("[\\w\\$]+");
+            final Pattern pattern = Pattern.compile("[\\w\\$\\€]+");
             final Matcher matcher = pattern.matcher(text);
             int start = 0;
             int end = 0;
@@ -309,7 +264,7 @@ public class LanguageDetector {
         }
 
         // Check if word border to the right
-        if (text.length() > currentPos && text.substring(currentPos, currentPos + 1).matches("[\\w\\$]")) {
+        if (text.length() > currentPos && text.substring(currentPos, currentPos + 1).matches("[\\w\\$\\€]")) {
             Log.d(LOG_TAG, "  text at right; return +1");
             return startPosition + 1;
         }
@@ -317,7 +272,7 @@ public class LanguageDetector {
         // Go left
         while (
                 currentPos > 0 &&
-                !text.substring(currentPos - 1, currentPos).matches("[\\w\\$]")
+                !text.substring(currentPos - 1, currentPos).matches("[\\w\\$\\€]")
         ) {
             Log.d(LOG_TAG, "  char:" + text.substring(currentPos - 1, currentPos));
             currentPos--;
@@ -328,6 +283,6 @@ public class LanguageDetector {
     }
 
     public static boolean isWordLetter(Character character) {
-        return character.toString().matches("[\\w\\$]");
+        return character.toString().matches("[\\w\\$\\€]");
     }
 }

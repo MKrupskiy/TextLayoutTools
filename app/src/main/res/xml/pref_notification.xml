@@ -1,0 +1,56 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/pref_h2_sound">
+        <Preference
+            android:summary="Если у вас есть идея относительно звука или параметров вибрации, пишите в теме программы на 4pda."/>
+
+        <ListPreference
+            android:defaultValue="Switch"
+            android:entries="@array/pref_sound_key_titles"
+            android:entryValues="@array/pref_sound_key_values"
+            android:key="@string/setting_sound_input_rus"
+            android:title="@string/pref_title_sound_input_rus" />
+        <ListPreference
+            android:defaultValue="Switch"
+            android:entries="@array/pref_sound_key_titles"
+            android:entryValues="@array/pref_sound_key_values"
+            android:key="@string/setting_sound_input_eng"
+            android:title="@string/pref_title_sound_input_eng" />
+
+        <ListPreference
+            android:defaultValue="Ru"
+            android:entries="@array/pref_sound_key_titles"
+            android:entryValues="@array/pref_sound_key_values"
+            android:key="@string/setting_sound_correct_rus"
+            android:title="@string/pref_title_sound_correct_rus" />
+        <ListPreference
+            android:defaultValue="En"
+            android:entries="@array/pref_sound_key_titles"
+            android:entryValues="@array/pref_sound_key_values"
+            android:key="@string/setting_sound_correct_eng"
+            android:title="@string/pref_title_sound_correct_eng" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_h2_vibration">
+        <SeekBarPreference
+            android:defaultValue="5"
+            android:min="0"
+            android:max="10"
+            android:key="@string/setting_vibration_intensity"
+            android:summary="@string/pref_description_vibration_intensity"
+            android:title="@string/pref_title_vibration_intensity"/>
+        <ListPreference
+            android:defaultValue="SingleShort"
+            android:entries="@array/pref_vibration_pattern_key_titles"
+            android:entryValues="@array/pref_vibration_pattern_key_values"
+            android:key="@string/setting_vibration_pattern_rus"
+            android:title="@string/pref_title_vibration_pattern_rus" />
+        <ListPreference
+            android:defaultValue="DoubleShort"
+            android:entries="@array/pref_vibration_pattern_key_titles"
+            android:entryValues="@array/pref_vibration_pattern_key_values"
+            android:key="@string/setting_vibration_pattern_eng"
+            android:title="@string/pref_title_vibration_pattern_eng" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

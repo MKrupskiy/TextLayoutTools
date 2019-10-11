@@ -1,0 +1,31 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/pref_h2_autocorrect">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="@string/setting_is_auto_correct"
+            android:summary="@string/pref_description_is_auto_correct"
+            android:title="@string/pref_title_is_auto_correct" />
+
+        <EditTextPreference
+            android:defaultValue="@string/pref_user_dictionary_default_value"
+            android:key="@string/setting_user_dictionary"
+            android:selectAllOnFocus="false"
+            android:singleLine="false"
+            android:inputType="textMultiLine"
+            android:dependency="@string/setting_is_auto_correct"
+            android:summary="@string/pref_description_user_dictionary"
+            android:title="@string/pref_title_user_dictionary" />
+
+        <ListPreference
+            android:defaultValue="Unknown"
+            android:entries="@array/pref_autocorrect_direction_key_titles"
+            android:entryValues="@array/pref_autocorrect_direction_key_values"
+            android:key="@string/setting_autocorrect_direction"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:dependency="@string/setting_is_auto_correct"
+            android:title="@string/pref_title_autocorrect_direction" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

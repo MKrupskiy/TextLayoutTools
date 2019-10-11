@@ -10,7 +10,44 @@ enum Language {
     En,
     Ru,
     RuTrans,
-    EnTrans
+    EnTrans;
+
+    public static Language fromString(String x) {
+        switch (x) {
+            case "Unknown":
+                return Unknown;
+            case "En":
+                return En;
+            case "Ru":
+                return Ru;
+            case "EnTrans":
+                return EnTrans;
+            case "RuTrans":
+                return RuTrans;
+        }
+        return null;
+    }
+
+    public boolean isRus() {
+        return this == Language.Ru || this == Language.RuTrans;
+    }
+    public boolean isEng() {
+        return this == Language.En || this == Language.EnTrans;
+    }
+    public Language getOpposite() {
+        switch (this) {
+            case En:
+                return Ru;
+            case Ru:
+                return En;
+            case EnTrans:
+                return RuTrans;
+            case RuTrans:
+                return EnTrans;
+            default:
+                return Unknown;
+        }
+    }
 }
 
 public class LayoutConverter {
@@ -234,7 +271,7 @@ public class LayoutConverter {
         put('b',"и");                       put('B',"И");
         put('n',"т");                       put('N',"Т");
         put('m',"ь"); put('Ò',"ъ");         put('M',"Ь"); //put('Ò',"Ъ");
-        put('$',"б"); put('Á',"ю");         //put('$',"Б"); //put('Á',"Ю");
+        put('$',"б"); put('Á',"ю");         put('€',"Б"); //put('Á',"Ю");
     }};
 
     private static final HashMap<Character, String> charsMapRuEn = new HashMap<Character, String>() {{

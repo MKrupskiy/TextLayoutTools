@@ -2,13 +2,17 @@ package by.mkr.blackberry.textlayouttools;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Build;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+
 
 public class NotifyManager {
     final String LOG_TAG = "ReplacerLog";
-    final String CHANNEL_ID = "by.mkr.blackberry.textlayouttools.layoutnotification";
+    final static String CHANNEL_ID = "by.mkr.blackberry.textlayouttools.layoutnotification";
 
     private Notification notificationEn;
     private Notification notificationRu;
@@ -28,11 +32,11 @@ public class NotifyManager {
             } catch (Exception e) {
                 Log.d(LOG_TAG, "notifyChannel is null");
             }
-            if (notifyChannel == null) {
+            if (notifyChannel == null || notifyChannel != null) {
                 notifyChannel = new NotificationChannel(
                         CHANNEL_ID,
                         "Current Keyboard Layout",
-                        android.app.NotificationManager.IMPORTANCE_LOW);
+                        NotificationManager.IMPORTANCE_DEFAULT);
                 notifyChannel.setShowBadge(false);
                 notifyChannel.enableLights(false);
                 notifyChannel.enableVibration(false);
@@ -43,19 +47,41 @@ public class NotifyManager {
         }
 
 
+
+        NotificationCompat.Action action1h = LanguageNotificationReceiver
+                .createNotificationAction(_service, LanguageNotificationReceiver.ACTION_MUTE_1H);
+
+        NotificationCompat.Action action24h = LanguageNotificationReceiver
+                .createNotificationAction(_service, LanguageNotificationReceiver.ACTION_MUTE_8H);
+
+        NotificationCompat.Action actionEnable = LanguageNotificationReceiver
+                .createNotificationAction(_service, LanguageNotificationReceiver.ACTION_ENABLE);
+
+
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            notificationEn = new Notification.Builder(_service, CHANNEL_ID)
+            notificationEn = new NotificationCompat.Builder(_service, CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_flag_gb)
                     .setContentTitle("English")
                     .setVisibility(Notification.VISIBILITY_SECRET)
                     .setOngoing(true)
+                    .addAction(action1h)
+                    .addAction(action24h)
+                    .addAction(actionEnable)
+                    .setShowWhen(false)
+                    .setColor(Color.parseColor(_service.getString(R.color.colorPrimary)))
                     .build();
 
-            notificationRu = new Notification.Builder(_service, CHANNEL_ID)
+            notificationRu = new NotificationCompat.Builder(_service, CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_flag_russia)
                     .setContentTitle("Русский")
                     .setVisibility(Notification.VISIBILITY_SECRET)
                     .setOngoing(true)
+                    .addAction(action1h)
+                    .addAction(action24h)
+                    .addAction(actionEnable)
+                    .setShowWhen(false)
+                    .setColor(Color.parseColor(_service.getString(R.color.colorPrimary)))
                     .build();
         } else {
             notificationEn = new Notification.Builder(_service)

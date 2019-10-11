@@ -7,8 +7,6 @@ import android.util.Log;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -26,7 +24,7 @@ public class WordsList {
         try {
             String[] files = assetManager.list("Files");
 
-            for(int i=0; i<files.length; i++) {
+            for (int i=0; i<files.length; i++) {
                 Log.d("ReplacerLog", files[i]);
             }
 
@@ -56,7 +54,7 @@ public class WordsList {
             if (line != null) {
                 Log.d("ReplacerLog", "   Version: " + line + "; " + fileToOpen);
             }
-            while(line != null){
+            while (line != null) {
                 //Log.d("ReplacerLog", "   Word: " + line);
                 if (!_words.containsKey(line.length())) {
                     _words.put(line.length(), new ArrayList<String>());
@@ -93,7 +91,6 @@ public class WordsList {
     public boolean contains(String text, int length) {
         Log.d("ReplacerLog", "--- Check Contains [" + length + "] " + _lang);
         boolean isFound = false;
-        Instant first = Instant.now();
         if (_words.get(length) == null) {
             // No words with that length
             return false;
@@ -105,9 +102,6 @@ public class WordsList {
                 break;
             }
         }
-        Instant second = Instant.now();
-        Duration duration = Duration.between(first, second);
-        Log.d("ReplacerLog", "--- duration:" + duration.getSeconds() + ":" + duration.getNano());
 
         return isFound;
     }
@@ -126,7 +120,6 @@ public class WordsList {
     public boolean startsWith(String text, int length) {
         Log.d("ReplacerLog", "--- Check Starts With [" + length + "] " + _lang);
         boolean isFound = false;
-        Instant first = Instant.now();
         if (_words.get(length) == null) {
             // No words with that length
             return false;
@@ -138,9 +131,6 @@ public class WordsList {
                 break;
             }
         }
-        Instant second = Instant.now();
-        Duration duration = Duration.between(first, second);
-        Log.d("ReplacerLog", "--- duration:" + duration.getSeconds() + ":" + duration.getNano());
 
         return isFound;
     }

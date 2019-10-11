@@ -1,16 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="by.mkr.blackberry.textlayouttools">
+
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
+        android:name=".App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:name=".App"
         android:theme="@style/AppTheme">
+        <receiver
+            android:name=".LanguageNotificationReceiver"
+            android:enabled="true"
+            android:exported="true"></receiver>
+
+        <activity
+            android:name=".AboutActivity"
+            android:label="@string/title_activity_about"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="by.mkr.blackberry.textlayouttools.MainActivity" />
+        </activity>
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
@@ -34,12 +50,24 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".AddToDictionaryActivity"
+            android:label="Добавить в словарь TLT">
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.PROCESS_TEXT" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
 
         <service
             android:name=".ReplacerService"
-            android:label="@string/app_name"
             android:enabled="true"
             android:exported="true"
+            android:label="@string/app_name"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
             <intent-filter>
                 <action android:name="android.accessibilityservice.AccessibilityService" />
@@ -58,11 +86,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="by.mkr.blackberry.textlayouttools.MainActivity" />
         </activity>
-        <activity android:name=".CorrectionsActivity"
+        <activity
+            android:name=".CorrectionsActivity"
             android:label="@string/pref_header_corrections"
-            android:parentActivityName=".SettingsActivity">
-        </activity>
+            android:parentActivityName=".SettingsActivity" />
     </application>
-
 
 </manifest>

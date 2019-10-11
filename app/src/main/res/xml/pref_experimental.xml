@@ -1,42 +1,31 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <SwitchPreference
-        android:defaultValue="false"
-        android:key="@string/setting_is_show_info"
-        android:summary="@string/pref_description_is_show_info"
-        android:title="@string/pref_title_is_show_info" />
+    <PreferenceCategory android:title="@string/pref_h2_ctrl_emulation">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/setting_key2emulation_enabled"
+            android:summary="@string/pref_description_key2emulation_enabled"
+            android:title="@string/pref_title_key2emulation_enabled" />
+    </PreferenceCategory>
 
-    <SwitchPreference
-        android:defaultValue="false"
-        android:key="@string/setting_key2emulation_enabled"
-        android:summary="@string/pref_description_key2emulation_enabled"
-        android:title="@string/pref_title_key2emulation_enabled" />
+    <PreferenceCategory android:title="@string/pref_h2_logging">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/setting_is_show_info"
+            android:summary="@string/pref_description_is_show_info"
+            android:title="@string/pref_title_is_show_info" />
 
-    <SwitchPreference
-        android:defaultValue="true"
-        android:key="@string/setting_is_auto_correct"
-        android:summary="@string/pref_description_is_auto_correct"
-        android:title="@string/pref_title_is_auto_correct" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/setting_is_log_to_sd"
+            android:summary="@string/pref_description_is_log_to_sd"
+            android:title="@string/pref_title_is_log_to_sd" />
 
-    <EditTextPreference
-        android:defaultValue="@string/pref_user_dictionary_default_value"
-        android:key="@string/setting_user_dictionary"
-        android:selectAllOnFocus="false"
-        android:singleLine="false"
-        android:inputType="textMultiLine"
-        android:summary="@string/pref_description_user_dictionary"
-        android:title="@string/pref_title_user_dictionary" />
-
-    <SwitchPreference
-        android:defaultValue="false"
-        android:key="@string/setting_is_log_to_sd"
-        android:summary="@string/pref_description_is_log_to_sd"
-        android:title="@string/pref_title_is_log_to_sd" />
-
-    <Preference android:title="@string/setting_open_app_settings">
-        <intent android:action="android.settings.APPLICATION_DETAILS_SETTINGS"
-            android:data="package:by.mkr.blackberry.textlayouttools" />
-    </Preference>
-
+        <Preference android:title="@string/setting_open_app_settings"
+            android:icon="@drawable/ic_chevron_right_black_24dp">
+            <intent android:action="android.settings.APPLICATION_DETAILS_SETTINGS"
+                android:data="package:by.mkr.blackberry.textlayouttools" />
+        </Preference>
+    </PreferenceCategory>
 
 </PreferenceScreen>

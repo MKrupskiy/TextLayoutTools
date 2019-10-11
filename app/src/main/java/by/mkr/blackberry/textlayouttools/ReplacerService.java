@@ -1,10 +1,12 @@
 package by.mkr.blackberry.textlayouttools;
 
 
+import android.annotation.TargetApi;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
@@ -14,22 +16,35 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import static by.mkr.blackberry.textlayouttools.R.string.setting_control_key;
-import static by.mkr.blackberry.textlayouttools.R.string.setting_input_method;
-import static by.mkr.blackberry.textlayouttools.R.string.setting_is_show_info;
-import static by.mkr.blackberry.textlayouttools.R.string.setting_key2emulation_enabled;
 
-public class ReplacerService extends android.accessibilityservice.AccessibilityService {
 
-    final String LOG_TAG = "ReplacerLog";
-    private static List<String> notHandlePackages = Arrays.asList(
+public class ReplacerService extends android.accessibilityservice.AccessibilityService
+        implements SharedPreferences.OnSharedPreferenceChangeListener {
+
+    final static String LOG_TAG = "ReplacerLog";
+    private static List<String> _notHandlePackages = Arrays.asList(
+            "by.tlt.dummyapp",
             "com.android.systemui",
             //"com.blackberry.blackberrylauncher",
             "com.blackberry.keyboard"
     );
+
+    private static int[] _notHandleInputs = {
+            InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD,
+            InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD,
+            InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD,
+            InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS,
+            InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_WEB_EMAIL_ADDRESS,
+            InputType.TYPE_CLASS_NUMBER,
+            InputType.TYPE_CLASS_DATETIME,
+            InputType.TYPE_CLASS_PHONE
+    };
+
+    private static AppSettings _appSettings;
 
     static TextSelection _replacerSelect;
     static TextSelection _controlSelect;
@@ -50,6 +65,11 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
 
     private Toast _toast;
 
+    private VibrationManager _vibrationManager;
+    private SoundManager _soundManager;
+
+    private long _lastSymPressed;
+
 
 
     @Override
@@ -62,6 +82,12 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
 
         _wordsListRu = new WordsList(this, Language.Ru);
         _wordsListEn = new WordsList(this, Language.En);
+
+        _vibrationManager = new VibrationManager(getApplicationContext());
+        _soundManager = new SoundManager(getApplicationContext());
+
+        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
+        _appSettings = new AppSettings(getApplicationContext());
     }
 
 
@@ -73,31 +99,24 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
         // key code = 45 - Q
         try {
             boolean isHandled = false;
-            SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
             int pressAction = event.getAction();
-            boolean isEnabled = sharedPrefs.getBoolean(getString(R.string.setting_shortcut_enabled_key), true);
-            String selectedCtrlMod = sharedPrefs.getString(getString(setting_control_key), "129");
-            boolean isKey2EmulationEnabled = sharedPrefs.getBoolean(getString(setting_key2emulation_enabled), false);
 
             // Change Text Layout
-            if (isEnabled && pressAction == 0) {
-                String keyCode = "" + event.getKeyCode();
-                String keyMod = "" + event.getModifiers();
-                String selectedShortCut = sharedPrefs.getString(getString(R.string.setting_shortcut_key), "" + KeyEvent.KEYCODE_Q);
-                boolean isTranslit = !"0".equals(sharedPrefs.getString(getString(setting_input_method), "0"));
-                boolean isSelectReplaced = sharedPrefs.getBoolean(getString(R.string.setting_select_replaced), false);
-                boolean isShowInfo = sharedPrefs.getBoolean(getString(setting_is_show_info), true);
+            if (_appSettings.isEnabled && pressAction == KeyEvent.ACTION_DOWN) {
+                int keyCode = event.getKeyCode();
+                int keyMod = event.getModifiers();
                 char display = event.getDisplayLabel();
-                boolean isAltEnter = keyMod.equals("18") && keyCode.equals("" + KeyEvent.KEYCODE_ENTER);
+                boolean isAltEnter = (keyMod == 18) && (keyCode == KeyEvent.KEYCODE_ENTER);
 
-                if (isShowInfo) {
+                if (_appSettings.isShowInfo) {
                     String logInfo = "Key: " + keyCode +
                             "\nMod: " + keyMod +
                             "\nAlt: " + event.isAltPressed() +
                             "\nShift: " + event.isShiftPressed() +
                             "\nCtrl: " + event.isCtrlPressed() +
-                            "\nFunc: " + event.isFunctionPressed();
+                            "\nFunc: " + event.isFunctionPressed() +
+                            "\nLong: " + event.isLongPress();
                     //Toast.makeText(this.getApplicationContext(), logInfo, Toast.LENGTH_SHORT).show();
                     logToToast(logInfo);
                 }
@@ -106,16 +125,32 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                 //logToFile("mod=" + keyMod + "; code=" + keyCode + "; action=" + pressAction + "; display=" + display);
                 // Ctrl+G: mod=18; code=66; action=0 - alt+enter
 
-                if (keyMod.equals(selectedCtrlMod) && keyCode.equals(selectedShortCut)
+
+                // Handle SYM key:
+                // Single press blocked
+                // Double press is a default action
+                if (keyMod == _appSettings.selectedCtrlMod && keyCode == KeyEvent.KEYCODE_SYM) {
+                    log(LOG_TAG, "SYM pressed; dif: " + (new Date().getTime() - _lastSymPressed));
+                    if (new Date().getTime() - _lastSymPressed > 500) {
+                        _lastSymPressed = new Date().getTime();
+                        return true;
+                    }
+                    _lastSymPressed = new Date().getTime();
+                }
+
+
+
+                if ( (keyMod == _appSettings.selectedCtrlMod && keyCode == _appSettings.selectedShortCut)
                         || isAltEnter
                 ) {
                     _isProgramChange = true;
-                    log(LOG_TAG, "_isProgramChange:" + _isProgramChange);
+                    log(LOG_TAG, "_isProgramChange3:" + _isProgramChange);
 
                     if (_replacerSelect.get_nodeInfo() != null && !_replacerSelect.isTextNullOrEmpty()) {
                         // Change SELECTED text
                         if (!_replacerSelect.isStartEqualsEnd()) {
-                            replaceSelectedText(_replacerSelect, isTranslit, isSelectReplaced);
+                            ActionType actionType = isAltEnter ? ActionType.AltEnterReplace : ActionType.ManualChange;
+                            replaceSelectedText(_replacerSelect, _appSettings.isTranslit, _appSettings.isSelectReplaced, actionType);
                         } else {
                             // Change last Entered word
 
@@ -136,7 +171,7 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
 
                                 _replacerSelect.set_startSelection(currentWord.Begin);
                                 _replacerSelect.set_endSelection(currentWord.End);
-                                replaceSelectedText(_replacerSelect, isTranslit, isSelectReplaced, cursorAt);
+                                replaceSelectedText(_replacerSelect, _appSettings.isTranslit, _appSettings.isSelectReplaced, cursorAt, ActionType.ManualChange);
 
                             }
 
@@ -153,39 +188,16 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
             }
 
             // Emulate CTRL+Key combinations
-            if (isKey2EmulationEnabled && pressAction == 0) {
-                String keyCode = "" + event.getKeyCode();
-                String keyMod = "" + event.getModifiers();
+            if (_appSettings.isKey2EmulationEnabled && pressAction == KeyEvent.ACTION_DOWN) {
+                int keyCode = event.getKeyCode();
+                int keyMod = event.getModifiers();
+                
 
 
 
 
                 AccessibilityNodeInfo eventNodeInfo = super.getRootInActiveWindow().findFocus(android.view.accessibility.AccessibilityNodeInfo.FOCUS_INPUT);
-                log(LOG_TAG, "  eventNodeInfo: " + eventNodeInfo.getPackageName() +
-                        "; c=" + eventNodeInfo.getClassName() +
-                        "; t=" + eventNodeInfo.getText() +
-                        "; s=" + eventNodeInfo.getTextSelectionStart() +
-                        "; e=" + eventNodeInfo.getTextSelectionEnd()
-                );
-
-                for (int i = 0; i < eventNodeInfo.getChildCount(); i++) {
-                    AccessibilityNodeInfo ch = eventNodeInfo.getChild(i);
-                    log(LOG_TAG, "    c[" + i + "]: c=" + ch.getClassName() +
-                            "; t=" + ch.getText() +
-                            "; s=" + ch.getTextSelectionStart() +
-                            "; e=" + ch.getTextSelectionEnd() +
-                            "; c=" + ch.getChildCount()
-                    );
-                    for (int j = 0; j < ch.getChildCount(); j++) {
-                        AccessibilityNodeInfo ch1 = eventNodeInfo.getChild(j);
-                        log(LOG_TAG, "      ch1[" + j + "]: c=" + ch.getClassName() +
-                                "; t=" + ch.getText() +
-                                "; s=" + ch.getTextSelectionStart() +
-                                "; e=" + ch.getTextSelectionEnd() +
-                                "; c=" + ch.getChildCount()
-                        );
-                    }
-                }
+                //traverseTree(eventNodeInfo, 1);
 
 
 
@@ -193,8 +205,7 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
 
 
 
-
-                if (keyMod.equals(selectedCtrlMod) && keyCode.equals("" + KeyEvent.KEYCODE_A)) {
+                if (keyMod == _appSettings.selectedCtrlMod && keyCode == KeyEvent.KEYCODE_A) {
                     log(LOG_TAG, "Ctrl+A");
 
                     if (_controlSelect.get_nodeInfo() != null && !_controlSelect.isTextNullOrEmpty()) {
@@ -215,28 +226,44 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                         _controlSelect.get_nodeInfo().performAction(AccessibilityNodeInfo.ACTION_SET_SELECTION, selectArguments);
                     }
                     isHandled = true;
-                } else if (keyMod.equals(selectedCtrlMod) && keyCode.equals("" + KeyEvent.KEYCODE_C)) {
+                } else if (keyMod == _appSettings.selectedCtrlMod && keyCode == KeyEvent.KEYCODE_C) {
                     Log.d(LOG_TAG, "Ctrl+C");
+                    //eventNodeInfo.performAction(AccessibilityNodeInfo.ACTION_COPY);
                     _controlSelect.get_nodeInfo().performAction(AccessibilityNodeInfo.ACTION_COPY);
                     isHandled = true;
-                } else if (keyMod.equals(selectedCtrlMod) && keyCode.equals("" + KeyEvent.KEYCODE_V)) {
+                } else if (keyMod == _appSettings.selectedCtrlMod && keyCode == KeyEvent.KEYCODE_V) {
                     Log.d(LOG_TAG, "Ctrl+V");
+                    //eventNodeInfo.performAction(AccessibilityNodeInfo.ACTION_PASTE);
                     _controlSelect.get_nodeInfo().performAction(AccessibilityNodeInfo.ACTION_PASTE);
                     isHandled = true;
-                } else if (keyMod.equals(selectedCtrlMod) && keyCode.equals("" + KeyEvent.KEYCODE_X)) {
+                    _isProgramChange = true;
+                } else if (keyMod == _appSettings.selectedCtrlMod && keyCode == KeyEvent.KEYCODE_X) {
                     Log.d(LOG_TAG, "Ctrl+X");
-
-
-                    _wordsListRu.contains(_controlSelect.get_inputText());
-
-
+                    //eventNodeInfo.performAction(AccessibilityNodeInfo.ACTION_CUT);
                     _controlSelect.get_nodeInfo().performAction(AccessibilityNodeInfo.ACTION_CUT);
                     isHandled = true;
-                } else if (keyMod.equals(selectedCtrlMod) && keyCode.equals("" + KeyEvent.KEYCODE_Z)) {
+                    _isProgramChange = true;
+                } else if (keyMod == _appSettings.selectedCtrlMod && keyCode == KeyEvent.KEYCODE_Z) {
+                    //Log.d(LOG_TAG, "Ctrl+X");
+                    //isHandled = true;
                     /*
-                    //logToToast("Ctrl+Z");
-                    if (_controlSelect.get_nodeInfo() != null) {
-                    }
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                Instrumentation inst = new Instrumentation();
+                                inst.sendKeySync(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ALT_LEFT));
+                                inst.sendKeySync(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER));
+                                Thread.sleep(300);
+                                inst.sendKeySync(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_ENTER));
+                                inst.sendKeySync(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_ALT_LEFT));
+                                log(LOG_TAG, "! Key Sent");
+                            }
+                            catch(Exception ex){
+                                log(LOG_TAG, "! Ex2: " + ex.getMessage());
+                            }
+                        }
+                    }).start();
                     isHandled = true;
                     */
                 }
@@ -254,7 +281,7 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
         }
 
         _isProgramChange = false;
-        log(LOG_TAG, "_isProgramChange: " + _isProgramChange);
+        log(LOG_TAG, "_isProgramChange4: " + _isProgramChange);
 
         // Nothing to do - default keyboard action
         return super.onKeyEvent(event);
@@ -264,14 +291,15 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
         log(LOG_TAG, "Accessibility; package=" + event.getPackageName() + "; type=" + event.getEventType());
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean isKey2EmulationEnabled = sharedPrefs.getBoolean(getString(setting_key2emulation_enabled), false);
 
         try {
             switch (event.getEventType()) {
 
                 // Fix double letters in Russian
                 case AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED: {
+                    if (_notHandlePackages.contains(event.getPackageName())) {
+                        break;
+                    }
 
                     String tempStr = event.getSource().getText().toString();
                     _controlSelect.set_all(
@@ -280,84 +308,96 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                             event.getSource().getTextSelectionStart(),
                             event.getSource().getTextSelectionEnd()
                     );
+                    _replacerSelect.copyFrom(_controlSelect);
                     log(LOG_TAG, "TYPE_VIEW_TEXT_CHANGED; text=" + _controlSelect.get_inputText() +
                             "; start=" + _controlSelect.get_startSelection() +
                             "; end=" + _controlSelect.get_endSelection()
                     );
 
 
-                    boolean isCorrectDoubled = sharedPrefs
-                            .getBoolean(getString(R.string.setting_is_correct_double_letters), false);
-                    if (!isCorrectDoubled) {
-                        return;
-                    }
+                    if (_appSettings.isCorrectDoubled) {
+                        log(LOG_TAG, "Lang=" + _currentLanguage + "; len=" + event.getText().toString().length());
 
-                    log(LOG_TAG, "Lang=" + _currentLanguage + "; len=" + event.getText().toString().length());
+                        String input = event.getText().toString();
+                        boolean isSystemReplace = false;
 
-                    String input = event.getText().toString();
-                    boolean isSystemReplace = false;
-
-                    // Do not change upon deletion
-                    if (_textLength - input.length() == 1) { // Chrome thinks that Placeholder is a text
-                        _textLength = input.length();
-                        _lastTypedTime = 0;
-                        _lastTypedLetter = ' ';
-                        return;
-                    } else {
-                        isSystemReplace = _textLength == input.length(); // system replaces the letter, no need to update
-                        _textLength = input.length();
-                    }
-
-
-                    if (_currentLanguage == null || _currentLanguage == Language.Unknown) {
-                        boolean isTranslit = !"0".equals(sharedPrefs.getString(getString(setting_input_method), "0"));
-                        _currentLanguage = LayoutConverter.getTextLanguage(input, isTranslit);
-                    }
-
-                    if (!isSystemReplace
-                            && (_currentLanguage == Language.Ru || _currentLanguage == Language.RuTrans)
-                    ) {
-                        char currentLetter = input.charAt(_textLength - 2);
-                        log(LOG_TAG, "TEXT_CHANGED; text=" + input +
-                                "; prev=" + _replacerSelect.get_inputText() +
-                                "; len=" + _textLength +
-                                "; char=" + currentLetter +
-                                "; last=" + _lastTypedLetter +
-                                "; time=" + _lastTypedTime +
-                                "; diff=" + (new Date().getTime() - _lastTypedTime));
-
-                        if (LayoutConverter.isDoubled(currentLetter, _currentLanguage)) {
-                            if (Character.toLowerCase(currentLetter) == Character.toLowerCase(_lastTypedLetter)
-                                    && (new Date().getTime() - _lastTypedTime) < 700
-                                    && !(Character.isUpperCase(currentLetter) && Character.isLowerCase(_lastTypedLetter))
-                            ) {
-
-                                // Replace double letter with single equivalent
-                                input = input.substring(1, input.length() - 3) + LayoutConverter.getSpareLetter(_lastTypedLetter, _currentLanguage);
-                                Bundle replaceArguments = new Bundle();
-                                replaceArguments.putCharSequence(
-                                        AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE,
-                                        input
-                                );
-                                event.getSource().performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, replaceArguments);
-
-                                _lastTypedTime = 0;
-                                _lastTypedLetter = ' ';
-                            } else {
-                                _lastTypedTime = new Date().getTime();
-                                _lastTypedLetter = currentLetter;
-                            }
-                        } else {
+                        // Do not change upon deletion
+                        if (_textLength - input.length() == 1) { // Chrome thinks that Placeholder is a text
+                            _textLength = input.length();
                             _lastTypedTime = 0;
                             _lastTypedLetter = ' ';
+                            return;
+                        } else {
+                            isSystemReplace = _textLength == input.length(); // system replaces the letter, no need to update
+                            _textLength = input.length();
                         }
+
+
+                        if (_currentLanguage == null || _currentLanguage == Language.Unknown) {
+                            _currentLanguage = LayoutConverter.getTextLanguage(input, _appSettings.isTranslit);
+                        }
+
+                        if (!isSystemReplace
+                                && (_currentLanguage == Language.Ru || _currentLanguage == Language.RuTrans)
+                        ) {
+                            char currentLetter = input.charAt(_textLength - 2);
+                            log(LOG_TAG, "TEXT_CHANGED; text=" + input +
+                                    "; prev=" + _replacerSelect.get_inputText() +
+                                    "; len=" + _textLength +
+                                    "; char=" + currentLetter +
+                                    "; last=" + _lastTypedLetter +
+                                    "; time=" + _lastTypedTime +
+                                    "; diff=" + (new Date().getTime() - _lastTypedTime));
+
+                            if (LayoutConverter.isDoubled(currentLetter, _currentLanguage)) {
+                                if (Character.toLowerCase(currentLetter) == Character.toLowerCase(_lastTypedLetter)
+                                        && (new Date().getTime() - _lastTypedTime) < 700
+                                        && !(Character.isUpperCase(currentLetter) && Character.isLowerCase(_lastTypedLetter))
+                                ) {
+
+                                    // Replace double letter with single equivalent
+                                    input = input.substring(1, input.length() - 3) + LayoutConverter.getSpareLetter(_lastTypedLetter, _currentLanguage);
+                                    Bundle replaceArguments = new Bundle();
+                                    replaceArguments.putCharSequence(
+                                            AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE,
+                                            input
+                                    );
+                                    event.getSource().performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, replaceArguments);
+
+                                    _lastTypedTime = 0;
+                                    _lastTypedLetter = ' ';
+                                } else {
+                                    _lastTypedTime = new Date().getTime();
+                                    _lastTypedLetter = currentLetter;
+                                }
+                            } else {
+                                _lastTypedTime = 0;
+                                _lastTypedLetter = ' ';
+                            }
+                        }
+
                     }
+
+
+
+
+                    autoreplace(_replacerSelect);
+
+
+
+
+
+
 
                     break;
                 }
 
                 // Handle selection
                 case AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED: {
+                    if (_notHandlePackages.contains(event.getPackageName())) {
+                        break;
+                    }
+
                     AccessibilityNodeInfo tempNodeInfo = event.getSource();
                     //AccessibilityNodeInfo tempNodeInfo = event.getSource().findFocus(android.view.accessibility.AccessibilityNodeInfo.FOCUS_INPUT);
 
@@ -373,6 +413,7 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                     log(LOG_TAG, "TYPE_VIEW_TEXT_SELECTION_CHANGED; " + tempStr+
                             "; s=" + selectBegin +
                             "; e=" + selectEnd +
+                            "; t=" + tempNodeInfo.getInputType() +
                             "; d=" + tempNodeInfo.getParent().findFocus(android.view.accessibility.AccessibilityNodeInfo.FOCUS_INPUT).getTextSelectionStart()
                     );
 
@@ -390,85 +431,7 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                         log(LOG_TAG, "Clear replacer; " + selectBegin);
 
 
-
-
-
-                        boolean isAutoCorrect = sharedPrefs.getBoolean(getString(R.string.setting_is_auto_correct), true);
-
-                        log(LOG_TAG, "CHECK _isProgramChange:" + _isProgramChange);
-                        if (!_isProgramChange && isAutoCorrect) {
-                            boolean isTranslit = !"0".equals(sharedPrefs.getString(getString(setting_input_method), "0"));
-                            boolean isSelectReplaced = false;
-                            Character lastChar = _replacerSelect.getLastChar();
-                            boolean isWordLetter = LanguageDetector.isWordLetter(lastChar);
-                            log(LOG_TAG, "^^^^^^^^^^^^^");
-                            log(LOG_TAG, "CHAR:" + lastChar + "; is word:" + isWordLetter);
-
-                            if (!isWordLetter) {
-                                // Automatic lang change
-                                String[] userDict = sharedPrefs
-                                        .getString(getString(R.string.setting_user_dictionary), "")
-                                        .toLowerCase()
-                                        .split("\n");
-                                log(LOG_TAG, "userDict:" + userDict.length);
-
-                                int cursorAt = _replacerSelect.get_endSelection();
-                                int wordEnd = LanguageDetector.getNearestWordEnd(_replacerSelect.get_inputText(), _replacerSelect.get_endSelection());
-                                log(LOG_TAG, "getNearestWordEnd: " + wordEnd + "; sel=" + _replacerSelect.get_endSelection());
-                                WordWithBoundaries currentWord = LanguageDetector.getWordAtPosition(_replacerSelect.get_inputText(), wordEnd);
-                                log(LOG_TAG, "Current Word: " + currentWord.Word + "; end:" + wordEnd);
-
-                                log(LOG_TAG, "_lastAutoReplaced CHECK: " + _lastAutoReplaced);
-                                if (currentWord.Begin == _lastAutoReplaced) {
-                                    log(LOG_TAG, "Already handled begin:" + currentWord.Begin);
-                                    return;
-                                }
-                                _lastAutoReplaced = currentWord.Begin;
-                                log(LOG_TAG, "_lastAutoReplaced: " + _lastAutoReplaced);
-
-                                Language lang = _languageDetector.getTargetLanguage(currentWord.Word, isTranslit, _wordsListRu, _wordsListEn, userDict);
-
-                                Language textEnteredLang = LayoutConverter.getTextLanguage(currentWord.Word, isTranslit);
-
-                                if (lang == textEnteredLang || lang == Language.Unknown) {
-                                    // Input language == keyboard language
-                                    // Do nothing
-                                    log(LOG_TAG, "***From: " + textEnteredLang +
-                                            "; To: '" + lang +
-                                            "; " + currentWord.Word +
-                                            "' no change" +
-                                            "; s=" + currentWord.Begin +
-                                            "; e=" + currentWord.End);
-                                } else {
-                                    // Need to change layout
-                                    String replacedWord = LayoutConverter.getReplacedText(currentWord.Word, textEnteredLang);
-                                    log(LOG_TAG, "***From: " + textEnteredLang +
-                                            "; To: " + lang +
-                                            "; '" + currentWord.Word +
-                                            "' -> '" + replacedWord + "'");
-
-                                    _replacerSelect.set_startSelection(currentWord.Begin);
-                                    _replacerSelect.set_endSelection(currentWord.End);
-                                    replaceSelectedText(_replacerSelect, isTranslit, isSelectReplaced, cursorAt);
-                                }
-                            } else {
-                                _lastAutoReplaced = -1;
-                                log(LOG_TAG, "_lastAutoReplaced: " + _lastAutoReplaced);
-                            }
-                            log(LOG_TAG, "vvvvvvvvvvvv");
-                        }
-                        _isProgramChange = true;
-                        log(LOG_TAG, "_isProgramChange:" + _isProgramChange);
-
-
-
-
-
-
-
-
-
-
+                        //autoreplace(_replacerSelect);
 
 
 
@@ -492,27 +455,26 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                     String text = (String) event.getText().get(0);
                     log(LOG_TAG, text);
 
-                    boolean isTranslit = !"0".equals(sharedPrefs.getString(getString(setting_input_method), "0"));
-                    boolean isShowIcon = sharedPrefs.getBoolean(getString(R.string.setting_is_show_icon), true);
-
                     boolean isRussian = text.contains("Русск") || text.contains("Russ");
                     _currentLanguage = isRussian
-                            ? (isTranslit ? Language.RuTrans : Language.Ru)
-                            : (isTranslit ? Language.EnTrans : Language.En);
+                            ? (_appSettings.isTranslit ? Language.RuTrans : Language.Ru)
+                            : (_appSettings.isTranslit ? Language.EnTrans : Language.En);
 
 
-                    if (isShowIcon) {
+                    if (_appSettings.isShowIcon) {
                         _notifyManager.updateNotification(_currentLanguage);
                     } else {
                         _notifyManager.clearNotifications();
                     }
+                    notify(_currentLanguage, ActionType.AltEnter);
 
                     break;
                 }
 
                 // Track input field change
                 case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED: {
-                    if (isKey2EmulationEnabled && !notHandlePackages.contains(event.getPackageName())) {
+                    if (_appSettings.isKey2EmulationEnabled && !_notHandlePackages.contains(event.getPackageName())) {
+                        log(LOG_TAG, "TYPE_WINDOW_STATE_CHANGED: ");
                         if (event.getSource() != null) {
                             AccessibilityNodeInfo tmpNodeInfo = event.getSource().findFocus(android.view.accessibility.AccessibilityNodeInfo.FOCUS_INPUT);
                             // Ensure that it has text input
@@ -523,7 +485,7 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                                         tmpNodeInfo.getTextSelectionStart() != -1 ? tmpNodeInfo.getTextSelectionStart() : 0,
                                         tmpNodeInfo.getTextSelectionEnd() != -1 ? tmpNodeInfo.getTextSelectionEnd() : 0
                                 );
-                                log(LOG_TAG, "TYPE_WINDOW_STATE_CHANGED: " + _controlSelect.get_inputText()
+                                log(LOG_TAG, "TYPE_WINDOW_STATE_CHANGED 2: " + _controlSelect.get_inputText()
                                         + "; s=" + _controlSelect.get_startSelection() +
                                         "; e=" + _controlSelect.get_endSelection());
                             }
@@ -534,7 +496,7 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                 }
 
                 case AccessibilityEvent.TYPE_VIEW_CONTEXT_CLICKED:{
-                    if (isKey2EmulationEnabled && !notHandlePackages.contains(event.getPackageName())) {
+                    if (_appSettings.isKey2EmulationEnabled && !_notHandlePackages.contains(event.getPackageName())) {
                         log(LOG_TAG, "TYPE_VIEW_CONTEXT_CLICKED: " + event.getText());
                     }
 
@@ -542,12 +504,13 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                 }
 
                 case AccessibilityEvent.TYPE_VIEW_CLICKED:{
-                    if (isKey2EmulationEnabled && !notHandlePackages.contains(event.getPackageName())) {
+                    if (_appSettings.isKey2EmulationEnabled && !_notHandlePackages.contains(event.getPackageName())) {
+                        log(LOG_TAG, "TYPE_VIEW_CLICKED 0: ");
                         //AccessibilityNodeInfo tempNodeInfo = event.getSource();
                         AccessibilityNodeInfo tempNodeInfo = event.getSource().findFocus(AccessibilityNodeInfo.FOCUS_INPUT);
 
                         if (tempNodeInfo != null) {
-                            log(LOG_TAG, "TYPE_VIEW_CLICKED: " + event.getText() +
+                            log(LOG_TAG, "TYPE_VIEW_CLICKED 1: " + event.getText() +
                                     "; c=" + tempNodeInfo.getClassName() +
                                     "; t=" + tempNodeInfo.getText() +
                                     "; s=" + tempNodeInfo.getTextSelectionStart() +
@@ -557,7 +520,7 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                             // ??? html
                             if (tempNodeInfo.getText() == null) {
                                 tempNodeInfo = event.getSource();
-                                log(LOG_TAG, "TYPE_VIEW_CLICKED: " + event.getText() +
+                                log(LOG_TAG, "TYPE_VIEW_CLICKED 2: " + event.getText() +
                                         "; c=" + tempNodeInfo.getClassName() +
                                         "; t=" + tempNodeInfo.getText() +
                                         "; s=" + tempNodeInfo.getTextSelectionStart() +
@@ -581,12 +544,13 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                 }
 
                 case AccessibilityEvent.TYPE_VIEW_FOCUSED: {
-                    if (isKey2EmulationEnabled && !notHandlePackages.contains(event.getPackageName())) {
+                    if (_appSettings.isKey2EmulationEnabled && !_notHandlePackages.contains(event.getPackageName())) {
+                        log(LOG_TAG, "TYPE_VIEW_FOCUSED 0: ");
                         //AccessibilityNodeInfo tempNodeInfo = event.getSource();
                         AccessibilityNodeInfo tempNodeInfo = event.getSource().findFocus(AccessibilityNodeInfo.FOCUS_INPUT);//not in hub
 
                         if (tempNodeInfo != null) {
-                            log(LOG_TAG, "TYPE_VIEW_FOCUSED: " + event.getText() +
+                            log(LOG_TAG, "TYPE_VIEW_FOCUSED 1: " + event.getText() +
                                     "; c=" + tempNodeInfo.getClassName() +
                                     "; t=" + tempNodeInfo.getText() +
                                     "; s=" + tempNodeInfo.getTextSelectionStart() +
@@ -597,7 +561,7 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                             // ??? html
                             if (tempNodeInfo.getText() == null) {
                                 tempNodeInfo = event.getSource();
-                                log(LOG_TAG, "TYPE_VIEW_FOCUSED: " + event.getText() +
+                                log(LOG_TAG, "TYPE_VIEW_FOCUSED 2: " + event.getText() +
                                         "; c=" + tempNodeInfo.getClassName() +
                                         "; t=" + tempNodeInfo.getText() +
                                         "; s=" + tempNodeInfo.getTextSelectionStart() +
@@ -605,6 +569,8 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                                         "; c=" + event.getSource().getParent().getChildCount()
                                 );
                             }
+
+                            //traverseTree(tempNodeInfo, 1);
 
                             String tempStr = tempNodeInfo.getText() != null ? tempNodeInfo.getText().toString() : null;
                             _controlSelect.set_all(
@@ -618,6 +584,11 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                         }
                     }
 
+                    break;
+                }
+
+                case AccessibilityEvent.TYPE_VIEW_SELECTED: {
+                    log(LOG_TAG, "TYPE_VIEW_SELECTED");
                     break;
                 }
 
@@ -642,7 +613,7 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
     }
 
 
-    private void replaceSelectedText(TextSelection textSelect, boolean isTranslit, boolean isSelectReplaced, int newCursor) {
+    private void replaceSelectedText(TextSelection textSelect, boolean isTranslit, boolean isSelectReplaced, int newCursor, ActionType actionType) {
         // Get selected text
         String selectedText = textSelect.getSelectedText();
         String beforeText = textSelect.getBeforeText();
@@ -677,21 +648,100 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
         _replacerSelect.get_nodeInfo().performAction(AccessibilityNodeInfo.ACTION_SET_SELECTION, selectArguments);
 
         _isProgramChange = true;
-        log(LOG_TAG, "_isProgramChange:" + _isProgramChange);
+        log(LOG_TAG, "_isProgramChange2:" + _isProgramChange);
 
         //textSelect.clearAll();
+
+        notify(_currentLanguage.getOpposite(), actionType);
     }
-    private void replaceSelectedText(TextSelection textSelect, boolean isTranslit, boolean isSelectReplaced) {
-        replaceSelectedText(textSelect, isTranslit, isSelectReplaced, -1);
+    private void replaceSelectedText(TextSelection textSelect, boolean isTranslit, boolean isSelectReplaced, ActionType actionType) {
+        replaceSelectedText(textSelect, isTranslit, isSelectReplaced, -1, actionType);
+    }
+
+
+    private void autoreplace(TextSelection textSelect) {
+        boolean isReplaceable = isReplaceableInput(textSelect.get_nodeInfo().getInputType());
+        boolean isBlockedByUser = _appSettings.autocorrectDirection.isEng() && _currentLanguage.isRus()
+                || _appSettings.autocorrectDirection.isRus() && _currentLanguage.isEng();
+        log(LOG_TAG, "TYPE:" + textSelect.get_nodeInfo().getInputType() + " " + isReplaceableInput(textSelect.get_nodeInfo().getInputType()));
+
+        log(LOG_TAG, "CHECK _isProgramChange:" + _isProgramChange);
+        if (!_isProgramChange && _appSettings.isAutoCorrect && isReplaceable && !isBlockedByUser) {
+            Character lastChar = textSelect.getLastChar();
+            boolean isWordLetter = LanguageDetector.isWordLetter(lastChar);
+
+            log(LOG_TAG, "^^^^^^^^^^^^^");
+            log(LOG_TAG, "CHAR:" + lastChar + "; is word:" + isWordLetter);
+
+            if (!isWordLetter) {
+                // Automatic lang change
+                log(LOG_TAG, "userDict:" + _appSettings.userDict.length);
+
+                int cursorAt = textSelect.get_endSelection();
+                int wordEnd = LanguageDetector.getNearestWordEnd(textSelect.get_inputText(), textSelect.get_endSelection());
+                log(LOG_TAG, "getNearestWordEnd: " + wordEnd + "; sel=" + textSelect.get_endSelection());
+                WordWithBoundaries currentWord = LanguageDetector.getWordAtPosition(textSelect.get_inputText(), wordEnd);
+                log(LOG_TAG, "Current Word: " + currentWord.Word + "; end:" + wordEnd);
+
+                log(LOG_TAG, "_lastAutoReplaced CHECK: " + _lastAutoReplaced);
+                if (currentWord.Begin == _lastAutoReplaced) {
+                    log(LOG_TAG, "Already handled begin:" + currentWord.Begin);
+                    return;
+                }
+                _lastAutoReplaced = currentWord.Begin;
+                log(LOG_TAG, "_lastAutoReplaced: " + _lastAutoReplaced);
+
+                Language lang = _languageDetector.getTargetLanguage(currentWord.Word, _appSettings.isTranslit, _wordsListRu, _wordsListEn, _appSettings.userDict);
+
+                Language textEnteredLang = LayoutConverter.getTextLanguage(currentWord.Word, _appSettings.isTranslit);
+
+                if (lang == textEnteredLang || lang == Language.Unknown) {
+                    // Input language == keyboard language
+                    // Do nothing
+                    log(LOG_TAG, "***From: " + textEnteredLang +
+                            "; To: '" + lang +
+                            "; " + currentWord.Word +
+                            "' no change" +
+                            "; s=" + currentWord.Begin +
+                            "; e=" + currentWord.End);
+                } else {
+                    // Need to change layout
+                    String replacedWord = LayoutConverter.getReplacedText(currentWord.Word, textEnteredLang);
+                    log(LOG_TAG, "***From: " + textEnteredLang +
+                            "; To: " + lang +
+                            "; '" + currentWord.Word +
+                            "' -> '" + replacedWord + "'");
+
+                    textSelect.set_startSelection(currentWord.Begin);
+                    textSelect.set_endSelection(currentWord.End);
+                    replaceSelectedText(textSelect, _appSettings.isTranslit, false, cursorAt, ActionType.AutoChange);
+                }
+            } else {
+                _lastAutoReplaced = -1;
+                log(LOG_TAG, "_lastAutoReplaced: " + _lastAutoReplaced);
+            }
+            log(LOG_TAG, "vvvvvvvvvvvv");
+        }
+        _isProgramChange = true;
+        log(LOG_TAG, "_isProgramChange1:" + _isProgramChange);
+    }
+
+
+    private static boolean isReplaceableInput(int inputType) {
+        // Check if any of Not Proceeding Types
+        for (int notHandling : _notHandleInputs) {
+            if (inputType == notHandling) {
+                return false;
+            }
+        }
+        return true;
     }
 
 
 
-    private void log(String logTag, String message) {
+    private static void log(String logTag, String message) {
         Log.d(logTag, message);
-        boolean isLogToFile = PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(getString(R.string.setting_is_log_to_sd), false);
-        if (isLogToFile) {
+        if (_appSettings.isLogToFile) {
             logToFile(message);
         }
         //logToToast(message);
@@ -723,6 +773,141 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
             osw.close();
         } catch (Exception ex) {
             //Log.d("ReplacerLog", "Ex: " + ex.getMessage());
+        }
+    }
+
+    @TargetApi(26)
+    private static void traverseTree(AccessibilityNodeInfo node, int level) {
+        String outline = "";
+        for (int j = 0; j < level; j++) { outline += "  "; }
+        log(LOG_TAG, outline + "c=" + node.getClassName() +
+                "; t=" + node.getText() +
+                "; s=" + node.getTextSelectionStart() +
+                "; e=" + node.getTextSelectionEnd() +
+                "; c=" + node.getChildCount()
+        );
+
+        if (node.getClassName().equals("android.webkit.WebView")) {
+        }
+        for (int i = 0; i < node.getChildCount(); i++) {
+            traverseTree(node.getChild(i), level + 1);
+        }
+    }
+
+    private void notify(Language lang, ActionType actionType) {
+        if (isNotificationsEnabled()) {
+            playSound(lang, actionType);
+            vibrate(lang, actionType);
+        }
+    }
+
+    public boolean isNotificationsEnabled() {
+        return _appSettings.whenEnableNotifications <= Calendar.getInstance().getTimeInMillis();
+    }
+
+    private void vibrate(Language lang, ActionType actionType) {
+        switch (lang) {
+            case Ru:
+            case RuTrans: {
+                if (actionType == ActionType.AltEnterReplace) {
+                    // Vibrate only if no Input vibration
+                    if (_appSettings.vibrationPatternRus == VibrationPattern.None) {
+                        _vibrationManager.vibrate(_appSettings.vibrationPatternRus, _appSettings.vibrationIntensity);
+                    }
+                } else {
+                    _vibrationManager.vibrate(_appSettings.vibrationPatternRus, _appSettings.vibrationIntensity);
+                }
+                break;
+            }
+            case En:
+            case EnTrans: {
+                if (actionType == ActionType.AltEnterReplace) {
+                    // Vibrate only if no Input vibration
+                    if (_appSettings.vibrationPatternRus == VibrationPattern.None) {
+                        _vibrationManager.vibrate(_appSettings.vibrationPatternEng, _appSettings.vibrationIntensity);
+                    }
+                } else {
+                    _vibrationManager.vibrate(_appSettings.vibrationPatternEng, _appSettings.vibrationIntensity);
+                }
+                break;
+            }
+            default: {
+                break;
+            }
+        }
+    }
+
+    private void playSound(Language lang, ActionType actionType) {
+        switch (lang) {
+            case Ru:
+            case RuTrans: {
+                if (actionType == ActionType.AltEnterReplace) {
+                    // Play only if no Input sound
+                    if (_appSettings.soundInputRus == SoundPattern.None) {
+                        _soundManager.play(_appSettings.soundCorrectRus);
+                    }
+                } else if (actionType == ActionType.AltEnter) {
+                    _soundManager.play(_appSettings.soundInputRus);
+                } else {
+                    _soundManager.play(_appSettings.soundCorrectRus);
+                }
+                break;
+            }
+            case En:
+            case EnTrans: {
+                if (actionType == ActionType.AltEnterReplace) {
+                    // Play only if no Input sound
+                    if (_appSettings.soundInputRus == SoundPattern.None) {
+                        _soundManager.play(_appSettings.soundCorrectEng);
+                    }
+                } else if (actionType == ActionType.AltEnter) {
+                    _soundManager.play(_appSettings.soundInputEng);
+                } else {
+                    _soundManager.play(_appSettings.soundCorrectEng);
+                }
+                break;
+            }
+            default: {
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        log(LOG_TAG, "Setting changed: " + key);
+        _appSettings.bindSettings(sharedPreferences);
+
+
+        // Preview Vibration
+        if (getString(R.string.setting_vibration_intensity).equals(key)) {
+            vibrate(Language.Ru, ActionType.AltEnter);
+            if (!_vibrationManager.hasAmplitudeControl()) {
+                logToToast(getString(R.string.pref_hint_vibration_intensity));
+            }
+        }
+        if (getString(R.string.setting_vibration_pattern_rus).equals(key)
+        ) {
+            vibrate(Language.Ru, ActionType.AltEnter);
+        }
+        if (getString(R.string.setting_vibration_pattern_eng).equals(key)) {
+            vibrate(Language.En, ActionType.AltEnter);
+        }
+
+        // Preview Input Sound
+        if (getString(R.string.setting_sound_input_rus).equals(key)) {
+            playSound(Language.Ru, ActionType.AltEnter);
+        }
+        if (getString(R.string.setting_sound_input_eng).equals(key)) {
+            playSound(Language.En, ActionType.AltEnter);
+        }
+
+        // Preview Correct Sound
+        if (getString(R.string.setting_sound_correct_rus).equals(key)) {
+            playSound(Language.Ru, ActionType.ManualChange);
+        }
+        if (getString(R.string.setting_sound_correct_eng).equals(key)) {
+            playSound(Language.En, ActionType.ManualChange);
         }
     }
 }
