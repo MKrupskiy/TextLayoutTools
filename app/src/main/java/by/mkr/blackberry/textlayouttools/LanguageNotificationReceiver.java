@@ -11,9 +11,9 @@ import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
-
 import java.text.DateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -21,7 +21,11 @@ import org.jetbrains.annotations.NotNull;
 public class LanguageNotificationReceiver extends BroadcastReceiver {
     public static final String ACTION_MUTE_1H = "by.mkr.blackberry.textlayouttools.layoutnotification.handlers.action.MUTE_1H";
     public static final String ACTION_MUTE_8H = "by.mkr.blackberry.textlayouttools.layoutnotification.handlers.action.MUTE_8H";
-    public static final String ACTION_ENABLE = "by.mkr.blackberry.textlayouttools.layoutnotification.handlers.action.ENABLE";
+    public static final String ACTION_SOUND_ENABLE = "by.mkr.blackberry.textlayouttools.layoutnotification.handlers.action.SOUND_ENABLE";
+
+    public static final String ACTION_MUTE_SWITCH = "by.mkr.blackberry.textlayouttools.layoutnotification.handlers.action.MUTE_SWITCH";
+    public static final String ACTION_MANUAL_SWITCH = "by.mkr.blackberry.textlayouttools.layoutnotification.handlers.action.MANUAL_SWITCH";
+    public static final String ACTION_AUTOCORRECT_SWITCH = "by.mkr.blackberry.textlayouttools.layoutnotification.handlers.action.AUTOCORRECT_SWITCH";
 
     private static int mel = 0;
 
@@ -32,19 +36,40 @@ public class LanguageNotificationReceiver extends BroadcastReceiver {
         switch (action) {
             case ACTION_MUTE_1H: {
                 updateMuted(context, 1);
-                showToUser(context, 1);
+                showOffUntilToUser(context, 1);
                 mel(context, 1);
                 break;
             }
             case ACTION_MUTE_8H: {
                 updateMuted(context, 8);
-                showToUser(context, 8);
+                showOffUntilToUser(context, 8);
                 mel(context, 8);
                 break;
             }
-            case ACTION_ENABLE: {
+            case ACTION_SOUND_ENABLE: {
                 updateMuted(context, -1);
-                showToUser(context, -1);
+                showOffUntilToUser(context, -1);
+                mel(context, -1);
+                break;
+            }
+            case ACTION_MUTE_SWITCH: {
+                boolean soundEnabled = !getIsSoundEnabled();
+                updateMuted(context, soundEnabled ? -1 : Integer.MAX_VALUE);
+                showOffToUser(context, soundEnabled ? -1 : Integer.MAX_VALUE);
+                mel(context, 1);
+                break;
+            }
+            case ACTION_MANUAL_SWITCH: {
+                boolean isManualChange = !getIsManualChange();
+                updateIsManualChange(context, isManualChange);
+                showOnOffManualChangeToUser(context, isManualChange);
+                mel(context, 8);
+                break;
+            }
+            case ACTION_AUTOCORRECT_SWITCH: {
+                boolean isAutocorrect = !getIsAutocorrect();
+                updateIsAutocorrect(context, isAutocorrect);
+                showOnOffAutocorrectToUser(context, isAutocorrect);
                 mel(context, -1);
                 break;
             }
@@ -60,6 +85,7 @@ public class LanguageNotificationReceiver extends BroadcastReceiver {
         String text = context.getString(R.string.text_btn_mute_1h);
         int drawableId = R.drawable.ic_chevron_right_black_24dp;
 
+
         switch (actionString) {
             case LanguageNotificationReceiver.ACTION_MUTE_1H: {
                 requestCode = 1001;
@@ -73,9 +99,36 @@ public class LanguageNotificationReceiver extends BroadcastReceiver {
                 drawableId = R.drawable.ic_chevron_right_black_24dp;
                 break;
             }
-            case LanguageNotificationReceiver.ACTION_ENABLE: {
+            case LanguageNotificationReceiver.ACTION_SOUND_ENABLE: {
                 requestCode = 1003;
                 text = context.getString(R.string.text_btn_mute_enable);
+                drawableId = R.drawable.ic_chevron_right_black_24dp;
+                break;
+            }
+            case LanguageNotificationReceiver.ACTION_MUTE_SWITCH: {
+                requestCode = 1004;
+                text = (getIsSoundEnabled()
+                    ? context.getString(R.string.text_btn_on_check)
+                    : context.getString(R.string.text_btn_off_check))
+                    + " " + context.getString(R.string.text_btn_mute_switch);
+                drawableId = R.drawable.ic_chevron_right_black_24dp;
+                break;
+            }
+            case LanguageNotificationReceiver.ACTION_MANUAL_SWITCH: {
+                requestCode = 1005;
+                text = (getIsManualChange()
+                        ? context.getString(R.string.text_btn_on_check)
+                        : context.getString(R.string.text_btn_off_check))
+                        + " " + context.getString(R.string.text_btn_manual_change_switch);
+                drawableId = R.drawable.ic_chevron_right_black_24dp;
+                break;
+            }
+            case LanguageNotificationReceiver.ACTION_AUTOCORRECT_SWITCH: {
+                requestCode = 1006;
+                text = (getIsAutocorrect()
+                        ? context.getString(R.string.text_btn_on_check)
+                        : context.getString(R.string.text_btn_off_check))
+                        + " " + context.getString(R.string.text_btn_autocorrect_switch);
                 drawableId = R.drawable.ic_chevron_right_black_24dp;
                 break;
             }
@@ -108,7 +161,48 @@ public class LanguageNotificationReceiver extends BroadcastReceiver {
         prefsEditor.commit();
     }
 
-    private static void showToUser(Context context, int hours) {
+    private static void updateIsAutocorrect(Context context, boolean isActive) {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor prefsEditor = sharedPrefs.edit();
+        prefsEditor.putBoolean(context.getString(R.string.setting_is_auto_correct), isActive);
+        prefsEditor.commit();
+    }
+
+    private static void updateIsManualChange(Context context, boolean isActive) {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor prefsEditor = sharedPrefs.edit();
+        prefsEditor.putBoolean(context.getString(R.string.setting_shortcut_enabled_key), isActive);
+        prefsEditor.commit();
+    }
+
+    private static boolean getIsAutocorrect() {
+        boolean autocorrectEnabled = true;
+        AppSettings appSettings = ReplacerService.getAppSettings();
+        if (appSettings != null) {
+            autocorrectEnabled = appSettings.isAutoCorrect;
+        }
+        return autocorrectEnabled;
+    }
+
+    private static boolean getIsSoundEnabled() {
+        boolean autocorrectEnabled = true;
+        AppSettings appSettings = ReplacerService.getAppSettings();
+        if (appSettings != null) {
+            autocorrectEnabled = appSettings.whenEnableNotifications <= new Date().getTime();
+        }
+        return autocorrectEnabled;
+    }
+
+    private static boolean getIsManualChange() {
+        boolean manualChangeEnabled = true;
+        AppSettings appSettings = ReplacerService.getAppSettings();
+        if (appSettings != null) {
+            manualChangeEnabled = appSettings.isEnabled;
+        }
+        return manualChangeEnabled;
+    }
+
+    private static void showOffUntilToUser(Context context, int hours) {
         if (hours <= 0) {
             Toast.makeText(context, context.getString(R.string.text_toast_mute_enable), Toast.LENGTH_SHORT).show();
         } else {
@@ -119,6 +213,30 @@ public class LanguageNotificationReceiver extends BroadcastReceiver {
             Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
         }
     }
+
+    private static void showOffToUser(Context context, int hours) {
+        if (hours <= 0) {
+            Toast.makeText(context, context.getString(R.string.text_toast_mute_enable), Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context, context.getString(R.string.text_toast_mute_disable), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private static void showOnOffAutocorrectToUser(Context context, boolean isActive) {
+        String text = isActive
+                ? context.getString(R.string.text_toast_autocorrect_enabled)
+                : context.getString(R.string.text_toast_autocorrect_disabled);
+        Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
+    }
+
+    private static void showOnOffManualChangeToUser(Context context, boolean isActive) {
+        String text = isActive
+                ? context.getString(R.string.text_toast_manual_change_enabled)
+                : context.getString(R.string.text_toast_manual_change_disabled);
+        Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
+    }
+
+
 
     private void mel(Context context, int hoursCount) {
         switch (hoursCount) {

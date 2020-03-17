@@ -10,6 +10,9 @@ public class AppSettings {
     public int selectedCtrlMod;
     public int selectedShortCut;
     public Language autocorrectDirection;
+    public InputMethod inputMethod;
+    public IconStyle iconStyleRu;
+    public IconStyle iconStyleEn;
     public boolean isEnabled;
     public boolean isKey2EmulationEnabled;
     public boolean isTranslit;
@@ -79,5 +82,14 @@ public class AppSettings {
         soundCorrectEng = SoundPattern.fromString(soundCorrectEngStr);
 
         whenEnableNotifications = sharedPrefs.getLong(_context.getString(R.string.setting_when_enable_notifications), 0);
+
+        String InputMethodStr = sharedPrefs.getString(_context.getString(R.string.setting_input_method), "Qwerty");
+        inputMethod = InputMethod.fromString(InputMethodStr);
+
+        String IconStyleRuStr = sharedPrefs.getString(_context.getString(R.string.setting_icon_style_ru), "Flag");
+        iconStyleRu = IconStyle.fromString(IconStyleRuStr);
+
+        String IconStyleEnStr = sharedPrefs.getString(_context.getString(R.string.setting_icon_style_en), "Flag");
+        iconStyleEn = IconStyle.fromString(IconStyleEnStr);
     }
 }

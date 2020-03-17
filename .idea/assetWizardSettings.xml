@@ -34,8 +34,11 @@
                         <option name="values">
                           <map>
                             <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="ic_grasshopper" />
-                            <entry key="sourceFile" value="C:\Users\MikhailKrupski\Downloads\images.svg" />
+                            <entry key="height" value="2" />
+                            <entry key="outputName" value="ic_flag_of_ukraine" />
+                            <entry key="overrideSize" value="true" />
+                            <entry key="sourceFile" value="C:\Users\MikhailKrupski\Downloads\Flag_of_Ukraine.svg" />
+                            <entry key="width" value="3" />
                           </map>
                         </option>
                       </PersistentState>

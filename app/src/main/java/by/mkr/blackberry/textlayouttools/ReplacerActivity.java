@@ -23,9 +23,10 @@ public class ReplacerActivity extends AppCompatActivity {
                 .getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT);
         boolean readonly = intent
                 .getBooleanExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, false);
-        boolean isTranslit = PreferenceManager
+        String inputMethodStr = PreferenceManager
                 .getDefaultSharedPreferences(this)
-                .getString(getString(R.string.setting_input_method), "0").equals("0") ? false : true;
+                .getString(getString(R.string.setting_input_method), "Qwerty");
+        InputMethod inputMethod = InputMethod.fromString(inputMethodStr);
         /*
         Boolean isEnabled = PreferenceManager
                 .getDefaultSharedPreferences(this)
@@ -37,7 +38,7 @@ public class ReplacerActivity extends AppCompatActivity {
 
         if (isEnabled) {
             // process the text
-            Language textLanguage = LayoutConverter.getTextLanguage(text, isTranslit);
+            Language textLanguage = LayoutConverter.getTextLanguage(text, inputMethod);
             String replacedText = LayoutConverter.getReplacedText(text, textLanguage);
             Log.d("ReplacerLog", "original=" + text + "; replaced=" + replacedText);
 

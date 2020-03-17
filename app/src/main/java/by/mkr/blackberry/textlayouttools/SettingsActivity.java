@@ -296,6 +296,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
+            bindPreferenceSummaryToValue(findPreference(getString(R.string.setting_icon_style_ru)));
+            bindPreferenceSummaryToValue(findPreference(getString(R.string.setting_icon_style_en)));
         }
 
         @Override

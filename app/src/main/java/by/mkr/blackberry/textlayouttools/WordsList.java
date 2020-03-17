@@ -31,12 +31,14 @@ public class WordsList {
             String fileToOpen;
             switch (lang) {
                 case Ru:
-                case RuTrans: {
+                case RuTrans:
+                case RuFull: {
                     fileToOpen = "Files/Ru.txt";
                     break;
                 }
                 case En:
-                case EnTrans: {
+                case EnTrans:
+                case EnFull: {
                     fileToOpen = "Files/En.txt";
                     break;
                 }

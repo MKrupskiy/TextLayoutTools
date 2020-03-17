@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 try {
                     PendingIntent pendingIntent = LanguageNotificationReceiver
-                            .createNotificationAction(MainActivity.this, LanguageNotificationReceiver.ACTION_ENABLE)
+                            .createNotificationAction(MainActivity.this, LanguageNotificationReceiver.ACTION_SOUND_ENABLE)
                             .actionIntent;
                     pendingIntent.send();
                 } catch (Exception e) {

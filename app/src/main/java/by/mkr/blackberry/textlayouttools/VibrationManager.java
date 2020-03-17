@@ -1,9 +1,11 @@
 package by.mkr.blackberry.textlayouttools;
 
 import android.content.Context;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.util.Log;
 
 
 enum VibrationPattern {
@@ -54,14 +56,16 @@ public class VibrationManager {
     private static final long[] SHORT_LONG_PATTERN = { 0, 80, 20, 200 };
 
     private Vibrator _vibrator;
+    private Context _context;
 
     public VibrationManager(Context context) {
+        _context = context;
         _vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
     }
 
 
     public void vibrate(VibrationPattern pattern, int intensityPercent) {
-        if (pattern == VibrationPattern.None) {
+        if (pattern == VibrationPattern.None || !isVibrationOn()) {
             // No need to vibrate
             return;
         }
@@ -84,6 +88,27 @@ public class VibrationManager {
         } else {
             return false;
         }
+    }
+
+    public boolean isVibrationOn() {
+        AudioManager audio = (AudioManager) _context.getSystemService(Context.AUDIO_SERVICE);
+        boolean isVibroOn = false;
+
+        switch( audio.getRingerMode() ){
+            case AudioManager.RINGER_MODE_NORMAL:
+                isVibroOn = true;
+                break;
+            case AudioManager.RINGER_MODE_VIBRATE:
+                isVibroOn = true;
+                break;
+            case AudioManager.RINGER_MODE_SILENT:
+                isVibroOn = false;
+                break;
+            default:
+                break;
+        }
+        Log.d("ReplacerLog", "Vibration ON: " + isVibroOn);
+        return isVibroOn;
     }
 
     private long[] getPatternValues(VibrationPattern pattern) {

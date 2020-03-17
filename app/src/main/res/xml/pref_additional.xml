@@ -14,6 +14,22 @@
             android:key="@string/setting_is_show_icon"
             android:summary="@string/pref_description_is_show_icon"
             android:title="@string/pref_title_is_show_icon" />
+
+        <ListPreference
+            android:defaultValue="Flag"
+            android:entries="@array/pref_icon_style_key_titles"
+            android:entryValues="@array/pref_icon_style_key_values"
+            android:key="@string/setting_icon_style_ru"
+            android:dependency="@string/setting_is_show_icon"
+            android:title="@string/pref_title_icon_style_ru" />
+
+        <ListPreference
+            android:defaultValue="Flag"
+            android:entries="@array/pref_icon_style_key_titles"
+            android:entryValues="@array/pref_icon_style_key_values"
+            android:key="@string/setting_icon_style_en"
+            android:dependency="@string/setting_is_show_icon"
+            android:title="@string/pref_title_icon_style_en" />
     </PreferenceCategory>
 
 </PreferenceScreen>

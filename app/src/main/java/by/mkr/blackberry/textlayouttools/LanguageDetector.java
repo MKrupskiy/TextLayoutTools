@@ -9,66 +9,10 @@ import java.util.regex.Pattern;
 public class LanguageDetector {
     final static String LOG_TAG = "ReplacerLog";
 
-    private String[] _russianImpossibleLemmas = {
-            "аъ", "аы", "аь",
-            "бй",
-            "вй", "вэ",
-            "гй", "гф", "гх", "гъ", "гь", "гэ",
-            "дй",
-            "еъ", "еы", "еь", "еэ",
-            "ёъ", "еы", "еь", "ёэ", "ёа", "ёе", "ёё", "ёи", "ёу", "ёф", "ёя",
-            "жй", "жф", "жх", "жш", "жщ", "жз",
-            "зй", "зп", "зщ",
-            "иъ", "иы", "иь",
-            "йё", "йж", /*"йй",*/ "йъ", "йы", "йь", "йэ",
-            "кй", "кщ", "къ", "кь", "кд",
-            "лй", "лъ", "лэ",
-            "мй", "мъ",
-            "нй",
-            "оъ", "оы", "оь",
-            "пв", "пг", "пж", "пз", "пй", "пъ",
-            "ръ",
-            "сй",
-            "тй",
-            "уъ", "уы", "уь",
-            "фб", "фж", "фз", "фй", "фп", "фх", "фц", "фъ", "фэ",
-            "хё", "хж", "хй", "хш", "хы", "хь", "хю", "хя",
-            "цб", "цё", "цж", "цй", "цф", "цх", "цч", "цщ", "цъ", "ць", "цэ", "цю", "ця",
-            "чб", "чг", "чз", "чй", "чп", "чф", "чщ", "чъ", "чы", "чэ", "чю", "ча",
-            "шд", "шж", "шз", "шй", "шш", "шщ", "шъ", "шы", "шэ",
-            "щб", "щг", "щд", "щж", "щз", "щй", "щл", "щп", "щп", "щф", "щх", "щц", "щч", "щш", "щщ", "щъ", "щы", "щь", "щэ",
-            "ъа", "ъб", "ъв", "ъг", "ъд", "ъж", "ъз", "ъи", "ъй", "ък", "ъл", "ъм", "ън", "ъп", "ър", "ъс", "ът", "ъу", "ъф", "ъх", "ъц", "ъч", "ъш", "ъщ", "ъъ", "ъы", "ъи", "ъэ", "ъ", "ъ", "ъ",
-            "ыа", "ыё", "ыо", "ыф", "ыъ", "ыы", "ыь", "ыэ",
-            "ьа", "ьй", "ьл", "ьу", "ьь", "ьы", "ьъ",
-            "эа", "эе", "эё", "эц", "эч", "эъ", "эы", "эь", /*"ээ",*/ "эю",
-            "юу", "юь", "юы", "юъ",
-            "яа", "яё", "яо", "яъ", "яы", "яь", "яэ"
-    };
 
-    private String[] _englishImpossibleLemmas = {
-            "bq", "bz",
-            "cf", "cj", "cv", "cx",
-            "fq", "fv", "fx", "fz",
-            "gq", "gv", "gx",
-            "hx", "hz",
-            "jb", "jd", "jf", "jg", "jh", "jl", "jm", "jp", "jq", "jr", "js", "jt", "jv", "jw", "jx", "jy", "jz",
-            "kq", "kx", "kz",
-            "mx", "mz",
-            "pq", "pv", "px",
-            "qb", "qc", "qd", "qf", "qg", "qh", "qj", "qk", "ql", "qm", "qn", "qp", "qq", "qv", "qw", "qx", "qy", "qz",
-            "sx",
-            "tq",
-            "vb", "vf", "vh", "vj", "vk", "vm", "vp", "vq", "vw", "vx",
-            "wq", "wv", "wx",
-            "xd", "xj", "xk", "xr", "xz",
-            "yq", "yy",
-            "zf", "zr", "zx",
-    };
-
-
-    public Language getTargetLanguage(String text, boolean isTranslit, WordsList wordsListRu, WordsList wordsListEn, String[] userDict) {
+    public Language getTargetLanguage(String text, InputMethod inputMethod, WordsList wordsListRu, WordsList wordsListEn, String[] userDict) {
         text = text.toLowerCase();
-        Language currentLang = LayoutConverter.getTextLanguage(text, isTranslit);
+        Language currentLang = LayoutConverter.getTextLanguage(text, inputMethod);
         String replacedWord = LayoutConverter.getReplacedText(text, currentLang);
         Language targetLanguage = currentLang;
         boolean isFoundRu = false;
@@ -77,7 +21,10 @@ public class LanguageDetector {
         Log.d(LOG_TAG, "getTargetLanguage Lang: " + text + "; " + currentLang + "; " + replacedWord);
 
         switch (currentLang) {
-            case Ru: {
+            case Ru:
+            case RuTrans:
+            case RuFull:
+            case RuQwertz: {
                 // Check initial language
                 /*
                 isFoundRu = checkInDict(text, _russianImpossibleLemmas);
@@ -110,7 +57,10 @@ public class LanguageDetector {
                 break;
             }
 
-            case En: {
+            case En:
+            case EnTrans:
+            case EnFull:
+            case EnQwertz: {
                 // Check initial language
                 /*
                 isFoundEn = checkInDict(text, _englishImpossibleLemmas);
@@ -148,7 +98,7 @@ public class LanguageDetector {
             }
         }
 
-        return targetLanguage;
+        return Language.getByInputMethod(targetLanguage, inputMethod);
     }
 
     public static Language checkByLength(Language lang1, Language lang2,
@@ -208,8 +158,9 @@ public class LanguageDetector {
         return isFound;
     }
 
-    public static WordWithBoundaries getLastWord(String text) {
-        Pattern p = Pattern.compile("\\W*([\\w\\$\\€]+)$");
+    public static WordWithBoundaries getLastWord(String text, Language lang) {
+        String regex = LayoutConverter.getWordRegex(lang);
+        Pattern p = Pattern.compile("(" + regex + "+)$"); // "\\W*([\\w\\$\\€]+)$"
         Matcher m = p.matcher(text);
         int start = 0;
         int end = 0;
@@ -223,7 +174,7 @@ public class LanguageDetector {
         return new WordWithBoundaries("", 0, 0);
     }
 
-    public static WordWithBoundaries getWordAtPosition(String text, int cursorPosition) {
+    public static WordWithBoundaries getWordAtPosition(String text, int cursorPosition, Language lang) {
         String currentWord = "";
         WordWithBoundaries curWord = new WordWithBoundaries("", 0, 0);
 
@@ -231,10 +182,11 @@ public class LanguageDetector {
             currentWord = "";
         } else if (cursorPosition == text.length() - 1) {
             // Last word
-            curWord = getLastWord(text);
+            curWord = getLastWord(text, lang);
         } else {
             // Get the word in the middle
-            final Pattern pattern = Pattern.compile("[\\w\\$\\€]+");
+            String regex = LayoutConverter.getWordRegex(lang);
+            final Pattern pattern = Pattern.compile(regex + "+"); // "[\\w\\$\\€]+"
             final Matcher matcher = pattern.matcher(text);
             int start = 0;
             int end = 0;
@@ -254,8 +206,10 @@ public class LanguageDetector {
     }
 
     // Search to the left
-    public static int getNearestWordEnd(String text, int startPosition) {
-        Log.d(LOG_TAG, "  getNearestWordEnd: '" + text + "'; start=" + startPosition);
+    public static int getNearestWordEnd(String text, int startPosition, Language lang) {
+        String regex = LayoutConverter.getWordRegex(lang);
+
+        Log.d(LOG_TAG, "  getNearestWordEnd: '" + text + "'; start=" + startPosition + "'; lang=" + lang);
         int currentPos = startPosition;
 
         if (text == null || text.length() == 0) {
@@ -264,7 +218,7 @@ public class LanguageDetector {
         }
 
         // Check if word border to the right
-        if (text.length() > currentPos && text.substring(currentPos, currentPos + 1).matches("[\\w\\$\\€]")) {
+        if (text.length() > currentPos && text.substring(currentPos, currentPos + 1).matches(regex)) {
             Log.d(LOG_TAG, "  text at right; return +1");
             return startPosition + 1;
         }
@@ -272,7 +226,7 @@ public class LanguageDetector {
         // Go left
         while (
                 currentPos > 0 &&
-                !text.substring(currentPos - 1, currentPos).matches("[\\w\\$\\€]")
+                !text.substring(currentPos - 1, currentPos).matches(regex)
         ) {
             Log.d(LOG_TAG, "  char:" + text.substring(currentPos - 1, currentPos));
             currentPos--;
@@ -282,7 +236,8 @@ public class LanguageDetector {
         return currentPos - 1;
     }
 
-    public static boolean isWordLetter(Character character) {
-        return character.toString().matches("[\\w\\$\\€]");
+    public static boolean isWordLetter(Character character, Language lang) {
+        String regex = LayoutConverter.getWordRegex(lang);
+        return character.toString().matches(regex);
     }
 }

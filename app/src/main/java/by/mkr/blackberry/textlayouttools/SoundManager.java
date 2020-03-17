@@ -1,7 +1,9 @@
 package by.mkr.blackberry.textlayouttools;
 
 import android.content.Context;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.util.Log;
 
 
 enum SoundPattern {
@@ -47,7 +49,7 @@ public class SoundManager {
     }
 
     public void play(SoundPattern pattern) {
-        if (pattern == SoundPattern.None) {
+        if (pattern == SoundPattern.None || !isSoundOn()) {
             // No need to play sound
             return;
         }
@@ -66,6 +68,32 @@ public class SoundManager {
             }
         });
         mp.start();
+    }
+
+    public boolean isSoundOn() {
+        AudioManager audio = (AudioManager) _context.getSystemService(Context.AUDIO_SERVICE);
+        boolean isSoundOn = false;
+
+        switch( audio.getRingerMode() ){
+            case AudioManager.RINGER_MODE_NORMAL:
+                isSoundOn = true;
+                Log.d("ReplacerLog", "Vibration ON: RINGER_MODE_NORMAL");
+                break;
+            case AudioManager.RINGER_MODE_VIBRATE:
+                isSoundOn = false;
+                Log.d("ReplacerLog", "Vibration ON: RINGER_MODE_VIBRATE");
+                break;
+            case AudioManager.RINGER_MODE_SILENT:
+                isSoundOn = false;
+                Log.d("ReplacerLog", "Vibration ON: RINGER_MODE_SILENT");
+                break;
+            default: {
+                Log.d("ReplacerLog", "Vibration ON: UNKNOWN");
+                break;
+            }
+        }
+        Log.d("ReplacerLog", "Sound ON: " + isSoundOn);
+        return isSoundOn;
     }
 
     private int getPatternValue(SoundPattern pattern) {

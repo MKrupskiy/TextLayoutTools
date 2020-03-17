@@ -81,4 +81,14 @@
     <string name="text_toast_mute_enable">Unmuted</string>
     <string name="text_toast_word_added">The word added</string>
     <string name="text_toast_word_in_dict_already">The word has already added</string>
+    <string name="pref_title_icon_style_ru">Icon style (Russian)</string>
+    <string name="pref_title_icon_style_en">Icon style (English)</string>
+    <string name="text_btn_mute_switch">Sound</string>
+    <string name="text_btn_autocorrect_switch">Autocorrect</string>
+    <string name="text_btn_manual_change_switch">Ctrl+Q</string>
+    <string name="text_toast_mute_disable">Sound disabled</string>
+    <string name="text_toast_autocorrect_enabled">Autocorrect enabled</string>
+    <string name="text_toast_autocorrect_disabled">Autocorrect disabled</string>
+    <string name="text_toast_manual_change_enabled">Manual change enabled</string>
+    <string name="text_toast_manual_change_disabled">Manual change disabled</string>
 </resources>

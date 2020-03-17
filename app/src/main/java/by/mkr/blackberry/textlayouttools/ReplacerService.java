@@ -3,14 +3,19 @@ package by.mkr.blackberry.textlayouttools;
 
 import android.annotation.TargetApi;
 import android.content.SharedPreferences;
+import android.content.pm.ServiceInfo;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
+import android.view.inputmethod.InputMethodInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.view.inputmethod.InputMethodSubtype;
 import android.widget.Toast;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -19,7 +24,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
 
 
 public class ReplacerService extends android.accessibilityservice.AccessibilityService
@@ -74,6 +78,13 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
 
     @Override
     protected void onServiceConnected() {
+        log(LOG_TAG, "--- onServiceConnected");
+
+        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
+        _appSettings = new AppSettings(getApplicationContext());
+
+        _currentLanguage = Language.Ru;
+
         _notifyManager = new NotifyManager(this);
         _languageDetector = new LanguageDetector();
 
@@ -85,9 +96,6 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
 
         _vibrationManager = new VibrationManager(getApplicationContext());
         _soundManager = new SoundManager(getApplicationContext());
-
-        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
-        _appSettings = new AppSettings(getApplicationContext());
     }
 
 
@@ -101,13 +109,34 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
             boolean isHandled = false;
 
             int pressAction = event.getAction();
+            int keyCode = event.getKeyCode();
+            int keyMod = event.getModifiers();
+            char display = event.getDisplayLabel();
+
+
+            // Handle SYM key:
+            // Single press blocked
+            // Double press is a default action
+            if (pressAction == KeyEvent.ACTION_DOWN
+                    && keyCode == KeyEvent.KEYCODE_SYM
+                    && keyMod == _appSettings.selectedCtrlMod
+            ) {
+                log(LOG_TAG, "SYM pressed; dif: " + (new Date().getTime() - _lastSymPressed));
+                if (new Date().getTime() - _lastSymPressed > 500) {
+                    _lastSymPressed = new Date().getTime();
+                    return true;
+                }
+                _lastSymPressed = new Date().getTime();
+            }
+
+
 
             // Change Text Layout
             if (_appSettings.isEnabled && pressAction == KeyEvent.ACTION_DOWN) {
-                int keyCode = event.getKeyCode();
-                int keyMod = event.getModifiers();
-                char display = event.getDisplayLabel();
-                boolean isAltEnter = (keyMod == 18) && (keyCode == KeyEvent.KEYCODE_ENTER);
+                boolean isAltEnter = (keyMod == 18 && keyCode == KeyEvent.KEYCODE_ENTER);
+                boolean isCtrlSpace = (keyMod == 12288 && keyCode == KeyEvent.KEYCODE_SPACE) // Ctrl // 20480 - right ctrl
+                                    || (keyMod == 327680 && keyCode == KeyEvent.KEYCODE_SPACE) // Win key
+                                    || (event.isShiftPressed() && keyCode == KeyEvent.KEYCODE_SPACE); // Shift+Space
 
                 if (_appSettings.isShowInfo) {
                     String logInfo = "Key: " + keyCode +
@@ -126,22 +155,9 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                 // Ctrl+G: mod=18; code=66; action=0 - alt+enter
 
 
-                // Handle SYM key:
-                // Single press blocked
-                // Double press is a default action
-                if (keyMod == _appSettings.selectedCtrlMod && keyCode == KeyEvent.KEYCODE_SYM) {
-                    log(LOG_TAG, "SYM pressed; dif: " + (new Date().getTime() - _lastSymPressed));
-                    if (new Date().getTime() - _lastSymPressed > 500) {
-                        _lastSymPressed = new Date().getTime();
-                        return true;
-                    }
-                    _lastSymPressed = new Date().getTime();
-                }
-
-
-
                 if ( (keyMod == _appSettings.selectedCtrlMod && keyCode == _appSettings.selectedShortCut)
                         || isAltEnter
+                        || isCtrlSpace
                 ) {
                     _isProgramChange = true;
                     log(LOG_TAG, "_isProgramChange3:" + _isProgramChange);
@@ -149,21 +165,25 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                     if (_replacerSelect.get_nodeInfo() != null && !_replacerSelect.isTextNullOrEmpty()) {
                         // Change SELECTED text
                         if (!_replacerSelect.isStartEqualsEnd()) {
-                            ActionType actionType = isAltEnter ? ActionType.AltEnterReplace : ActionType.ManualChange;
-                            replaceSelectedText(_replacerSelect, _appSettings.isTranslit, _appSettings.isSelectReplaced, actionType);
+                            ActionType actionType = isAltEnter
+                                    ? ActionType.AltEnterReplace
+                                    : isCtrlSpace
+                                        ? ActionType.CtrlSpace
+                                        : ActionType.ManualChange;
+                            replaceSelectedText(_replacerSelect, _appSettings.inputMethod, _appSettings.isSelectReplaced, actionType);
                         } else {
                             // Change last Entered word
 
 
                             // Do not change via Alt+Enter
-                            if (!isAltEnter) {
+                            if (!isAltEnter && !isCtrlSpace) {
 
 
                                 // Lang change
                                 int cursorAt = _replacerSelect.get_endSelection();
-                                int wordEnd = LanguageDetector.getNearestWordEnd(_replacerSelect.get_inputText(), _replacerSelect.get_endSelection());
+                                int wordEnd = LanguageDetector.getNearestWordEnd(_replacerSelect.get_inputText(), _replacerSelect.get_endSelection(), _currentLanguage);
                                 log(LOG_TAG, "getNearestWordEnd: " + wordEnd + "; sel=" + _replacerSelect.get_endSelection());
-                                WordWithBoundaries currentWord = LanguageDetector.getWordAtPosition(_replacerSelect.get_inputText(), wordEnd);
+                                WordWithBoundaries currentWord = LanguageDetector.getWordAtPosition(_replacerSelect.get_inputText(), wordEnd, _currentLanguage);
                                 log(LOG_TAG, "Current Word: " + currentWord.Word + "; end:" + wordEnd);
 
                                 _lastAutoReplaced = currentWord.Begin;
@@ -171,7 +191,7 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
 
                                 _replacerSelect.set_startSelection(currentWord.Begin);
                                 _replacerSelect.set_endSelection(currentWord.End);
-                                replaceSelectedText(_replacerSelect, _appSettings.isTranslit, _appSettings.isSelectReplaced, cursorAt, ActionType.ManualChange);
+                                replaceSelectedText(_replacerSelect, _appSettings.inputMethod, _appSettings.isSelectReplaced, cursorAt, ActionType.ManualChange);
 
                             }
 
@@ -179,19 +199,40 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
 
                         }
 
-                        isHandled = true && !isAltEnter;
+                        isHandled = true && !isAltEnter && !isCtrlSpace;
 
                     } else {
                         log(LOG_TAG, "No text selected");
                     }
                 }
+
+                if (isCtrlSpace) {
+                    // Need to update Tray Notification
+                    InputMethodManager imeManager = (InputMethodManager) getApplicationContext().getSystemService(INPUT_METHOD_SERVICE);
+                    InputMethodSubtype ims = imeManager.getCurrentInputMethodSubtype();
+                    if (ims != null) {
+                        // Able to detect by input method
+                        String locale = ims.getLocale();
+                        String locale2 = ims.getLanguageTag();
+                        log(LOG_TAG, "locale: " + locale + "; locale2: " + locale2);
+                        boolean isRussian = locale.toLowerCase().contains("ru");
+                        _currentLanguage = Language.getByInputMethod(isRussian ? Language.Ru : Language.En, _appSettings.inputMethod);
+                    } else {
+                        // Can't detect input method (e.g. Russian KB)
+                        log(LOG_TAG, "locale not detected: " + _currentLanguage);
+                        //_currentLanguage = Language.getByInputMethod(_currentLanguage, _appSettings.inputMethod);
+                    }
+                    if (_appSettings.isShowIcon) {
+                        _notifyManager.updateNotification(_currentLanguage);
+                    } else {
+                        _notifyManager.clearNotifications();
+                    }
+                    notify(_currentLanguage, ActionType.CtrlSpace);
+                }
             }
 
             // Emulate CTRL+Key combinations
             if (_appSettings.isKey2EmulationEnabled && pressAction == KeyEvent.ACTION_DOWN) {
-                int keyCode = event.getKeyCode();
-                int keyMod = event.getModifiers();
-                
 
 
 
@@ -334,7 +375,7 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
 
 
                         if (_currentLanguage == null || _currentLanguage == Language.Unknown) {
-                            _currentLanguage = LayoutConverter.getTextLanguage(input, _appSettings.isTranslit);
+                            _currentLanguage = LayoutConverter.getTextLanguage(input, _appSettings.inputMethod);
                         }
 
                         if (!isSystemReplace
@@ -456,10 +497,13 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                     log(LOG_TAG, text);
 
                     boolean isRussian = text.contains("Русск") || text.contains("Russ");
-                    _currentLanguage = isRussian
-                            ? (_appSettings.isTranslit ? Language.RuTrans : Language.Ru)
-                            : (_appSettings.isTranslit ? Language.EnTrans : Language.En);
+                    _currentLanguage = Language.getByInputMethod(isRussian ? Language.Ru : Language.En, _appSettings.inputMethod);
 
+                    // Quick Ukraine fix
+                    boolean isUkr = text.contains("Украин") || text.contains("Ukrain");
+                    if (isUkr) {
+                        _currentLanguage = Language.Ukr;
+                    }
 
                     if (_appSettings.isShowIcon) {
                         _notifyManager.updateNotification(_currentLanguage);
@@ -613,7 +657,7 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
     }
 
 
-    private void replaceSelectedText(TextSelection textSelect, boolean isTranslit, boolean isSelectReplaced, int newCursor, ActionType actionType) {
+    private void replaceSelectedText(TextSelection textSelect, InputMethod inputMethod, boolean isSelectReplaced, int newCursor, ActionType actionType) {
         // Get selected text
         String selectedText = textSelect.getSelectedText();
         String beforeText = textSelect.getBeforeText();
@@ -622,7 +666,7 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
         log(LOG_TAG, "1=" + beforeText + "; t=" + selectedText + "; a=" + afterText);
 
         // Get converted text
-        _currentLanguage = LayoutConverter.getTextLanguage(selectedText, isTranslit);
+        _currentLanguage = LayoutConverter.getTextLanguage(selectedText, inputMethod);
         String replacedText = LayoutConverter.getReplacedText(selectedText, _currentLanguage);
 
         // Replace selected text
@@ -654,8 +698,8 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
 
         notify(_currentLanguage.getOpposite(), actionType);
     }
-    private void replaceSelectedText(TextSelection textSelect, boolean isTranslit, boolean isSelectReplaced, ActionType actionType) {
-        replaceSelectedText(textSelect, isTranslit, isSelectReplaced, -1, actionType);
+    private void replaceSelectedText(TextSelection textSelect, InputMethod inputMethod, boolean isSelectReplaced, ActionType actionType) {
+        replaceSelectedText(textSelect, inputMethod, isSelectReplaced, -1, actionType);
     }
 
 
@@ -668,7 +712,7 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
         log(LOG_TAG, "CHECK _isProgramChange:" + _isProgramChange);
         if (!_isProgramChange && _appSettings.isAutoCorrect && isReplaceable && !isBlockedByUser) {
             Character lastChar = textSelect.getLastChar();
-            boolean isWordLetter = LanguageDetector.isWordLetter(lastChar);
+            boolean isWordLetter = LanguageDetector.isWordLetter(lastChar, _currentLanguage);
 
             log(LOG_TAG, "^^^^^^^^^^^^^");
             log(LOG_TAG, "CHAR:" + lastChar + "; is word:" + isWordLetter);
@@ -678,9 +722,9 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                 log(LOG_TAG, "userDict:" + _appSettings.userDict.length);
 
                 int cursorAt = textSelect.get_endSelection();
-                int wordEnd = LanguageDetector.getNearestWordEnd(textSelect.get_inputText(), textSelect.get_endSelection());
+                int wordEnd = LanguageDetector.getNearestWordEnd(textSelect.get_inputText(), textSelect.get_endSelection(), _currentLanguage);
                 log(LOG_TAG, "getNearestWordEnd: " + wordEnd + "; sel=" + textSelect.get_endSelection());
-                WordWithBoundaries currentWord = LanguageDetector.getWordAtPosition(textSelect.get_inputText(), wordEnd);
+                WordWithBoundaries currentWord = LanguageDetector.getWordAtPosition(textSelect.get_inputText(), wordEnd, _currentLanguage);
                 log(LOG_TAG, "Current Word: " + currentWord.Word + "; end:" + wordEnd);
 
                 log(LOG_TAG, "_lastAutoReplaced CHECK: " + _lastAutoReplaced);
@@ -691,9 +735,9 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                 _lastAutoReplaced = currentWord.Begin;
                 log(LOG_TAG, "_lastAutoReplaced: " + _lastAutoReplaced);
 
-                Language lang = _languageDetector.getTargetLanguage(currentWord.Word, _appSettings.isTranslit, _wordsListRu, _wordsListEn, _appSettings.userDict);
+                Language lang = _languageDetector.getTargetLanguage(currentWord.Word, _appSettings.inputMethod, _wordsListRu, _wordsListEn, _appSettings.userDict);
 
-                Language textEnteredLang = LayoutConverter.getTextLanguage(currentWord.Word, _appSettings.isTranslit);
+                Language textEnteredLang = LayoutConverter.getTextLanguage(currentWord.Word, _appSettings.inputMethod);
 
                 if (lang == textEnteredLang || lang == Language.Unknown) {
                     // Input language == keyboard language
@@ -714,7 +758,7 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
 
                     textSelect.set_startSelection(currentWord.Begin);
                     textSelect.set_endSelection(currentWord.End);
-                    replaceSelectedText(textSelect, _appSettings.isTranslit, false, cursorAt, ActionType.AutoChange);
+                    replaceSelectedText(textSelect, _appSettings.inputMethod, false, cursorAt, ActionType.AutoChange);
                 }
             } else {
                 _lastAutoReplaced = -1;
@@ -741,7 +785,7 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
 
     private static void log(String logTag, String message) {
         Log.d(logTag, message);
-        if (_appSettings.isLogToFile) {
+        if (_appSettings != null && _appSettings.isLogToFile) {
             logToFile(message);
         }
         //logToToast(message);
@@ -799,6 +843,24 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
             playSound(lang, actionType);
             vibrate(lang, actionType);
         }
+
+        /*
+        InputMethodManager imeManager = (InputMethodManager) getApplicationContext().getSystemService(INPUT_METHOD_SERVICE);
+        //imeManager.showInputMethodPicker();
+        List<InputMethodInfo> lst = imeManager.getInputMethodList();
+        for (InputMethodInfo inf: lst) {
+            Log.d(LOG_TAG, "INPUT id: " + inf.getId());
+        }
+        InputMethodSubtype ims = imeManager.getCurrentInputMethodSubtype();
+        String locale = ims.getLocale();
+        String mode = ims.getMode();
+        String langTag = ims.getLanguageTag();
+        int kb = getResources().getConfiguration().keyboard;
+        //String locale = ims.getLanguageTag();
+        //String locale = Locale.getDefault().getLanguage(); // Default system lang
+        Log.d(LOG_TAG, "LANG: '" + locale + "'");
+        logToToast("LANG: '" + locale + "'\nmode:" + mode + "'\nlangTag:" + langTag + "'\nkb:" + kb);
+        */
     }
 
     public boolean isNotificationsEnabled() {
@@ -808,8 +870,9 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
     private void vibrate(Language lang, ActionType actionType) {
         switch (lang) {
             case Ru:
-            case RuTrans: {
-                if (actionType == ActionType.AltEnterReplace) {
+            case RuTrans:
+            case RuFull: {
+                if (actionType == ActionType.AltEnterReplace || actionType == ActionType.CtrlSpace) {
                     // Vibrate only if no Input vibration
                     if (_appSettings.vibrationPatternRus == VibrationPattern.None) {
                         _vibrationManager.vibrate(_appSettings.vibrationPatternRus, _appSettings.vibrationIntensity);
@@ -820,8 +883,9 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                 break;
             }
             case En:
-            case EnTrans: {
-                if (actionType == ActionType.AltEnterReplace) {
+            case EnTrans:
+            case EnFull: {
+                if (actionType == ActionType.AltEnterReplace || actionType == ActionType.CtrlSpace) {
                     // Vibrate only if no Input vibration
                     if (_appSettings.vibrationPatternRus == VibrationPattern.None) {
                         _vibrationManager.vibrate(_appSettings.vibrationPatternEng, _appSettings.vibrationIntensity);
@@ -840,13 +904,14 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
     private void playSound(Language lang, ActionType actionType) {
         switch (lang) {
             case Ru:
-            case RuTrans: {
+            case RuTrans:
+            case RuFull: {
                 if (actionType == ActionType.AltEnterReplace) {
                     // Play only if no Input sound
                     if (_appSettings.soundInputRus == SoundPattern.None) {
                         _soundManager.play(_appSettings.soundCorrectRus);
                     }
-                } else if (actionType == ActionType.AltEnter) {
+                } else if (actionType == ActionType.AltEnter || actionType == ActionType.CtrlSpace) {
                     _soundManager.play(_appSettings.soundInputRus);
                 } else {
                     _soundManager.play(_appSettings.soundCorrectRus);
@@ -854,13 +919,14 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                 break;
             }
             case En:
-            case EnTrans: {
+            case EnTrans:
+            case EnFull: {
                 if (actionType == ActionType.AltEnterReplace) {
                     // Play only if no Input sound
                     if (_appSettings.soundInputRus == SoundPattern.None) {
                         _soundManager.play(_appSettings.soundCorrectEng);
                     }
-                } else if (actionType == ActionType.AltEnter) {
+                } else if (actionType == ActionType.AltEnter || actionType == ActionType.CtrlSpace) {
                     _soundManager.play(_appSettings.soundInputEng);
                 } else {
                     _soundManager.play(_appSettings.soundCorrectEng);
@@ -871,6 +937,17 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                 break;
             }
         }
+    }
+
+    public static AppSettings getAppSettings() {
+        log(LOG_TAG, "--- getAppSettings. Is null? " + (_appSettings == null));
+
+        /*if (_appSettings == null) {
+            ReplacerService serv = new ReplacerService();
+            serv.onServiceConnected();
+            _appSettings = new AppSettings(serv.getApplicationContext());
+        }*/
+        return _appSettings;
     }
 
     @Override
@@ -908,6 +985,17 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
         }
         if (getString(R.string.setting_sound_correct_eng).equals(key)) {
             playSound(Language.En, ActionType.ManualChange);
+        }
+
+        // Icon settings
+        if (getString(R.string.setting_icon_style_ru).equals(key)
+                || getString(R.string.setting_icon_style_en).equals(key)
+                || getString(R.string.setting_is_auto_correct).equals(key)
+                || getString(R.string.setting_when_enable_notifications).equals(key)
+                || getString(R.string.setting_shortcut_enabled_key).equals(key)
+        ) {
+            _notifyManager = new NotifyManager(this);
+            _notifyManager.updateNotification(_currentLanguage);
         }
     }
 }

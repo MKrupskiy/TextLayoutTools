@@ -8,7 +8,7 @@
     <string name="title_activity_settings">Настройки</string>
 
     <!-- Strings related to Main Activity -->
-    <string name="main_app_name_version" translatable="false">Text Layout Tools 1.8</string>
+    <string name="main_app_name_version" translatable="false">Text Layout Tools 1.10</string>
     <string name="main_description">Приложение для смены раскладки текста.</string>
     <string name="main_examples">Автоматическая смена\nCtrl+Q - смена раскладки\nAlt+Enter - смена раскладки со сменой языка</string>
     <!--<string name="main_service_description">Переключение также возможно при помощи комбинации клавиш. Для этого требуется включить поддержку в меню настроек Специальные Возможности</string>-->
@@ -22,7 +22,7 @@
     <string name="title_activity_about">О программе</string>
     <string name="about_text_support">Создано при поддержке форумчан 4pda.\nПожелания и идеи можно отправлять на 4pda или на электронный ящик.</string>
     <string name="about_text_profile_link">Мой профиль на 4pda:\nhttps://4pda.ru/forum/index.php?showuser=1974942</string>
-    <string name="about_text_app_link">Тема программы:\nhttps://4pda.ru/forum/index.php?showtopic=965434</string>
+    <string name="about_text_app_link">Обсуждение программы:\nhttps://4pda.ru/forum/index.php?showtopic=965434</string>
 
 
     <!-- Strings related to Settings -->
@@ -33,14 +33,18 @@
 
     <string name="setting_input_method" translatable="false">Setting_Input_Method</string>
 
-    <string name="pref_title_input_method">Метод ввода для дополнительной (русской) раскладки</string>
+    <string name="pref_title_input_method">Метод ввода</string>
     <string-array name="pref_input_method_titles">
         <item>йцукен</item>
         <item>translit</item>
+        <item>USB-клавиатура</item>
+        <item>qwertz</item>
     </string-array>
     <string-array name="pref_input_method_values">
         <item>0</item>
         <item>1</item>
+        <item>2</item>
+        <item>3</item>
     </string-array>
     <string name="pref_title_keyboard_input_settings">Открыть Настройки Ввода</string>
 
@@ -65,12 +69,14 @@
         <item>Sym</item>
         <item>Speed Key (Key2)</item>
         <item>Currency Key (Key2)</item>
+        <item>Ctrl (USB-клавиатура)</item>
     </string-array>
     <string-array name="pref_control_key_values">
         <item>129</item>
         <item>65</item>
         <item>4</item>
         <item>8</item>
+        <item>12288</item>
         <item>12288</item>
     </string-array>
 
@@ -223,6 +229,21 @@
     <string name="pref_description_is_show_icon">Показывать иконку-флаг в строке уведомлений (после следующей смены языка)</string>
     <string name="pref_title_is_show_icon">Показывать иконку</string>
 
+    <string name="setting_icon_style_ru" translatable="false">Setting_Icon_Style_Ru</string>
+    <string name="pref_title_icon_style_ru">Стиль иконки (Русский)</string>
+    <string-array name="pref_icon_style_key_titles">
+        <item>Флаг</item>
+        <item>Ru / En</item>
+        <item>RU / EN</item>
+    </string-array>
+    <string-array name="pref_icon_style_key_values">
+        <item>Flag</item>
+        <item>TextCamel</item>
+        <item>TextCapital</item>
+    </string-array>
+    <string name="setting_icon_style_en" translatable="false">Setting_Icon_Style_En</string>
+    <string name="pref_title_icon_style_en">Стиль иконки (Английский)</string>
+
 
     <!-- Example settings Experimental -->
     <string name="pref_header_experimental">Экспериментальные</string>
@@ -247,8 +268,18 @@
     <string name="text_btn_mute_1h">Без звука 1ч</string>
     <string name="text_btn_mute_8h">Без звука 8ч</string>
     <string name="text_btn_mute_enable">Включить</string>
+    <string name="text_btn_mute_switch">Звук</string>
+    <string name="text_btn_autocorrect_switch">Автозамена</string>
+    <string name="text_btn_manual_change_switch">Ctrl+Q</string>
+    <string name="text_btn_on_check" translatable="false">☑</string>
+    <string name="text_btn_off_check" translatable="false">☐</string>
     <string name="text_toast_mute_general">Звук отключён до</string>
     <string name="text_toast_mute_enable">Звук включён</string>
+    <string name="text_toast_mute_disable">Звук отключён</string>
+    <string name="text_toast_autocorrect_enabled">Автоисправление включено</string>
+    <string name="text_toast_autocorrect_disabled">Автоисправление выключено</string>
+    <string name="text_toast_manual_change_enabled">Ручное исправление включено</string>
+    <string name="text_toast_manual_change_disabled">Ручное исправление выключено</string>
     <string name="text_toast_word_added">Слово добавлено</string>
     <string name="text_toast_word_in_dict_already">Слово уже в словаре</string>
 
