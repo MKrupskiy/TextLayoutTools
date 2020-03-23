@@ -8,7 +8,7 @@
     <string name="title_activity_settings">Настройки</string>
 
     <!-- Strings related to Main Activity -->
-    <string name="main_app_name_version" translatable="false">Text Layout Tools 1.10</string>
+    <string name="main_app_name_version" translatable="false">Text Layout Tools 1.11</string>
     <string name="main_description">Приложение для смены раскладки текста.</string>
     <string name="main_examples">Автоматическая смена\nCtrl+Q - смена раскладки\nAlt+Enter - смена раскладки со сменой языка</string>
     <!--<string name="main_service_description">Переключение также возможно при помощи комбинации клавиш. Для этого требуется включить поддержку в меню настроек Специальные Возможности</string>-->
@@ -219,7 +219,7 @@
     <!-- Example settings Additional -->
     <string name="pref_header_additional">Дополнительные</string>
     <string name="pref_h2_double_letters">Двойные Буквы</string>
-    <string name="pref_h2_statusbar_icon">Индикатор Текущей Раскладки</string>
+    <string name="pref_h2_statusbar_icon">Индикатор Раскладки в Трее</string>
 
     <string name="setting_is_correct_double_letters" translatable="false">Setting_Correct_Doubled</string>
     <string name="pref_description_is_correct_double_letters">Заменять двойные буквы на альтернативные (дд > ж)</string>
@@ -243,6 +243,68 @@
     </string-array>
     <string name="setting_icon_style_en" translatable="false">Setting_Icon_Style_En</string>
     <string name="pref_title_icon_style_en">Стиль иконки (Английский)</string>
+
+
+    <!-- Example settings Floating Indicator -->
+    <string name="pref_header_floating_indicator">Плавающий Индикатор</string>
+    <string name="pref_h2_floating_icon">Плавающий Индикатор</string>
+
+    <string name="setting_is_show_floating_icon" translatable="false">Setting_Show_Floating_Icon</string>
+    <string name="pref_description_is_show_floating_icon">Показывать иконку-флаг на экране (Требуется разрешение на отображение поверх других приложений)</string>
+
+    <string name="pref_title_overlay_settings">Открыть Настройки Отображения</string>
+    <string name="pref_title_notification_settings">Открыть Настройки Уведомлений</string>
+
+    <string name="pref_title_is_show_floating_icon">Показывать Иконку</string>
+
+    <string name="setting_floating_icon_style_ru" translatable="false">Setting_FloatingIcon_Style_Ru</string>
+
+    <string name="setting_floating_icon_style_en" translatable="false">Setting_FloatingIcon_Style_En</string>
+
+    <string name="setting_floating_icon_gravity_horiz" translatable="false">Setting_FloatingIcon_Gravity_Horiz</string>
+    <string name="pref_title_floating_icon_gravity_horiz">Расположение по горизонтали</string>
+
+    <string name="setting_floating_icon_gravity_vert" translatable="false">Setting_FloatingIcon_Gravity_Vert</string>
+    <string name="pref_title_floating_icon_gravity_vert">Расположение по вертикали</string>
+    <string-array name="pref_floating_icon_gravity_vert_key_titles">
+        <item>В Трее</item>
+        <item>Сверху</item>
+        <item>Снизу</item>
+    </string-array>
+    <string-array name="pref_floating_icon_gravity_vert_key_values">
+        <item>StatusBar</item>
+        <item>Top</item>
+        <item>Bottom</item>
+    </string-array>
+    <string-array name="pref_floating_icon_style_key_titles">
+        <item>Флаг</item>
+        <item>Текст</item>
+    </string-array>
+    <string-array name="pref_floating_icon_style_key_values">
+        <item>Flag</item>
+        <item>TextCustom</item>
+    </string-array>
+
+    <string name="setting_floating_icon_text_ru" translatable="false">Setting_FloatingIcon_Text_Ru</string>
+    <string name="pref_title_floating_icon_text_ru">Текст для русского языка</string>
+
+    <string name="setting_floating_icon_text_en" translatable="false">Setting_FloatingIcon_Text_En</string>
+    <string name="pref_title_floating_icon_text_en">Текст для английского языка</string>
+
+    <string name="setting_floating_icon_text_color" translatable="false">Setting_FloatingIcon_TextColor</string>
+    <string name="pref_title_floating_icon_text_color">Цвет текста</string>
+
+    <string name="setting_floating_icon_background_color" translatable="false">Setting_FloatingIcon_BackgroundColor</string>
+    <string name="pref_title_floating_icon_background_color">Цвет заливки</string>
+
+    <string name="setting_floating_icon_text_size" translatable="false">Setting_FloatingIcon_Text_Size</string>
+    <string name="pref_title_floating_icon_text_size">Размер текста</string>
+
+    <string name="setting_floating_icon_flag_size" translatable="false">Setting_FloatingIcon_Flag_Size</string>
+    <string name="pref_title_floating_icon_flag_size">Размер флага</string>
+
+    <string name="setting_floating_icon_opacity" translatable="false">Setting_FloatingIcon_Opacity</string>
+    <string name="pref_title_floating_icon_opacity">Прозрачность</string>
 
 
     <!-- Example settings Experimental -->

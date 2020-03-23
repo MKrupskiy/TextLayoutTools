@@ -30,6 +30,11 @@
         android:title="@string/pref_header_notification" />
 
     <header
+        android:fragment="by.mkr.blackberry.textlayouttools.SettingsActivity$FloatingIndicatorPreferenceFragment"
+        android:icon="@drawable/ic_photo_size_select_small_black_24dp"
+        android:title="@string/pref_header_floating_indicator" />
+
+    <header
         android:fragment="by.mkr.blackberry.textlayouttools.SettingsActivity$AdditionalPreferenceFragment"
         android:icon="@drawable/ic_widgets_black_24dp"
         android:title="@string/pref_header_additional" />

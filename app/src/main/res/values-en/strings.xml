@@ -79,8 +79,8 @@
     <string name="pref_hint_vibration_intensity">Can\'t change vibration intensity</string>
     <string name="text_toast_mute_general">Muted until</string>
     <string name="text_toast_mute_enable">Unmuted</string>
-    <string name="text_toast_word_added">The word added</string>
-    <string name="text_toast_word_in_dict_already">The word has already added</string>
+    <string name="text_toast_word_added">The word has been added</string>
+    <string name="text_toast_word_in_dict_already">The word has already been added</string>
     <string name="pref_title_icon_style_ru">Icon style (Russian)</string>
     <string name="pref_title_icon_style_en">Icon style (English)</string>
     <string name="text_btn_mute_switch">Sound</string>
@@ -91,4 +91,18 @@
     <string name="text_toast_autocorrect_disabled">Autocorrect disabled</string>
     <string name="text_toast_manual_change_enabled">Manual change enabled</string>
     <string name="text_toast_manual_change_disabled">Manual change disabled</string>
+    <string name="pref_h2_floating_icon">Floating Icon</string>
+    <string name="pref_title_is_show_floating_icon">Show floating icon</string>
+    <string name="pref_title_floating_icon_gravity_horiz">Horizontal position</string>
+    <string name="pref_title_floating_icon_gravity_vert">Vertical position</string>
+    <string name="pref_title_floating_icon_text_ru">Russian text indicator</string>
+    <string name="pref_title_floating_icon_text_en">English text indicator</string>
+    <string name="pref_title_floating_icon_text_color">Text color</string>
+    <string name="pref_title_floating_icon_background_color">Background color</string>
+    <string name="pref_title_floating_icon_text_size">Text size</string>
+    <string name="pref_title_floating_icon_flag_size">Flag size</string>
+    <string name="pref_description_is_show_floating_icon">Show flag icon on the screen (permission required)</string>
+    <string name="pref_title_overlay_settings">Displaying over other apps settings</string>
+    <string name="pref_title_notification_settings">Notification Settings</string>
+    <string name="pref_header_floating_indicator">Floating Indicator</string>
 </resources>

@@ -4,18 +4,28 @@ package by.mkr.blackberry.textlayouttools;
 import android.annotation.TargetApi;
 import android.content.SharedPreferences;
 import android.content.pm.ServiceInfo;
+import android.graphics.PixelFormat;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.support.constraint.ConstraintLayout;
 import android.text.InputType;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.WindowManager;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.view.inputmethod.InputMethodSubtype;
+import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -71,6 +81,7 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
 
     private VibrationManager _vibrationManager;
     private SoundManager _soundManager;
+    private FloatingIndicatorManager _floatingIndicatorManager;
 
     private long _lastSymPressed;
 
@@ -96,6 +107,8 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
 
         _vibrationManager = new VibrationManager(getApplicationContext());
         _soundManager = new SoundManager(getApplicationContext());
+
+        _floatingIndicatorManager = new FloatingIndicatorManager(getApplicationContext());
     }
 
 
@@ -226,6 +239,11 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                         _notifyManager.updateNotification(_currentLanguage);
                     } else {
                         _notifyManager.clearNotifications();
+                    }
+                    if (_appSettings.isShowFloatingIcon) {
+                        _floatingIndicatorManager.setLanguage(_currentLanguage);
+                    } else {
+                        _floatingIndicatorManager.clearLanguage();
                     }
                     notify(_currentLanguage, ActionType.CtrlSpace);
                 }
@@ -487,20 +505,34 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
 
                 // Track language changes
                 case AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED: {
-                    if (!"com.blackberry.keyboard".equals(event.getPackageName())) {
-                        return;
+                    CharSequence packageName = event.getPackageName();
+                    log(LOG_TAG, "Toast event; package=" + packageName);
+                    if (event.getText() != null && !event.getText().isEmpty()) {
+                        log(LOG_TAG, (String)event.getText().get(0));
                     }
 
-                    log(LOG_TAG, "Toast event; package=" + event.getPackageName());
+                    if (!"com.blackberry.keyboard".equals(packageName)
+                        && !"android".equals(packageName)) {
+                        return;
+                    }
+                    if (event.getText() == null || event.getText().isEmpty()) {
+                        return; // If no text info
+                    }
 
                     String text = (String) event.getText().get(0);
-                    log(LOG_TAG, text);
+                    //log(LOG_TAG, text);
 
                     boolean isRussian = text.contains("Русск") || text.contains("Russ");
+                    boolean isEnglish = text.contains("Англ") || text.contains("Eng");
+                    boolean isUkr = text.contains("Украин") || text.contains("Ukrain");
+
+                    if (!isRussian && !isEnglish && !isUkr) {
+                        return; // If no language indication
+                    }
+
                     _currentLanguage = Language.getByInputMethod(isRussian ? Language.Ru : Language.En, _appSettings.inputMethod);
 
                     // Quick Ukraine fix
-                    boolean isUkr = text.contains("Украин") || text.contains("Ukrain");
                     if (isUkr) {
                         _currentLanguage = Language.Ukr;
                     }
@@ -509,6 +541,11 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                         _notifyManager.updateNotification(_currentLanguage);
                     } else {
                         _notifyManager.clearNotifications();
+                    }
+                    if (_appSettings.isShowFloatingIcon) {
+                        _floatingIndicatorManager.setLanguage(_currentLanguage);
+                    } else {
+                        _floatingIndicatorManager.clearLanguage();
                     }
                     notify(_currentLanguage, ActionType.AltEnter);
 
@@ -654,6 +691,7 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
     public void onInterrupt() {
         log(LOG_TAG,"Interrupt");
         _notifyManager.clearNotifications();
+        _floatingIndicatorManager.clearLanguage();
     }
 
 
@@ -993,9 +1031,33 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                 || getString(R.string.setting_is_auto_correct).equals(key)
                 || getString(R.string.setting_when_enable_notifications).equals(key)
                 || getString(R.string.setting_shortcut_enabled_key).equals(key)
+                || getString(R.string.setting_is_show_icon).equals(key)
         ) {
-            _notifyManager = new NotifyManager(this);
+            if (_notifyManager == null) {
+                _notifyManager = new NotifyManager(this);
+            }
             _notifyManager.updateNotification(_currentLanguage);
+        }
+
+        // Floating Icon settings
+        if (getString(R.string.setting_floating_icon_flag_size).equals(key)
+                || getString(R.string.setting_floating_icon_text_size).equals(key)
+                || getString(R.string.setting_is_show_floating_icon).equals(key)
+                || getString(R.string.setting_floating_icon_style_ru).equals(key)
+                || getString(R.string.setting_floating_icon_style_en).equals(key)
+                || getString(R.string.setting_floating_icon_text_ru).equals(key)
+                || getString(R.string.setting_floating_icon_text_en).equals(key)
+                || getString(R.string.setting_floating_icon_gravity_horiz).equals(key)
+                || getString(R.string.setting_floating_icon_gravity_vert).equals(key)
+                || getString(R.string.setting_floating_icon_text_color).equals(key)
+                || getString(R.string.setting_floating_icon_background_color).equals(key)
+                || getString(R.string.setting_floating_icon_opacity).equals(key)
+        ) {
+            if (_floatingIndicatorManager == null) {
+                _floatingIndicatorManager = new FloatingIndicatorManager(this);
+            }
+            _floatingIndicatorManager.updateSettings();
+            _floatingIndicatorManager.setLanguage(_currentLanguage);
         }
     }
 }
