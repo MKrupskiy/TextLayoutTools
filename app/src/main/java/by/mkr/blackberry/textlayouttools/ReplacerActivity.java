@@ -8,7 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
-
+import static by.mkr.blackberry.textlayouttools.ReplacerService.LOG_TAG;
 
 
 public class ReplacerActivity extends AppCompatActivity {
@@ -34,13 +34,13 @@ public class ReplacerActivity extends AppCompatActivity {
         */
         Boolean isEnabled = true;
 
-        Log.d("ReplacerLog", (readonly ? "ReadOnly": "Editable") + "; " + (isEnabled ? "Enabled": "Disabled"));
+        Log.d(LOG_TAG, (readonly ? "ReadOnly": "Editable") + "; " + (isEnabled ? "Enabled": "Disabled"));
 
         if (isEnabled) {
             // process the text
             Language textLanguage = LayoutConverter.getTextLanguage(text, inputMethod);
             String replacedText = LayoutConverter.getReplacedText(text, textLanguage);
-            Log.d("ReplacerLog", "original=" + text + "; replaced=" + replacedText);
+            Log.d(LOG_TAG, "original=" + text + "; replaced=" + replacedText);
 
             if (!readonly) {
                 intent.putExtra(Intent.EXTRA_PROCESS_TEXT, replacedText);

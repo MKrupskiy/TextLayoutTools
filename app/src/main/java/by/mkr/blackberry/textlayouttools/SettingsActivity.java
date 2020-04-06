@@ -3,6 +3,7 @@ package by.mkr.blackberry.textlayouttools;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
@@ -302,6 +303,24 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
             bindPreferenceSummaryToValue(findPreference(getString(R.string.setting_floating_icon_text_ru)));
             bindPreferenceSummaryToValue(findPreference(getString(R.string.setting_floating_icon_text_en)));
+
+            // Bind custom code preference
+            Preference button = findPreference(getString(R.string.setting_floating_icon_reset_position));
+            button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    // Get trigger value
+                    SharedPreferences sharedPrefs = preference.getSharedPreferences();
+                    boolean prevValue = sharedPrefs.getBoolean(getString(R.string.setting_floating_icon_reset_position), false);
+                    // Save inverted value to notify ReplacerService
+                    SharedPreferences.Editor prefsEditor = sharedPrefs.edit();
+                    prefsEditor.putInt(getString(R.string.setting_floating_icon_position_x), 0);
+                    prefsEditor.putInt(getString(R.string.setting_floating_icon_position_y), 0);
+                    prefsEditor.putBoolean(getString(R.string.setting_floating_icon_reset_position), !prevValue);
+                    prefsEditor.commit();
+                    return true;
+                }
+            });
         }
 
         @Override

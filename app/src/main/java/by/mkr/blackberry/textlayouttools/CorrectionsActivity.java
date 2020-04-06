@@ -15,13 +15,15 @@ import DataBase.AppDatabase;
 import DataBase.Correction;
 import DataBase.CorrectionDao;
 
+import static by.mkr.blackberry.textlayouttools.ReplacerService.LOG_TAG;
+
 public class CorrectionsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_corrections);
-        Log.d("ReplacerLog", "! onCreate");
+        Log.d(LOG_TAG, "! onCreate");
 
         final AppDatabase db = AppDatabase.getInstance(this);
         final CorrectionDao correctionDao = db.correctionDao();
@@ -48,7 +50,7 @@ public class CorrectionsActivity extends AppCompatActivity {
                 values.get(itemIndex).fromText = newFromText;
                 values.get(itemIndex).toText = newToText;
                 correctionAdapter.notifyDataSetChanged();
-                Log.d("ReplacerLog", "edited: " + values.get(itemIndex).fromText + " => " + values.get(itemIndex).toText);
+                Log.d(LOG_TAG, "edited: " + values.get(itemIndex).fromText + " => " + values.get(itemIndex).toText);
                 // update the repo
                 Correction corr = new Correction(values.get(itemIndex).id, newFromText, newToText);
                 correctionDao.update(corr);
@@ -57,7 +59,7 @@ public class CorrectionsActivity extends AppCompatActivity {
 
             @Override
             public void onItemDeleted(int itemIndex) {
-                Log.d("ReplacerLog", "deleted: " + values.get(itemIndex).fromText + " => " + values.get(itemIndex).toText);
+                Log.d(LOG_TAG, "deleted: " + values.get(itemIndex).fromText + " => " + values.get(itemIndex).toText);
                 long itemId = values.get(itemIndex).id;
                 values.remove(itemIndex);
                 correctionAdapter.notifyDataSetChanged();
@@ -75,7 +77,7 @@ public class CorrectionsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 correctionAdapter.addItem(view.getContext());
-                Log.d("ReplacerLog", "added new");
+                Log.d(LOG_TAG, "added new");
             }
         });
     }
@@ -83,7 +85,7 @@ public class CorrectionsActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d("ReplacerLog", "! onDestroy");
+        Log.d(LOG_TAG, "! onDestroy");
         AppDatabase.releaseDB();
     }
 

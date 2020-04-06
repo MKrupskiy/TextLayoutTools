@@ -15,8 +15,6 @@ public class AppSettings {
     public IconStyle iconStyleEn;
     public FloatingIconStyle floatingIconStyleRu;
     public FloatingIconStyle floatingIconStyleEn;
-    public FloatingIconGravityHoriz floatingIconGravityHoriz;
-    public FloatingIconGravityVert floatingIconGravityVert;
     public boolean isEnabled;
     public boolean isKey2EmulationEnabled;
     public boolean isTranslit;
@@ -27,6 +25,9 @@ public class AppSettings {
     public boolean isShowFloatingIcon;
     public boolean isLogToFile;
     public boolean isSelectReplaced;
+    public boolean isFloatingIconUnlocked;
+    public boolean isDetectLanguageByText;
+    public boolean isFloatingIconShowLangPicker;
     public String floatingIconTextRu;
     public String floatingIconTextEn;
     public String[] userDict;
@@ -36,6 +37,8 @@ public class AppSettings {
     public int floatingIconFlagSize;
     public int floatingIconTextColor;
     public int floatingIconBackgroundColor;
+    public int floatingIconPositionX;
+    public int floatingIconPositionY;
     public VibrationPattern vibrationPatternRus;
     public VibrationPattern vibrationPatternEng;
     public SoundPattern soundInputRus;
@@ -112,20 +115,25 @@ public class AppSettings {
         String FloatingIconStyleEnStr = sharedPrefs.getString(_context.getString(R.string.setting_floating_icon_style_en), "Flag");
         floatingIconStyleEn = FloatingIconStyle.fromString(FloatingIconStyleEnStr);
 
-        floatingIconTextRu = sharedPrefs.getString(_context.getString(R.string.setting_floating_icon_text_ru), "Rus");
-        floatingIconTextEn = sharedPrefs.getString(_context.getString(R.string.setting_floating_icon_text_en), "Eng");
+        floatingIconTextRu = sharedPrefs.getString(_context.getString(R.string.setting_floating_icon_text_ru), "RUS");
+        floatingIconTextEn = sharedPrefs.getString(_context.getString(R.string.setting_floating_icon_text_en), "ENG");
 
-        floatingIconTextSize = sharedPrefs.getInt(_context.getString(R.string.setting_floating_icon_text_size), 2) + 10;
-        floatingIconFlagSize = sharedPrefs.getInt(_context.getString(R.string.setting_floating_icon_flag_size), 30) + 30;
+        floatingIconTextSize = sharedPrefs.getInt(_context.getString(R.string.setting_floating_icon_text_size), 4) + 10;
+        floatingIconFlagSize = sharedPrefs.getInt(_context.getString(R.string.setting_floating_icon_flag_size), 40) + 40;
 
         floatingIconTextColor = sharedPrefs.getInt(_context.getString(R.string.setting_floating_icon_text_color), 0xFFFFFFFF);
         floatingIconBackgroundColor = sharedPrefs.getInt(_context.getString(R.string.setting_floating_icon_background_color), 0x22000000);
-        floatingIconGravityHoriz = FloatingIconGravityHoriz.fromInt(sharedPrefs.getInt(_context.getString(R.string.setting_floating_icon_gravity_horiz), 2));
-
-        String floatingIconGravityVertStr = sharedPrefs.getString(_context.getString(R.string.setting_floating_icon_gravity_vert), "Bottom");
-        floatingIconGravityVert = FloatingIconGravityVert.fromString(floatingIconGravityVertStr);
 
         int opacityInt = sharedPrefs.getInt(_context.getString(R.string.setting_floating_icon_opacity), 20);
         opacity = 1 - (float)opacityInt / 100;
+
+        floatingIconPositionX = sharedPrefs.getInt(_context.getString(R.string.setting_floating_icon_position_x), 0);
+        floatingIconPositionY = sharedPrefs.getInt(_context.getString(R.string.setting_floating_icon_position_y), 0);
+
+        isFloatingIconUnlocked = sharedPrefs.getBoolean(_context.getString(R.string.setting_floating_icon_is_unlocked), true);
+
+        isDetectLanguageByText = sharedPrefs.getBoolean(_context.getString(R.string.setting_check_text_for_language), false);
+
+        isFloatingIconShowLangPicker = sharedPrefs.getBoolean(_context.getString(R.string.setting_floating_icon_is_show_lang_picker), true);
     }
 }

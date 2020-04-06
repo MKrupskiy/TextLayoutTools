@@ -5,6 +5,8 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.util.Log;
 
+import static by.mkr.blackberry.textlayouttools.ReplacerService.LOG_TAG;
+
 
 enum SoundPattern {
     None,
@@ -77,22 +79,22 @@ public class SoundManager {
         switch( audio.getRingerMode() ){
             case AudioManager.RINGER_MODE_NORMAL:
                 isSoundOn = true;
-                Log.d("ReplacerLog", "Vibration ON: RINGER_MODE_NORMAL");
+                //Log.d(LOG_TAG, "Vibration ON: RINGER_MODE_NORMAL");
                 break;
             case AudioManager.RINGER_MODE_VIBRATE:
                 isSoundOn = false;
-                Log.d("ReplacerLog", "Vibration ON: RINGER_MODE_VIBRATE");
+                //Log.d(LOG_TAG, "Vibration ON: RINGER_MODE_VIBRATE");
                 break;
             case AudioManager.RINGER_MODE_SILENT:
                 isSoundOn = false;
-                Log.d("ReplacerLog", "Vibration ON: RINGER_MODE_SILENT");
+                //Log.d(LOG_TAG, "Vibration ON: RINGER_MODE_SILENT");
                 break;
             default: {
-                Log.d("ReplacerLog", "Vibration ON: UNKNOWN");
+                //Log.d(LOG_TAG, "Vibration ON: UNKNOWN");
                 break;
             }
         }
-        Log.d("ReplacerLog", "Sound ON: " + isSoundOn);
+        //Log.d(LOG_TAG, "Sound ON: " + isSoundOn);
         return isSoundOn;
     }
 

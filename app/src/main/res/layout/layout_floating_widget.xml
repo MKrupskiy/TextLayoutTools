@@ -32,34 +32,34 @@
                 android:id="@+id/collapsed_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="ENG"
-                android:paddingRight="4px"
+                android:text="RU/EN"
                 android:visibility="visible"/>
         </RelativeLayout>
 
         <!-- this is the expanded layout -->
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/layoutExpanded"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#a0c3d7"
-            android:orientation="horizontal"
+            android:orientation="vertical"
+            android:padding="16dp"
             android:visibility="gone">
 
             <ImageView
                 android:id="@+id/expanded_flag_view"
-                android:layout_width="75dp"
-                android:layout_height="50dp"
-                android:padding="16dp"
+                android:layout_width="80px"
+                android:layout_height="wrap_content"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
                 android:src="@drawable/ic_flag_gb_col"
                 android:visibility="gone" />
             <TextView
                 android:id="@+id/expanded_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:text="ENG"
+                android:text="RU/EN"
                 android:visibility="visible"/>
-        </LinearLayout>
+        </RelativeLayout>
     </RelativeLayout>
 </FrameLayout>

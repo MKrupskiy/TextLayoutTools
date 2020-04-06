@@ -10,6 +10,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static by.mkr.blackberry.textlayouttools.ReplacerService.LOG_TAG;
+
 public class WordsList {
 
     private Language _lang;
@@ -25,7 +27,7 @@ public class WordsList {
             String[] files = assetManager.list("Files");
 
             for (int i=0; i<files.length; i++) {
-                Log.d("ReplacerLog", files[i]);
+                Log.d(LOG_TAG, files[i]);
             }
 
             String fileToOpen;
@@ -44,7 +46,7 @@ public class WordsList {
                 }
                 default: {
                     fileToOpen = "";
-                    Log.d("ReplacerLog", "No such dictionary: " + lang);
+                    Log.d(LOG_TAG, "No such dictionary: " + lang);
                     break;
                 }
             }
@@ -54,10 +56,10 @@ public class WordsList {
             String line = reader.readLine();
             // Get Version
             if (line != null) {
-                Log.d("ReplacerLog", "   Version: " + line + "; " + fileToOpen);
+                Log.d(LOG_TAG, "   Version: " + line + "; " + fileToOpen);
             }
             while (line != null) {
-                //Log.d("ReplacerLog", "   Word: " + line);
+                //Log.d(LOG_TAG, "   Word: " + line);
                 if (!_words.containsKey(line.length())) {
                     _words.put(line.length(), new ArrayList<String>());
                 }
@@ -67,10 +69,10 @@ public class WordsList {
 
             // List words' count by length
             for (int i : _words.keySet()) {
-                Log.d("ReplacerLog", "--- Words in [" + i + "]:" + _words.get(i).size());
+                Log.d(LOG_TAG, "--- Words in [" + i + "]:" + _words.get(i).size());
             }
         } catch (Exception ex) {
-            Log.d("ReplacerLog", "   EX: " + ex.getMessage());
+            Log.d(LOG_TAG, "   EX: " + ex.getMessage());
             ex.printStackTrace();
         }
     }
@@ -80,7 +82,7 @@ public class WordsList {
     }
 
     public boolean contains(String text) {
-        Log.d("ReplacerLog", "--- Check Contains " + _lang);
+        Log.d(LOG_TAG, "--- Check Contains " + _lang);
         boolean isFound = false;
         for (int i = text.length(); i > 0; i--) {
             isFound = contains(text, i);
@@ -91,7 +93,7 @@ public class WordsList {
     }
 
     public boolean contains(String text, int length) {
-        Log.d("ReplacerLog", "--- Check Contains [" + length + "] " + _lang);
+        Log.d(LOG_TAG, "--- Check Contains [" + length + "] " + _lang);
         boolean isFound = false;
         if (_words.get(length) == null) {
             // No words with that length
@@ -99,7 +101,7 @@ public class WordsList {
         }
         for (String word : _words.get(length)) {
             if (text.contains(word)) {
-                Log.d("ReplacerLog", "--- Word:" + word);
+                Log.d(LOG_TAG, "--- Word:" + word);
                 isFound = true;
                 break;
             }
@@ -109,7 +111,7 @@ public class WordsList {
     }
 
     public boolean startsWith(String text) {
-        Log.d("ReplacerLog", "--- Check Starts With " + _lang);
+        Log.d(LOG_TAG, "--- Check Starts With " + _lang);
         boolean isFound = false;
         for (int i = text.length(); i > 0; i--) {
             isFound = startsWith(text, i);
@@ -120,7 +122,7 @@ public class WordsList {
     }
 
     public boolean startsWith(String text, int length) {
-        Log.d("ReplacerLog", "--- Check Starts With [" + length + "] " + _lang);
+        Log.d(LOG_TAG, "--- Check Starts With [" + length + "] " + _lang);
         boolean isFound = false;
         if (_words.get(length) == null) {
             // No words with that length
@@ -128,7 +130,7 @@ public class WordsList {
         }
         for (String word : _words.get(length)) {
             if (text.startsWith(word)) {
-                Log.d("ReplacerLog", "--- Word:" + word);
+                Log.d(LOG_TAG, "--- Word:" + word);
                 isFound = true;
                 break;
             }

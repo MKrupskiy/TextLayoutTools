@@ -4,6 +4,8 @@ import android.util.Log;
 import java.util.HashMap;
 import DataBase.Correction;
 
+import static by.mkr.blackberry.textlayouttools.ReplacerService.LOG_TAG;
+
 
 enum Language {
     Unknown,
@@ -154,7 +156,7 @@ public class LayoutConverter {
 
     public static String getReplacedText(CharSequence textToReplace, Language fromLanguage) {
         StringBuilder text = new StringBuilder();
-        Log.d("ReplacerLog", textToReplace.toString() + "; lang=" + fromLanguage);
+        Log.d(LOG_TAG, textToReplace.toString() + "; lang=" + fromLanguage);
 
         switch (fromLanguage) {
             case En: {
@@ -176,8 +178,7 @@ public class LayoutConverter {
             }
 
             case Ru: {
-                //Log.d("ReplacerLog", textToReplace.toString());
-
+                //Log.d(LOG_TAG, textToReplace.toString());
                 for (int i = 0; i < textToReplace.length(); i++) {
                     if (charsMapRuEn.containsKey(textToReplace.charAt(i))) {
                         text.append(charsMapRuEn.get(textToReplace.charAt(i)));
@@ -189,8 +190,7 @@ public class LayoutConverter {
             }
 
             case RuTrans: {
-                //Log.d("ReplacerLog", textToReplace.toString());
-
+                //Log.d(LOG_TAG, textToReplace.toString());
                 for (int i = 0; i < textToReplace.length(); i++) {
                     if (charsMapRuTransEn.containsKey(textToReplace.charAt(i))) {
                         text.append(charsMapRuTransEn.get(textToReplace.charAt(i)));
@@ -202,7 +202,7 @@ public class LayoutConverter {
             }
 
             case EnTrans: {
-                //Log.d("ReplacerLog", textToReplace.toString());
+                //Log.d(LOG_TAG, textToReplace.toString());
                 textToReplace = textToReplace.toString().replaceAll("(?i)ww", "Ç");
                 textToReplace = textToReplace.toString().replaceAll("(?i)ee", "È");
                 textToReplace = textToReplace.toString().replaceAll("(?i)uu", "Ñ");
@@ -219,8 +219,7 @@ public class LayoutConverter {
             }
 
             case RuFull: {
-                //Log.d("ReplacerLog", textToReplace.toString());
-
+                //Log.d(LOG_TAG, textToReplace.toString());
                 for (int i = 0; i < textToReplace.length(); i++) {
                     if (charsMapRuFullEn.containsKey(textToReplace.charAt(i))) {
                         text.append(charsMapRuFullEn.get(textToReplace.charAt(i)));
@@ -232,7 +231,7 @@ public class LayoutConverter {
             }
 
             case EnFull: {
-                //Log.d("ReplacerLog", textToReplace.toString());
+                //Log.d(LOG_TAG, textToReplace.toString());
                 for (int i = 0; i < textToReplace.length(); i++) {
                     if (charsMapEnRuFull.containsKey(textToReplace.charAt(i))) {
                         text.append(charsMapEnRuFull.get(textToReplace.charAt(i)));
@@ -261,8 +260,7 @@ public class LayoutConverter {
             }
 
             case RuQwertz: {
-                //Log.d("ReplacerLog", textToReplace.toString());
-
+                //Log.d(LOG_TAG, textToReplace.toString());
                 for (int i = 0; i < textToReplace.length(); i++) {
                     if (charsMapRuQwertzEn.containsKey(textToReplace.charAt(i))) {
                         text.append(charsMapRuQwertzEn.get(textToReplace.charAt(i)));
@@ -274,7 +272,7 @@ public class LayoutConverter {
             }
 
             default: {
-                Log.d("ReplacerLog", "Unexpected language");
+                Log.d(LOG_TAG, "Unexpected language");
                 text = new StringBuilder(textToReplace.toString());
                 break;
             }
@@ -305,14 +303,14 @@ public class LayoutConverter {
 
 
         /*
-        Log.d("ReplacerLog", "! Corrections count=" + _corrections.size());
+        Log.d(LOG_TAG, "! Corrections count=" + _corrections.size());
         for (Correction corr : _corrections) {
             text = text.replaceAll("(?i)" + corr.fromText, corr.toText);
         }
         */
 
 
-        //Log.d("ReplacerLog", text);
+        //Log.d(LOG_TAG, text);
         return text.toString();
     }
 
@@ -411,6 +409,37 @@ public class LayoutConverter {
             default: { break; } //Lang
         }
         return spare;
+    }
+
+    public static boolean isNeedDoubleCapitalCorrection(CharSequence textToCorrect) {
+        if (textToCorrect != null && textToCorrect.length() < 3) {
+            return false;
+        }
+        /*boolean isAllUpper = true;
+        for (int i = 0; i < textToCorrect.length(); i++) {
+            if (Character.isLowerCase(textToCorrect.charAt(i))) {
+                isAllUpper = false;
+                break;
+            }
+        }*/
+        // Correct 'ПРивет', but not 'HELLo'
+        boolean isNeedsCorrection = Character.isUpperCase(textToCorrect.charAt(0))
+                && Character.isUpperCase(textToCorrect.charAt(1))
+                && Character.isLowerCase(textToCorrect.charAt(2));
+        Log.d(LOG_TAG, "Needs corect: " + isNeedsCorrection);
+        return isNeedsCorrection;
+    }
+
+    public static String getTextWithoutDoubledCapital(CharSequence textToCorrect) {
+        if (isNeedDoubleCapitalCorrection(textToCorrect)) {
+            StringBuilder corrected = new StringBuilder(textToCorrect);
+            corrected.setCharAt(1, Character.toLowerCase(textToCorrect.charAt(1)));
+            Log.d(LOG_TAG, "getTextWithoutDoubledCapital change: " + corrected.toString());
+            return corrected.toString();
+        } else {
+            Log.d(LOG_TAG, "getTextWithoutDoubledCapital no change: " + textToCorrect.toString());
+            return textToCorrect.toString();
+        }
     }
 
 

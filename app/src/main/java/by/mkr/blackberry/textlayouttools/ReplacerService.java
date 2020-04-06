@@ -3,29 +3,16 @@ package by.mkr.blackberry.textlayouttools;
 
 import android.annotation.TargetApi;
 import android.content.SharedPreferences;
-import android.content.pm.ServiceInfo;
-import android.graphics.PixelFormat;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
-import android.support.constraint.ConstraintLayout;
 import android.text.InputType;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.WindowManager;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
-import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.view.inputmethod.InputMethodSubtype;
-import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -142,14 +129,27 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                 _lastSymPressed = new Date().getTime();
             }
 
-
-
             // Change Text Layout
             if (_appSettings.isEnabled && pressAction == KeyEvent.ACTION_DOWN) {
                 boolean isAltEnter = (keyMod == 18 && keyCode == KeyEvent.KEYCODE_ENTER);
                 boolean isCtrlSpace = (keyMod == 12288 && keyCode == KeyEvent.KEYCODE_SPACE) // Ctrl // 20480 - right ctrl
                                     || (keyMod == 327680 && keyCode == KeyEvent.KEYCODE_SPACE) // Win key
                                     || (event.isShiftPressed() && keyCode == KeyEvent.KEYCODE_SPACE); // Shift+Space
+
+
+
+                /*
+                Intent intent = new Intent("com.blackberry.quick.subtype.switch.result.receiver");
+                intent.setPackage("com.blackberry.inputmethod.core.quicksubtypeswitcher.SubtypeSwitcherDialog");
+                intent.putExtra("subtype.switcher.dialog.result", 1);
+                getApplicationContext().startService(intent);
+                //C0385b.m1388a(getApplicationContext()).mo1338a(intent);
+                //mo5485a();
+                */
+
+
+
+
 
                 if (_appSettings.isShowInfo) {
                     String logInfo = "Key: " + keyCode +
@@ -255,7 +255,7 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
 
 
 
-                AccessibilityNodeInfo eventNodeInfo = super.getRootInActiveWindow().findFocus(android.view.accessibility.AccessibilityNodeInfo.FOCUS_INPUT);
+                //AccessibilityNodeInfo eventNodeInfo = super.getRootInActiveWindow().findFocus(android.view.accessibility.AccessibilityNodeInfo.FOCUS_INPUT);
                 //traverseTree(eventNodeInfo, 1);
 
 
@@ -303,7 +303,7 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                     isHandled = true;
                     _isProgramChange = true;
                 } else if (keyMod == _appSettings.selectedCtrlMod && keyCode == KeyEvent.KEYCODE_Z) {
-                    //Log.d(LOG_TAG, "Ctrl+X");
+                    //Log.d(LOG_TAG, "Ctrl+Z");
                     //isHandled = true;
                     /*
                     new Thread(new Runnable() {
@@ -446,6 +446,30 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
 
 
 
+                    // !!! Detect language based on text. Unstable!!!
+                    if (_appSettings.isDetectLanguageByText) {
+                        log(LOG_TAG, "--- curr lang: " + _currentLanguage + "; text: " + event.getSource().getText());
+                        int selStart = event.getSource().getTextSelectionStart();
+                        String charEntered = "" + event.getSource().getText().charAt(selStart - 1);
+                        Language newLang = LayoutConverter.getTextLanguage(charEntered, _appSettings.inputMethod);
+                        if (_currentLanguage != newLang) {
+                            _currentLanguage = newLang;
+                            if (_appSettings.isShowIcon) {
+                                _notifyManager.updateNotification(_currentLanguage);
+                            } else {
+                                _notifyManager.clearNotifications();
+                            }
+                            if (_appSettings.isShowFloatingIcon) {
+                                _floatingIndicatorManager.setLanguage(_currentLanguage);
+                            } else {
+                                _floatingIndicatorManager.clearLanguage();
+                            }
+                            notify(_currentLanguage, ActionType.AltEnter);
+                        }
+                    }
+
+
+
 
 
                     break;
@@ -465,9 +489,9 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                     String tempStr = event.getText().toString();
 
                     // ??? inside HTML changes indices are not equal
-                    if (tempNodeInfo.getTextSelectionStart() != tempNodeInfo.getParent().findFocus(android.view.accessibility.AccessibilityNodeInfo.FOCUS_INPUT).getTextSelectionStart()) {
-                        selectBegin = 0;
-                    }
+                    //if (tempNodeInfo.getTextSelectionStart() != tempNodeInfo.getParent().findFocus(android.view.accessibility.AccessibilityNodeInfo.FOCUS_INPUT).getTextSelectionStart()) {
+                    //    selectBegin = 0;
+                    //}
 
                     log(LOG_TAG, "TYPE_VIEW_TEXT_SELECTION_CHANGED; " + tempStr+
                             "; s=" + selectBegin +
@@ -694,18 +718,11 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
         _floatingIndicatorManager.clearLanguage();
     }
 
-
-    private void replaceSelectedText(TextSelection textSelect, InputMethod inputMethod, boolean isSelectReplaced, int newCursor, ActionType actionType) {
-        // Get selected text
+    private void sendTextToInput(TextSelection textSelect, String replacedText, boolean isSelectReplaced, int newCursor) {
         String selectedText = textSelect.getSelectedText();
         String beforeText = textSelect.getBeforeText();
         String afterText = textSelect.getAfterText();
         int startSelection = textSelect.get_startSelection();
-        log(LOG_TAG, "1=" + beforeText + "; t=" + selectedText + "; a=" + afterText);
-
-        // Get converted text
-        _currentLanguage = LayoutConverter.getTextLanguage(selectedText, inputMethod);
-        String replacedText = LayoutConverter.getReplacedText(selectedText, _currentLanguage);
 
         // Replace selected text
         Bundle replaceArguments = new Bundle();
@@ -728,6 +745,26 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
         }
         _replacerSelect.get_nodeInfo().performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, replaceArguments);
         _replacerSelect.get_nodeInfo().performAction(AccessibilityNodeInfo.ACTION_SET_SELECTION, selectArguments);
+
+    }
+
+
+    private void replaceSelectedText(TextSelection textSelect, InputMethod inputMethod, boolean isSelectReplaced, int newCursor, ActionType actionType) {
+        // Get selected text
+        String selectedText = textSelect.getSelectedText();
+        String beforeText = textSelect.getBeforeText();
+        String afterText = textSelect.getAfterText();
+        int startSelection = textSelect.get_startSelection();
+        log(LOG_TAG, "1=" + beforeText + "; t=" + selectedText + "; a=" + afterText);
+
+        // Get converted text
+        _currentLanguage = LayoutConverter.getTextLanguage(selectedText, inputMethod);
+        String replacedText = LayoutConverter.getReplacedText(selectedText, _currentLanguage);
+
+        // Correct doubled capitals
+        replacedText = LayoutConverter.getTextWithoutDoubledCapital(replacedText);
+
+        sendTextToInput(textSelect, replacedText, isSelectReplaced, newCursor);
 
         _isProgramChange = true;
         log(LOG_TAG, "_isProgramChange2:" + _isProgramChange);
@@ -779,13 +816,20 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
 
                 if (lang == textEnteredLang || lang == Language.Unknown) {
                     // Input language == keyboard language
-                    // Do nothing
-                    log(LOG_TAG, "***From: " + textEnteredLang +
-                            "; To: '" + lang +
-                            "; " + currentWord.Word +
-                            "' no change" +
-                            "; s=" + currentWord.Begin +
-                            "; e=" + currentWord.End);
+                    // Check for doubled capital
+                    if (LayoutConverter.isNeedDoubleCapitalCorrection(currentWord.Word)) {
+                        textSelect.set_startSelection(currentWord.Begin);
+                        textSelect.set_endSelection(currentWord.End);
+                        sendTextToInput(textSelect, LayoutConverter.getTextWithoutDoubledCapital(currentWord.Word), false, cursorAt);
+                    } else {
+                        // Do nothing
+                        log(LOG_TAG, "***From: " + textEnteredLang +
+                                "; To: '" + lang +
+                                "; " + currentWord.Word +
+                                "' no change" +
+                                "; s=" + currentWord.Begin +
+                                "; e=" + currentWord.End);
+                    }
                 } else {
                     // Need to change layout
                     String replacedWord = LayoutConverter.getReplacedText(currentWord.Word, textEnteredLang);
@@ -821,6 +865,9 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
 
 
 
+    private static void log(String message) {
+        log(LOG_TAG, message);
+    }
     private static void log(String logTag, String message) {
         Log.d(logTag, message);
         if (_appSettings != null && _appSettings.isLogToFile) {
@@ -978,19 +1025,12 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
     }
 
     public static AppSettings getAppSettings() {
-        log(LOG_TAG, "--- getAppSettings. Is null? " + (_appSettings == null));
-
-        /*if (_appSettings == null) {
-            ReplacerService serv = new ReplacerService();
-            serv.onServiceConnected();
-            _appSettings = new AppSettings(serv.getApplicationContext());
-        }*/
         return _appSettings;
     }
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        log(LOG_TAG, "Setting changed: " + key);
+        //log(LOG_TAG, "Setting changed: " + key);
         _appSettings.bindSettings(sharedPreferences);
 
 
@@ -1035,6 +1075,8 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
         ) {
             if (_notifyManager == null) {
                 _notifyManager = new NotifyManager(this);
+            } else {
+                _notifyManager.updateNotificationButtons();
             }
             _notifyManager.updateNotification(_currentLanguage);
         }
@@ -1043,15 +1085,16 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
         if (getString(R.string.setting_floating_icon_flag_size).equals(key)
                 || getString(R.string.setting_floating_icon_text_size).equals(key)
                 || getString(R.string.setting_is_show_floating_icon).equals(key)
+                || getString(R.string.setting_floating_icon_is_unlocked).equals(key)
                 || getString(R.string.setting_floating_icon_style_ru).equals(key)
                 || getString(R.string.setting_floating_icon_style_en).equals(key)
                 || getString(R.string.setting_floating_icon_text_ru).equals(key)
                 || getString(R.string.setting_floating_icon_text_en).equals(key)
-                || getString(R.string.setting_floating_icon_gravity_horiz).equals(key)
-                || getString(R.string.setting_floating_icon_gravity_vert).equals(key)
                 || getString(R.string.setting_floating_icon_text_color).equals(key)
                 || getString(R.string.setting_floating_icon_background_color).equals(key)
                 || getString(R.string.setting_floating_icon_opacity).equals(key)
+                || getString(R.string.setting_floating_icon_reset_position).equals(key)
+                || getString(R.string.setting_floating_icon_is_show_lang_picker).equals(key)
         ) {
             if (_floatingIndicatorManager == null) {
                 _floatingIndicatorManager = new FloatingIndicatorManager(this);

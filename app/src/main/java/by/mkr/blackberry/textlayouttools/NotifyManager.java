@@ -11,6 +11,8 @@ import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import static by.mkr.blackberry.textlayouttools.ReplacerService.LOG_TAG;
+
 
 enum IconStyle {
     Flag,
@@ -49,12 +51,11 @@ enum IconStyle {
 
 
 public class NotifyManager {
-    final String LOG_TAG = "ReplacerLog";
     final static String CHANNEL_ID = "by.mkr.blackberry.textlayouttools.layoutnotification";
 
-    private Notification notificationEn;
-    private Notification notificationRu;
-    private Notification notificationUkr;
+    private Notification _notificationEn;
+    private Notification _notificationRu;
+    private Notification _notificationUkr;
     private android.accessibilityservice.AccessibilityService _service;
     private android.app.NotificationManager _notifyManager;
 
@@ -85,7 +86,44 @@ public class NotifyManager {
             }
         }
 
+        createNotifications(_service);
+    }
 
+    public void updateNotification(Language lang) {
+        switch (lang) {
+            case Ru:
+            case RuTrans:
+            case RuFull:
+            case RuQwertz: {
+                _notifyManager.notify(123, _notificationRu);
+                break;
+            }
+            case En:
+            case EnTrans:
+            case EnFull:
+            case EnQwertz: {
+                _notifyManager.notify(123, _notificationEn);
+                break;
+            }
+            case Ukr: {
+                _notifyManager.notify(123, _notificationUkr);
+                break;
+            }
+            default: {
+                break;
+            }
+        }
+    }
+
+    public void updateNotificationButtons() {
+        if(_service != null) {
+            createNotifications(_service);
+        } else {
+            Log.d(LOG_TAG, "NotifyManager->updateNotificationButtons: service is null");
+        }
+    }
+
+    private void createNotifications(android.accessibilityservice.AccessibilityService service) {
         // Icon styles
         int[] iconStyles = getIconStyles();
 
@@ -118,7 +156,7 @@ public class NotifyManager {
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            notificationRu = new NotificationCompat.Builder(_service, CHANNEL_ID)
+            _notificationRu = new NotificationCompat.Builder(_service, CHANNEL_ID)
                     .setSmallIcon(iconStyles[0])
                     .setContentTitle("Русский")
                     .setVisibility(Notification.VISIBILITY_SECRET)
@@ -135,7 +173,7 @@ public class NotifyManager {
                     .setContentIntent(settingsIntent)
                     .build();
 
-            notificationEn = new NotificationCompat.Builder(_service, CHANNEL_ID)
+            _notificationEn = new NotificationCompat.Builder(_service, CHANNEL_ID)
                     .setSmallIcon(iconStyles[1])
                     .setContentTitle("English")
                     .setVisibility(Notification.VISIBILITY_SECRET)
@@ -152,7 +190,7 @@ public class NotifyManager {
                     .setContentIntent(settingsIntent)
                     .build();
 
-            notificationUkr = new NotificationCompat.Builder(_service, CHANNEL_ID)
+            _notificationUkr = new NotificationCompat.Builder(_service, CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_flag_ukraine)
                     .setContentTitle("Українська")
                     .setVisibility(Notification.VISIBILITY_SECRET)
@@ -169,7 +207,7 @@ public class NotifyManager {
                     .setContentIntent(settingsIntent)
                     .build();
         } else {
-            notificationRu = new Notification.Builder(_service)
+            _notificationRu = new Notification.Builder(_service)
                     .setSmallIcon(iconStyles[0])
                     .setContentTitle("Русский")
                     .setVisibility(Notification.VISIBILITY_SECRET)
@@ -178,7 +216,7 @@ public class NotifyManager {
                     .setContentIntent(settingsIntent)
                     .build();
 
-            notificationEn = new Notification.Builder(_service)
+            _notificationEn = new Notification.Builder(_service)
                     .setSmallIcon(iconStyles[1])
                     .setContentTitle("English")
                     .setVisibility(Notification.VISIBILITY_SECRET)
@@ -186,32 +224,6 @@ public class NotifyManager {
                     .setPriority(Notification.PRIORITY_DEFAULT)
                     .setContentIntent(settingsIntent)
                     .build();
-        }
-    }
-
-    public void updateNotification(Language lang) {
-        switch (lang) {
-            case Ru:
-            case RuTrans:
-            case RuFull:
-            case RuQwertz: {
-                _notifyManager.notify(123, notificationRu);
-                break;
-            }
-            case En:
-            case EnTrans:
-            case EnFull:
-            case EnQwertz: {
-                _notifyManager.notify(123, notificationEn);
-                break;
-            }
-            case Ukr: {
-                _notifyManager.notify(123, notificationUkr);
-                break;
-            }
-            default: {
-                break;
-            }
         }
     }
 

@@ -5,11 +5,10 @@ import android.util.Log;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static by.mkr.blackberry.textlayouttools.ReplacerService.LOG_TAG;
+
 
 public class LanguageDetector {
-    final static String LOG_TAG = "ReplacerLog";
-
-
     public Language getTargetLanguage(String text, InputMethod inputMethod, WordsList wordsListRu, WordsList wordsListEn, String[] userDict) {
         text = text.toLowerCase();
         Language currentLang = LayoutConverter.getTextLanguage(text, inputMethod);

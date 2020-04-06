@@ -7,6 +7,8 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Log;
 
+import static by.mkr.blackberry.textlayouttools.ReplacerService.LOG_TAG;
+
 
 enum VibrationPattern {
     None,
@@ -107,7 +109,7 @@ public class VibrationManager {
             default:
                 break;
         }
-        Log.d("ReplacerLog", "Vibration ON: " + isVibroOn);
+        Log.d(LOG_TAG, "Vibration ON: " + isVibroOn);
         return isVibroOn;
     }
 
