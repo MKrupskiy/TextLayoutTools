@@ -24,21 +24,6 @@ public class LanguageDetector {
             case RuTrans:
             case RuFull:
             case RuQwertz: {
-                // Check initial language
-                /*
-                isFoundRu = checkInDict(text, _russianImpossibleLemmas);
-                isFoundEn = checkInDict(replacedWord, _englishImpossibleLemmas);
-                if (!isFoundRu && isFoundEn) {
-                    targetLanguage = Language.Ru;
-                } else if (isFoundRu && isFoundEn) {
-                    targetLanguage = Language.Ru;
-                } else if (!isFoundRu) {
-                    targetLanguage = Language.Ru;
-                } else {
-                    targetLanguage = Language.En;
-                }
-                */
-
                 // Check user's dict, both languages
                 isFoundRu = checkInDict(text, userDict);
                 if (isFoundRu) {
@@ -60,21 +45,6 @@ public class LanguageDetector {
             case EnTrans:
             case EnFull:
             case EnQwertz: {
-                // Check initial language
-                /*
-                isFoundEn = checkInDict(text, _englishImpossibleLemmas);
-                isFoundRu = checkInDict(replacedWord, _russianImpossibleLemmas);
-                if (!isFoundEn && isFoundRu) {
-                    targetLanguage = Language.En;
-                } else if (isFoundEn && isFoundRu) {
-                    targetLanguage = Language.En;
-                } else if (!isFoundEn) {
-                    targetLanguage = Language.En;
-                } else {
-                    targetLanguage = Language.Ru;
-                }
-                */
-
                 // Check user's dict, both languages
                 isFoundEn = checkInDict(text, userDict);
                 if (isFoundEn) {

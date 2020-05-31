@@ -23,14 +23,13 @@ public class CorrectionsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_corrections);
-        Log.d(LOG_TAG, "! onCreate");
 
         final AppDatabase db = AppDatabase.getInstance(this);
         final CorrectionDao correctionDao = db.correctionDao();
 
         final List<CorrectionItem> values = mapDbToViewItems(correctionDao.getAll());
 
-        RecyclerView correctionsView = (RecyclerView)findViewById(R.id.corrections_view);
+        RecyclerView correctionsView = findViewById(R.id.corrections_view);
         correctionsView.setHasFixedSize(true);
         correctionsView.setLayoutManager(new LinearLayoutManager(this));
         final CorrectionAdapter correctionAdapter = new CorrectionAdapter(values);
@@ -72,7 +71,7 @@ public class CorrectionsActivity extends AppCompatActivity {
 
 
         // Floating Action Button
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.btnFloatAddCorrection);
+        FloatingActionButton fab = findViewById(R.id.btnFloatAddCorrection);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -85,7 +84,6 @@ public class CorrectionsActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d(LOG_TAG, "! onDestroy");
         AppDatabase.releaseDB();
     }
 

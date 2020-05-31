@@ -10,15 +10,11 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 import android.widget.Toast;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
-
 import org.jetbrains.annotations.NotNull;
-
-import static by.mkr.blackberry.textlayouttools.ReplacerService.LOG_TAG;
 
 
 public class LanguageNotificationReceiver extends BroadcastReceiver {
@@ -161,21 +157,21 @@ public class LanguageNotificationReceiver extends BroadcastReceiver {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor prefsEditor = sharedPrefs.edit();
         prefsEditor.putLong(context.getString(R.string.setting_when_enable_notifications), addHours(hoursCount));
-        prefsEditor.commit();
+        prefsEditor.apply();
     }
 
     private static void updateIsAutocorrect(Context context, boolean isActive) {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor prefsEditor = sharedPrefs.edit();
         prefsEditor.putBoolean(context.getString(R.string.setting_is_auto_correct), isActive);
-        prefsEditor.commit();
+        prefsEditor.apply();
     }
 
     private static void updateIsManualChange(Context context, boolean isActive) {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor prefsEditor = sharedPrefs.edit();
         prefsEditor.putBoolean(context.getString(R.string.setting_shortcut_enabled_key), isActive);
-        prefsEditor.commit();
+        prefsEditor.apply();
     }
 
     private static boolean getIsAutocorrect() {

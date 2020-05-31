@@ -8,8 +8,13 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
+
 
 public class AboutActivity extends AppCompatActivity {
+    private int _pressedCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +33,21 @@ public class AboutActivity extends AppCompatActivity {
                 startActivity(Intent.createChooser(emailIntent, getString(R.string.contact_email_title)));
             }
         });
+
+
+        final ImageView iconImage = findViewById(R.id.iconView);
+        iconImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                _pressedCount++;
+                if (_pressedCount == 5) {
+                    Animation animBlink = AnimationUtils.loadAnimation(iconImage.getContext(), R.anim.blink);
+                    iconImage.startAnimation(animBlink);
+                    _pressedCount = 0;
+                }
+            }
+        });
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 

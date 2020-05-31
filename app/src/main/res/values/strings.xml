@@ -8,7 +8,7 @@
     <string name="title_activity_settings">Настройки</string>
 
     <!-- Strings related to Main Activity -->
-    <string name="main_app_name_version" translatable="false">Text Layout Tools 1.11</string>
+    <string name="main_app_name_version" translatable="false">Text Layout Tools 1.12</string>
     <string name="main_description">Приложение для смены раскладки текста.</string>
     <string name="main_examples">Автоматическая смена\nCtrl+Q - смена раскладки\nAlt+Enter - смена раскладки со сменой языка</string>
     <!--<string name="main_service_description">Переключение также возможно при помощи комбинации клавиш. Для этого требуется включить поддержку в меню настроек Специальные Возможности</string>-->
@@ -128,6 +128,7 @@
     <string name="pref_title_is_auto_correct">Автоматически исправлять раскладку</string>
 
     <string name="setting_user_dictionary" translatable="false">Setting_User_Dictionary</string>
+    <string name="setting_user_temp_dictionary" translatable="false">Setting_User_Temp_Dictionary</string>
     <string name="pref_description_user_dictionary">Одно слово на строке</string>
     <string name="pref_title_user_dictionary">Пользовательский словарь</string>
     <string name="pref_user_dictionary_default_value">Привет\nМир</string>
@@ -232,12 +233,14 @@
     <string name="setting_icon_style_ru" translatable="false">Setting_Icon_Style_Ru</string>
     <string name="pref_title_icon_style_ru">Стиль иконки (Русский)</string>
     <string-array name="pref_icon_style_key_titles">
-        <item>Флаг</item>
+        <item>Флаг 1</item>
+        <item>Флаг 2</item>
         <item>Ru / En</item>
         <item>RU / EN</item>
     </string-array>
     <string-array name="pref_icon_style_key_values">
         <item>Flag</item>
+        <item>FlagAlt1</item>
         <item>TextCamel</item>
         <item>TextCapital</item>
     </string-array>
@@ -278,12 +281,39 @@
     <string name="setting_floating_icon_style_ru" translatable="false">Setting_FloatingIcon_Style_Ru</string>
     <string name="setting_floating_icon_style_en" translatable="false">Setting_FloatingIcon_Style_En</string>
     <string-array name="pref_floating_icon_style_key_titles">
-        <item>Флаг</item>
+        <item>Флаг 1</item>
+        <item>Флаг 2</item>
         <item>Текст</item>
     </string-array>
     <string-array name="pref_floating_icon_style_key_values">
         <item>Flag</item>
+        <item>FlagAlt1</item>
         <item>TextCustom</item>
+    </string-array>
+
+    <string name="pref_title_floating_icon_animation">Анимация смены языка</string>
+    <string name="setting_floating_icon_animation" translatable="false">Setting_FloatingIcon_Animation</string>
+    <string-array name="pref_floating_icon_animation_key_titles">
+        <item>Нет</item>
+        <item>Проявление</item>
+        <item>Поворот</item>
+        <item>Появление снизу</item>
+        <item>Появление сверху</item>
+        <item>Появление справа</item>
+        <item>Появление слева</item>
+        <item>Увеличение</item>
+        <item>Уменьшение</item>
+    </string-array>
+    <string-array name="pref_floating_icon_animation_key_values">
+        <item>None</item>
+        <item>FadeIn</item>
+        <item>Rotate360</item>
+        <item>MoveUp</item>
+        <item>MoveDown</item>
+        <item>MoveLeft</item>
+        <item>MoveRight</item>
+        <item>ZoomIn</item>
+        <item>ZoomOut</item>
     </string-array>
 
     <string name="setting_floating_icon_text_ru" translatable="false">Setting_FloatingIcon_Text_Ru</string>
@@ -350,6 +380,7 @@
     <string name="text_toast_manual_change_disabled">Ручное исправление выключено</string>
     <string name="text_toast_word_added">Слово добавлено</string>
     <string name="text_toast_word_in_dict_already">Слово уже в словаре</string>
+    <string name="text_toast_word_promoted_to_dict_format">Вы исправили \'%s\' %d раза. Слово добавлено в словарь</string>
 
 
 </resources>

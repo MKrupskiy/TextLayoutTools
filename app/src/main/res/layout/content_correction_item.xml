@@ -15,7 +15,7 @@
             android:layout_alignParentTop="true"
             android:layout_marginLeft="8dp"
             android:layout_marginTop="4dp"
-            android:textSize="24dp"
+            android:textSize="24sp"
             android:text="Hello" />
 
         <TextView
@@ -37,7 +37,7 @@
             android:layout_marginTop="4dp"
             android:layout_toEndOf="@+id/textViewItemMiddle"
             android:text="Hello"
-            android:textSize="24dp" />
+            android:textSize="24sp" />
 
         <ImageButton
             android:id="@+id/btnItemDelete"

@@ -16,6 +16,7 @@ import static by.mkr.blackberry.textlayouttools.ReplacerService.LOG_TAG;
 
 enum IconStyle {
     Flag,
+    FlagAlt1,
     TextCamel,
     TextCapital;
 
@@ -23,6 +24,8 @@ enum IconStyle {
         switch (x) {
             case "Flag":
                 return Flag;
+            case "FlagAlt1":
+                return FlagAlt1;
             case "TextCamel":
                 return TextCamel;
             case "TextCapital":
@@ -39,6 +42,8 @@ enum IconStyle {
         switch (style) {
             case Flag:
                 return lang.isRus() ? R.drawable.ic_flag_russia : R.drawable.ic_flag_gb;
+            case FlagAlt1:
+                return lang.isRus() ? R.drawable.ic_flag_russia : R.drawable.ic_flag_us;
             case TextCamel:
                 return lang.isRus() ? R.drawable.ic_text_ru : R.drawable.ic_text_en;
             case TextCapital:

@@ -5,5 +5,5 @@ enum ActionType {
     AltEnterReplace,
     ManualChange,
     AutoChange,
-    CtrlSpace;
+    CtrlSpace
 }

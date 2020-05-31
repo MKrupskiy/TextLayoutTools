@@ -3,6 +3,7 @@ package by.mkr.blackberry.textlayouttools;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 
 
@@ -45,9 +46,12 @@ public class AppSettings {
     public SoundPattern soundInputEng;
     public SoundPattern soundCorrectRus;
     public SoundPattern soundCorrectEng;
+    public FloatingIconAnimation floatingIconAnimation;
 
     public long whenEnableNotifications;
     public float opacity;
+
+    public UserTempDictionary userTempDict;
 
     private Context _context;
 
@@ -76,7 +80,13 @@ public class AppSettings {
         userDict = sharedPrefs
                 .getString(_context.getString(R.string.setting_user_dictionary), "")
                 .toLowerCase()
+                .replaceAll("\n{2,}", "\n")
+                .replaceAll("\n+$", "")
+                .replaceAll("^\n+", "")
                 .split("\n");
+
+        String userTempDictionaryStr = sharedPrefs.getString(_context.getString(R.string.setting_user_temp_dictionary), "");
+        userTempDict = new UserTempDictionary(userTempDictionaryStr);
 
 
         vibrationIntensity = sharedPrefs.getInt(_context.getString(R.string.setting_vibration_intensity), 5) * 10; // 100%
@@ -125,7 +135,7 @@ public class AppSettings {
         floatingIconBackgroundColor = sharedPrefs.getInt(_context.getString(R.string.setting_floating_icon_background_color), 0x22000000);
 
         int opacityInt = sharedPrefs.getInt(_context.getString(R.string.setting_floating_icon_opacity), 20);
-        opacity = 1 - (float)opacityInt / 100;
+        opacity = 1 - (float) opacityInt / 100;
 
         floatingIconPositionX = sharedPrefs.getInt(_context.getString(R.string.setting_floating_icon_position_x), 0);
         floatingIconPositionY = sharedPrefs.getInt(_context.getString(R.string.setting_floating_icon_position_y), 0);
@@ -135,5 +145,29 @@ public class AppSettings {
         isDetectLanguageByText = sharedPrefs.getBoolean(_context.getString(R.string.setting_check_text_for_language), false);
 
         isFloatingIconShowLangPicker = sharedPrefs.getBoolean(_context.getString(R.string.setting_floating_icon_is_show_lang_picker), true);
+
+        String floatingIconAnimationStr = sharedPrefs.getString(_context.getString(R.string.setting_floating_icon_animation), "FadeIn");
+        floatingIconAnimation = FloatingIconAnimation.fromString(floatingIconAnimationStr);
+    }
+
+    public String getString(int resourceId) {
+        return _context.getString(resourceId);
+    }
+
+    public void updateUserDict(String[] newUserDict) {
+        String newUserDictStr = TextUtils
+                .join("\n", newUserDict)
+                .replaceAll("\n{2,}", "\n");
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(_context);
+        SharedPreferences.Editor edit = sharedPrefs.edit();
+        edit.putString(getString(R.string.setting_user_dictionary), newUserDictStr);
+        edit.apply();
+    }
+
+    public void updateUserTempDict(UserTempDictionary newUserDict) {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(_context);
+        SharedPreferences.Editor edit = sharedPrefs.edit();
+        edit.putString(getString(R.string.setting_user_temp_dictionary), newUserDict.toString());
+        edit.apply();
     }
 }

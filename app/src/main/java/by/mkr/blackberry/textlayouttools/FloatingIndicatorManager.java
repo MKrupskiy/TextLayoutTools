@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -21,12 +23,15 @@ import static by.mkr.blackberry.textlayouttools.ReplacerService.LOG_TAG;
 
 enum FloatingIconStyle {
     Flag,
+    FlagAlt1,
     TextCustom;
 
     public static FloatingIconStyle fromString(String x) {
         switch (x) {
             case "Flag":
                 return Flag;
+            case "FlagAlt1":
+                return FlagAlt1;
             case "TextCustom":
                 return TextCustom;
             default:
@@ -35,17 +40,79 @@ enum FloatingIconStyle {
     }
 }
 
+enum FloatingIconAnimation {
+    None,
+    FadeIn,
+    Rotate360,
+    MoveUp,
+    MoveDown,
+    MoveLeft,
+    MoveRight,
+    ZoomIn,
+    ZoomOut;
+
+    public static FloatingIconAnimation fromString(String x) {
+        switch (x) {
+            case "None":
+                return None;
+            case "FadeIn":
+                return FadeIn;
+            case "Rotate360":
+                return Rotate360;
+            case "MoveUp":
+                return MoveUp;
+            case "MoveDown":
+                return MoveDown;
+            case "MoveLeft":
+                return MoveLeft;
+            case "MoveRight":
+                return MoveRight;
+            case "ZoomIn":
+                return ZoomIn;
+            case "ZoomOut":
+                return ZoomOut;
+            default:
+                return null;
+        }
+    }
+
+    public int getAnimationResource() {
+        switch (this) {
+            case None:
+                return 0;
+            case FadeIn:
+                return R.anim.fade_in;
+            case Rotate360:
+                return R.anim.rotate_360;
+            case MoveUp:
+                return R.anim.move_up;
+            case MoveDown:
+                return R.anim.move_down;
+            case MoveLeft:
+                return R.anim.move_left;
+            case MoveRight:
+                return R.anim.move_right;
+            case ZoomIn:
+                return R.anim.zoom_in;
+            case ZoomOut:
+                return R.anim.zoom_out;
+            default:
+                return 0;
+        }
+    }
+}
+
 
 public class FloatingIndicatorManager implements View.OnClickListener {
 
     private Context _context;
-    private static View _mFloatingView;
-    private static View _collapsedView;
-    private static View _expandedView;
-    private static TextView _textViewCollapsed;
-    private static TextView _textViewExpanded;
-    private static ImageView _flagViewCollapsed;
-    private static ImageView _flagViewExpanded;
+    private View _mFloatingView;
+    private View _collapsedView;
+    private View _expandedView;
+    private TextView _textViewCollapsed;
+    private TextView _textViewExpanded;
+    private ImageView _flagViewCollapsed;
+    private ImageView _flagViewExpanded;
 
 
     FloatingIndicatorManager(Context context) {
@@ -71,6 +138,10 @@ public class FloatingIndicatorManager implements View.OnClickListener {
                         showFlag(R.drawable.ic_flag_russia_col);
                         break;
                     }
+                    case FlagAlt1: {
+                        showFlag(R.drawable.ic_flag_russia_col);
+                        break;
+                    }
                     case TextCustom: {
                         showText(appSettings.floatingIconTextRu);
                         break;
@@ -83,6 +154,10 @@ public class FloatingIndicatorManager implements View.OnClickListener {
                 switch (appSettings.floatingIconStyleEn) {
                     case Flag: {
                         showFlag(R.drawable.ic_flag_gb_col);
+                        break;
+                    }
+                    case FlagAlt1: {
+                        showFlag(R.drawable.ic_flag_us_col);
                         break;
                     }
                     case TextCustom: {
@@ -115,6 +190,9 @@ public class FloatingIndicatorManager implements View.OnClickListener {
         _flagViewExpanded.setVisibility(View.VISIBLE);
         _textViewCollapsed.setVisibility(View.GONE);
         _textViewExpanded.setVisibility(View.GONE);
+
+        AppSettings appSettings = ReplacerService.getAppSettings();
+        startAnimation(_flagViewCollapsed, appSettings.floatingIconAnimation);
     }
     private void showText(String text) {
         _textViewCollapsed.setText(text);
@@ -123,33 +201,18 @@ public class FloatingIndicatorManager implements View.OnClickListener {
         _flagViewExpanded.setVisibility(View.GONE);
         _textViewCollapsed.setVisibility(View.VISIBLE);
         _textViewExpanded.setVisibility(View.VISIBLE);
+
+        AppSettings appSettings = ReplacerService.getAppSettings();
+        startAnimation(_textViewCollapsed, appSettings.floatingIconAnimation);
     }
 
-    /*
-    private static WindowManager.LayoutParams getLayoutParams(AppSettings appSettings) {
-        int layout_params = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-                ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-                : WindowManager.LayoutParams.TYPE_PHONE;
-
-        int isStatusBarFlag = appSettings.floatingIconGravityVert == FloatingIconGravityVert.StatusBar
-                ? WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
-                : 0;
-
-        final WindowManager.LayoutParams params = new WindowManager.LayoutParams(
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                layout_params,
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE | isStatusBarFlag,
-                PixelFormat.TRANSLUCENT);
-        params.gravity = appSettings.floatingIconGravityVert.toGravityInt() | appSettings.floatingIconGravityHoriz.toGravityInt();
-        params.x = 0;
-        params.y = appSettings.floatingIconGravityVert == FloatingIconGravityVert.StatusBar
-                ? 10
-                : 0;
-
-        return params;
+    private void startAnimation(View view, FloatingIconAnimation floatingIconAnimation){
+        if (floatingIconAnimation != FloatingIconAnimation.None) {
+            Animation anim = AnimationUtils.loadAnimation(_context, floatingIconAnimation.getAnimationResource());
+            view.startAnimation(anim);
+        }
     }
-    */
+
 
     private void savePosition(int x, int y) {
         //Log.d(LOG_TAG, "POS [" + x + ", " + y + "]");
@@ -157,7 +220,7 @@ public class FloatingIndicatorManager implements View.OnClickListener {
         SharedPreferences.Editor prefsEditor = sharedPrefs.edit();
         prefsEditor.putInt(_context.getString(R.string.setting_floating_icon_position_x), x);
         prefsEditor.putInt(_context.getString(R.string.setting_floating_icon_position_y), y);
-        prefsEditor.commit();
+        prefsEditor.apply();
     }
 
     private void initView() {

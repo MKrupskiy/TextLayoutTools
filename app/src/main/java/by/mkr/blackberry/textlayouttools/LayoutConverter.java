@@ -426,7 +426,7 @@ public class LayoutConverter {
         boolean isNeedsCorrection = Character.isUpperCase(textToCorrect.charAt(0))
                 && Character.isUpperCase(textToCorrect.charAt(1))
                 && Character.isLowerCase(textToCorrect.charAt(2));
-        Log.d(LOG_TAG, "Needs corect: " + isNeedsCorrection);
+        Log.d(LOG_TAG, "Needs corect double capital: " + isNeedsCorrection + "; " + textToCorrect);
         return isNeedsCorrection;
     }
 

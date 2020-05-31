@@ -3,9 +3,6 @@ package by.mkr.blackberry.textlayouttools;
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.util.Log;
-
-import static by.mkr.blackberry.textlayouttools.ReplacerService.LOG_TAG;
 
 
 enum SoundPattern {

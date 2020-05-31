@@ -3,7 +3,6 @@ package by.mkr.blackberry.textlayouttools;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
@@ -23,16 +22,19 @@ public class ReplacerActivity extends AppCompatActivity {
                 .getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT);
         boolean readonly = intent
                 .getBooleanExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, false);
-        String inputMethodStr = PreferenceManager
-                .getDefaultSharedPreferences(this)
-                .getString(getString(R.string.setting_input_method), "Qwerty");
-        InputMethod inputMethod = InputMethod.fromString(inputMethodStr);
+
+
+        InputMethod inputMethod = InputMethod.Qwerty;
+        AppSettings appSettings = ReplacerService.getAppSettings();
+        if (appSettings != null) {
+            inputMethod = appSettings.inputMethod;
+        }
         /*
         Boolean isEnabled = PreferenceManager
                 .getDefaultSharedPreferences(this)
                 .getBoolean(getString(R.string.switch_enabled_preference), true);
         */
-        Boolean isEnabled = true;
+        boolean isEnabled = true;
 
         Log.d(LOG_TAG, (readonly ? "ReadOnly": "Editable") + "; " + (isEnabled ? "Enabled": "Disabled"));
 

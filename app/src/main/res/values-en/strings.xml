@@ -116,4 +116,6 @@
     <string name="pref_description_floating_icon_is_show_lang_picker">Show language switch dialog when tapping on icon</string>
     <string name="pref_title_check_text_for_language">Detect language based on text</string>
     <string name="pref_description_check_text_for_language">Selected language will be selected based on entered text</string>
+    <string name="pref_title_floating_icon_animation">Floating icon animation</string>
+    <string name="text_toast_word_promoted_to_dict_format">You\'ve corrected \'%s\' %d times. The word has been added to dictionary</string>
 </resources>

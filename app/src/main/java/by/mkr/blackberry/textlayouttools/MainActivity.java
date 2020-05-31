@@ -25,12 +25,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
 
         // Floating Action Button
-        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        final FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Accessibility Button
-        Button btnAccessibility = (Button) findViewById(R.id.btnAccessibilityOpen);
+        Button btnAccessibility = findViewById(R.id.btnAccessibilityOpen);
         btnAccessibility.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initMuteButtons() {
         // Mute 1h Button
-        Button btnMute1h = (Button) findViewById(R.id.btnMute1h);
+        Button btnMute1h = findViewById(R.id.btnMute1h);
         btnMute1h.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Mute 24h Button
-        Button btnMute24h = (Button) findViewById(R.id.btnMute24h);
+        Button btnMute24h = findViewById(R.id.btnMute24h);
         btnMute24h.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Mute Enable Button
-        Button btnEnable = (Button) findViewById(R.id.btnMuteEnable);
+        Button btnEnable = findViewById(R.id.btnMuteEnable);
         btnEnable.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

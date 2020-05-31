@@ -171,8 +171,8 @@ public class CorrectionAdapter extends RecyclerView.Adapter<CorrectionAdapter.My
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setView(promptsView);
 
-        final EditText inputFrom = (EditText) promptsView.findViewById(R.id.editText);
-        final EditText inputTo = (EditText) promptsView.findViewById(R.id.editText2);
+        final EditText inputFrom = promptsView.findViewById(R.id.editText);
+        final EditText inputTo = promptsView.findViewById(R.id.editText2);
         inputFrom.setText(fromText);
         inputTo.setText(toText);
 
@@ -185,7 +185,7 @@ public class CorrectionAdapter extends RecyclerView.Adapter<CorrectionAdapter.My
 
         // Set positive button action with validation
         Button b = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-        ((Button) b).setOnClickListener(
+        b.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {

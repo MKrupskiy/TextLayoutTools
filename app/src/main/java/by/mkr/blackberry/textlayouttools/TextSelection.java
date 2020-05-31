@@ -88,11 +88,11 @@ public class TextSelection {
         return _inputText.substring(_endSelection);
     }
 
-    public Character getLastChar() {
+    public Character getLastEnteredChar() {
         if (_inputText == null || _inputText.length() == 0) {
             return null;
         } else {
-            return _inputText.charAt(_inputText.length() - 1);
+            return _inputText.charAt(_endSelection - 1);
         }
     }
 }

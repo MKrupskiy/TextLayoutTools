@@ -26,6 +26,17 @@
             android:positiveButtonText="@null"
             android:dependency="@string/setting_is_auto_correct"
             android:title="@string/pref_title_autocorrect_direction" />
+
+        <!--
+        <EditTextPreference
+            android:key="@string/setting_user_temp_dictionary"
+            android:selectAllOnFocus="false"
+            android:singleLine="false"
+            android:inputType="textMultiLine"
+            android:dependency="@string/setting_is_auto_correct"
+            android:summary="@string/pref_description_user_dictionary"
+            android:title="@string/pref_title_user_dictionary" />
+        -->
     </PreferenceCategory>
 
 </PreferenceScreen>

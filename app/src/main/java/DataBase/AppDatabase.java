@@ -46,7 +46,8 @@ public abstract class AppDatabase extends RoomDatabase {
                                         new Correction(0, "ожан", "оддан"),
                                         new Correction(0, "ожерж", "оддерж"),
                                         new Correction(0, "ожуб", "оддуб"),
-                                        new Correction(0, "уюот", "уббот"));
+                                        new Correction(0, "уюот", "уббот"),
+                                        new Correction(0, "стрэ", "стрее"));
                             }
                         });
                     }

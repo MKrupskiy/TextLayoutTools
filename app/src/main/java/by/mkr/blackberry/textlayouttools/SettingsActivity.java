@@ -304,6 +304,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(findPreference(getString(R.string.setting_floating_icon_text_ru)));
             bindPreferenceSummaryToValue(findPreference(getString(R.string.setting_floating_icon_text_en)));
 
+            bindPreferenceSummaryToValue(findPreference(getString(R.string.setting_floating_icon_animation)));
+
             // Bind custom code preference
             Preference button = findPreference(getString(R.string.setting_floating_icon_reset_position));
             button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -317,7 +319,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     prefsEditor.putInt(getString(R.string.setting_floating_icon_position_x), 0);
                     prefsEditor.putInt(getString(R.string.setting_floating_icon_position_y), 0);
                     prefsEditor.putBoolean(getString(R.string.setting_floating_icon_reset_position), !prevValue);
-                    prefsEditor.commit();
+                    prefsEditor.apply();
                     return true;
                 }
             });
