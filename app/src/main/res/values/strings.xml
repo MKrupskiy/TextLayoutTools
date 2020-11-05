@@ -2,13 +2,14 @@
     <string name="app_name">Text Layout Tools</string>
     <string name="contact_email_title">Связаться с разработчиком</string>
     <string name="action_settings">Настройки</string>
+    <string name="action_statistics">Статистика</string>
     <string name="action_about">О программе</string>
     <string name="descr_accessibility_service">Разрешение требуется для отслеживания нажатия комбинации клавиш и замены текста. Введенный текст не сохраняется и не передается сторонним сервисам.</string>
 
     <string name="title_activity_settings">Настройки</string>
 
     <!-- Strings related to Main Activity -->
-    <string name="main_app_name_version" translatable="false">Text Layout Tools 1.12</string>
+    <string name="main_app_name_version" translatable="false">Text Layout Tools 1.14</string>
     <string name="main_description">Приложение для смены раскладки текста.</string>
     <string name="main_examples">Автоматическая смена\nCtrl+Q - смена раскладки\nAlt+Enter - смена раскладки со сменой языка</string>
     <!--<string name="main_service_description">Переключение также возможно при помощи комбинации клавиш. Для этого требуется включить поддержку в меню настроек Специальные Возможности</string>-->
@@ -41,10 +42,10 @@
         <item>qwertz</item>
     </string-array>
     <string-array name="pref_input_method_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
+        <item>Qwerty</item>
+        <item>Translit</item>
+        <item>UsbKb</item>
+        <item>Qwertz</item>
     </string-array>
     <string name="pref_title_keyboard_input_settings">Открыть Настройки Ввода</string>
 
@@ -55,12 +56,16 @@
     <string name="pref_h2_text_selection">Выделение</string>
 
     <string name="setting_shortcut_enabled_key" translatable="false">Setting_Enabled</string>
+    <string name="setting_is_replace_alt_enter" translatable="false">Setting_Replace_Alt_Enter</string>
     <string name="setting_control_key" translatable="false">Setting_Control</string>
     <string name="setting_shortcut_key" translatable="false">Setting_Shortcut</string>
     <string name="setting_select_replaced" translatable="false">Setting_Select_Replaced</string>
 
-    <string name="pref_description_shortcut_enabled">Смена раскладки при нажатии Ctrl+&lt;key&gt; и Alt+Enter</string>
+    <string name="pref_description_shortcut_enabled">Смена раскладки при нажатии Ctrl+&lt;key&gt;</string>
     <string name="pref_title_shortcut_enabled">Переключение по комбинации клавиш</string>
+
+    <string name="pref_description_is_replace_alt_enter">Смена раскладки при нажатии Alt+Enter (со сменой яыка)</string>
+    <string name="pref_title_is_replace_alt_enter">Переключение по Alt+Enter</string>
 
     <string name="pref_title_control_key">Клавиша Ctrl</string>
     <string-array name="pref_control_key_titles">
@@ -91,6 +96,8 @@
         <item>K</item>
         <item>L</item>
         <item>M</item>
+        <item>0</item>
+        <item>$</item>
     </string-array>
     <string-array name="pref_shortcut_values">
         <item>45</item>
@@ -102,6 +109,8 @@
         <item>39</item>
         <item>40</item>
         <item>41</item>
+        <item>7</item>
+        <item>11</item>
     </string-array>
 
     <string name="pref_title_system_accessibility_settings">Открыть Специальные Возможности</string>
@@ -145,6 +154,12 @@
         <item>Ru</item>
         <item>En</item>
     </string-array>
+
+    <string name="setting_apps_black_list_autocorrect" translatable="false">Setting_Apps_Black_List_Autocorrect</string>
+    <string name="setting_apps_black_list_all" translatable="false">Setting_Apps_Black_List_All</string>
+    <string name="pref_title_apps_black_list">Программы-Исключения</string>
+    <string name="pref_description_apps_black_list">Программы, в которых НЕ будет выполняться автоисправление</string>
+    <string name="dialog_text_add_blacklist_app">Добавить программу</string>
 
 
     <!-- Example settings Notification -->
@@ -252,7 +267,6 @@
     <string name="pref_header_floating_indicator">Плавающий Индикатор</string>
     <string name="pref_h2_floating_icon">Плавающий Индикатор</string>
     <string name="pref_h2_floating_icon_style">Стиль</string>
-    <string name="pref_h2_floating_icon_flag">Параметры Флага</string>
     <string name="pref_h2_floating_icon_text">Параметры Текста</string>
 
     <string name="setting_is_show_floating_icon" translatable="false">Setting_Show_Floating_Icon</string>
@@ -283,11 +297,15 @@
     <string-array name="pref_floating_icon_style_key_titles">
         <item>Флаг 1</item>
         <item>Флаг 2</item>
+        <item>Флаг 1 Ч/Б</item>
+        <item>Флаг 2 Ч/Б</item>
         <item>Текст</item>
     </string-array>
     <string-array name="pref_floating_icon_style_key_values">
         <item>Flag</item>
         <item>FlagAlt1</item>
+        <item>FlagBw</item>
+        <item>FlagAlt1Bw</item>
         <item>TextCustom</item>
     </string-array>
 
@@ -328,11 +346,13 @@
     <string name="setting_floating_icon_background_color" translatable="false">Setting_FloatingIcon_BackgroundColor</string>
     <string name="pref_title_floating_icon_background_color">Цвет заливки</string>
 
+    <!--
     <string name="setting_floating_icon_text_size" translatable="false">Setting_FloatingIcon_Text_Size</string>
     <string name="pref_title_floating_icon_text_size">Размер текста</string>
+    -->
 
     <string name="setting_floating_icon_flag_size" translatable="false">Setting_FloatingIcon_Flag_Size</string>
-    <string name="pref_title_floating_icon_flag_size">Размер флага</string>
+    <string name="pref_title_floating_icon_flag_size">Размер индикатора</string>
 
     <string name="setting_floating_icon_opacity" translatable="false">Setting_FloatingIcon_Opacity</string>
     <string name="pref_title_floating_icon_opacity">Прозрачность</string>
@@ -357,10 +377,39 @@
     <string name="pref_title_check_text_for_language">Определять язык по тексту</string>
 
     <string name="setting_is_log_to_sd" translatable="false">Setting_Auto_Log_To_SD</string>
-    <string name="pref_description_is_log_to_sd">Записывать логи событий в файл \'tlt_log.txt\' в корне внутренней памяти. Необхожимо предоставить разрешение на запись в Память и USB.\nВНИМАНИЕ! В файле будет содержаться введённый текст.</string>
+    <string name="pref_description_is_log_to_sd">Записывать логи событий в файл \'TextLayoutTools\tlt_log.txt\' во внутренней памяти. Необхожимо предоставить разрешение на запись в Память и USB.\nВНИМАНИЕ! В файле будет содержаться введённый текст.</string>
     <string name="pref_title_is_log_to_sd">Записывать логи событий в файл</string>
 
     <string name="setting_open_app_settings">Открыть настройки приложения</string>
+
+
+    <!-- Example settings Backup -->
+    <string name="pref_header_backup">Резервное Копирование</string>
+    <string name="pref_h2_save_settings_to_file">Сохранение настроек</string>
+    <string name="pref_description_storage_permissions">Необходимо разрешение на запись в память устройства:</string>
+
+    <string name="setting_save_settings_to_file" translatable="false">Setting_Save_To_File</string>
+    <string name="pref_title_save_settings_to_file">Сохранить настройки в файл</string>
+    <string name="text_toast_settings_saved">Настройки сохранены:\n\\TextLayoutTools\\settings.json</string>
+    <string name="text_toast_settings_saved_failed">Ошибка! Настройки не сохранены</string>
+
+    <string name="setting_restore_settings_from_file" translatable="false">Setting_Restore_From_File</string>
+    <string name="pref_title_restore_settings_from_file">Восстановить настройки из файла</string>
+    <string name="text_toast_settings_restored">Настройки восстановлены</string>
+    <string name="text_toast_settings_restored_failed">Ошибка! Настройки не восстановлены</string>
+    <string name="text_toast_pick_file">Выберите файл</string>
+
+
+    <!-- Statistics: -->
+    <string name="title_activity_statistics">Статистика</string>
+    <string name="setting_statistics_manual_changes" translatable="false">Setting_Statistics_Manual_Changes</string>
+    <string name="setting_statistics_auto_changes" translatable="false">Setting_Statistics_Auto_Changes</string>
+
+    <string name="about_text_manual_changes">Ручных исправлений:</string>
+    <string name="about_text_auto_changes">Автоматических исправлений:</string>
+    <string name="about_text_dictionary_words">Слов в словаре:</string>
+    <string name="about_text_clear_statistics">Обнулить</string>
+
 
     <string name="setting_when_enable_notifications" translatable="false">Setting_When_Enable_Notifications</string>
     <string name="text_btn_mute_1h">Без звука 1ч</string>
@@ -369,6 +418,7 @@
     <string name="text_btn_mute_switch">Звук</string>
     <string name="text_btn_autocorrect_switch">Автозамена</string>
     <string name="text_btn_manual_change_switch">Ctrl+Q</string>
+    <string name="text_btn_off_switch">Откл.</string>
     <string name="text_btn_on_check" translatable="false">☑</string>
     <string name="text_btn_off_check" translatable="false">☐</string>
     <string name="text_toast_mute_general">Звук отключён до</string>
@@ -382,5 +432,15 @@
     <string name="text_toast_word_in_dict_already">Слово уже в словаре</string>
     <string name="text_toast_word_promoted_to_dict_format">Вы исправили \'%s\' %d раза. Слово добавлено в словарь</string>
 
+
+    <string name="text_menu_action_search">Поиск</string>
+    <string name="text_menu_action_sorttitle">По названию</string>
+    <string name="text_menu_action_sortstatus">По статусу</string>
+    <string name="text_menu_action_help">Помощь</string>
+
+    <string name="text_help_dialog_title">Приложение может иметь 3 состояния, которые определяют, как TLT обрабатывает текст.</string>
+    <string name="text_help_dialog_all">• ВКЛЮЧИТЬ ВСЁ\nРазрешить автоматическое и ручное исправление.</string>
+    <string name="text_help_dialog_ctrlq">• ТОЛЬКО РУЧНОЕ\nОтключить автоисправление, но оставить Ctrl+Q.</string>
+    <string name="text_help_dialog_none">• ОТКЛЮЧИТЬ ВСЁ\nТекст в программе обрабатываться не будет.</string>
 
 </resources>

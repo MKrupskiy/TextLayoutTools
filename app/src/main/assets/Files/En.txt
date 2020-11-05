@@ -1,7 +1,6 @@
 0.1
 http
 sym
-mod
 zen
 en
 ru
@@ -11,6 +10,8 @@ ps
 mod
 gigabyte
 aer
+alt
+tlt
 down
 load
 zip
@@ -19,6 +20,11 @@ dublin
 brian
 miguel
 dell
+dpi
+ctrl
+nfc
+fhd
+bt
 co
 db
 be

@@ -6,6 +6,12 @@
             android:key="@string/setting_shortcut_enabled_key"
             android:summary="@string/pref_description_shortcut_enabled"
             android:title="@string/pref_title_shortcut_enabled" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="@string/setting_is_replace_alt_enter"
+            android:dependency="@string/setting_shortcut_enabled_key"
+            android:summary="@string/pref_description_is_replace_alt_enter"
+            android:title="@string/pref_title_is_replace_alt_enter" />
         <ListPreference
             android:defaultValue="129"
             android:entries="@array/pref_control_key_titles"

@@ -37,6 +37,17 @@
             android:summary="@string/pref_description_user_dictionary"
             android:title="@string/pref_title_user_dictionary" />
         -->
+
+        <!--
+        <Preference android:title="@string/pref_title_apps_black_list"
+            android:summary="@string/pref_description_apps_black_list"
+            android:dependency="@string/setting_is_auto_correct">
+            <intent
+                android:targetPackage="by.mkr.blackberry.textlayouttools"
+                android:targetClass="by.mkr.blackberry.textlayouttools.AppsBlackListActivity"/>
+        </Preference>
+        -->
+
     </PreferenceCategory>
 
 </PreferenceScreen>

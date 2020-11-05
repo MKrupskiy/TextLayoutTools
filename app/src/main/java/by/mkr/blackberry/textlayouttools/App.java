@@ -1,10 +1,15 @@
 package by.mkr.blackberry.textlayouttools;
 
 import android.app.Application;
+import android.os.Environment;
 import android.util.Log;
+
+import java.io.File;
 import java.util.List;
 import DataBase.AppDatabase;
 import DataBase.Correction;
+
+import static by.mkr.blackberry.textlayouttools.ReplacerService.LOG_TAG;
 
 public class App extends Application/* implements LifecycleOwner*/ {
     /*private LifecycleRegistry _reg;*/
@@ -76,5 +81,18 @@ public class App extends Application/* implements LifecycleOwner*/ {
 
     public static void updateCorrections(List<Correction> corrections) {
         _corrections = corrections;
+    }
+
+    public static File createAppFolder() {
+        try {
+            File f = new File(Environment.getExternalStorageDirectory(), "TextLayoutTools");
+            if (!f.exists()) {
+                f.mkdirs();
+            }
+            return f;
+        } catch (Exception ex) {
+            Log.d(LOG_TAG, "Ex createAppFolder: " + ex.getMessage());
+        }
+        return null;
     }
 }

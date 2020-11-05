@@ -5,5 +5,18 @@ enum ActionType {
     AltEnterReplace,
     ManualChange,
     AutoChange,
-    CtrlSpace
+    CtrlSpace;
+
+    public boolean isAuto() {
+        switch(this) {
+            case AutoChange:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    public boolean isManual() {
+        return !isAuto();
+    }
 }

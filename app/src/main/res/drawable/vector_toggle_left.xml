@@ -1,0 +1,31 @@
+<vector android:name="vector"
+    android:width="64dp"
+    android:height="32dp"
+    android:viewportWidth="64"
+    android:viewportHeight="32"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <path
+        android:name="axis_left_circle"
+        android:pathData=" M 16,8.5    a 8,8  10 0,0 0,16"
+        android:fillColor="#88888888"/>
+    <path
+        android:name="axis_left_square"
+        android:pathData="M16,8.5h16v16h-16z"
+        android:fillColor="#88888888"/>
+    <path
+        android:name="axis_right_square"
+        android:pathData="M32,8.5h16v16h-16z"
+        android:fillColor="#88888888"/>
+    <path
+        android:name="axis_right_circle"
+        android:pathData=" M 48,24.5    a 8,8  10 0,0 0,-16"
+        android:fillColor="#88888888"/>
+    <path
+        android:name="circle_shadow"
+        android:pathData=" M 0,16.5    a 15,15  10 1,1 0,1"
+        android:fillColor="#33000000"/>
+    <path
+        android:name="circle"
+        android:pathData=" M 2,15.5    a 15,15  10 1,1 0,1"
+        android:fillColor="#FFDDDDDD"/>
+</vector>

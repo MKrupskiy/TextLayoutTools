@@ -1,0 +1,4 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/ic_flag_gb"/>
+    <item android:drawable="@drawable/ic_flag_status_autocorrect_bar"/>
+</layer-list>

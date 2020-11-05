@@ -1,0 +1,25 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="info.androidhive.recyclerviewsearch.MainActivity">
+    <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_search_black_24dp"
+        android:orderInCategory="100"
+        android:title="@string/text_menu_action_search"
+        app:showAsAction="always"
+        app:actionViewClass="android.support.v7.widget.SearchView" />
+    <item
+        android:id="@+id/action_sort"
+        android:icon="@drawable/ic_sort_title_white"
+        android:orderInCategory="100"
+        android:title="@string/text_menu_action_sorttitle"
+        app:showAsAction="ifRoom" >
+    </item>
+    <item
+        android:id="@+id/action_help"
+        android:icon="@drawable/ic_help_outline_white_24dp"
+        android:orderInCategory="100"
+        android:title="@string/text_menu_action_help"
+        app:showAsAction="ifRoom" />
+</menu>

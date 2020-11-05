@@ -80,6 +80,11 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
 
+        if (id == R.id.action_statistics) {
+            startActivity(new Intent(MainActivity.this, StatisticsActivity.class));
+            return true;
+        }
+
         if (id == R.id.action_about) {
             startActivity(new Intent(MainActivity.this, AboutActivity.class));
             return true;

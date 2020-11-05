@@ -7,6 +7,8 @@ public class TextSelection {
     private String _inputText;
     private int _startSelection;
     private int _endSelection;
+    private int _leftMaxLetters = 30;
+    private int _rightMaxLetters = 30;
 
     public TextSelection() {
         _nodeInfo = null;
@@ -26,6 +28,12 @@ public class TextSelection {
 
     public String get_inputText() {
         return _inputText;
+    }
+    public String get_inputTextTruncated() {
+        int pos = this.get_endSelection() -1;// -1 because of corrections in the middle of the string ("hello NEW |world")
+        int leftBorder = pos - _leftMaxLetters > 0 ? pos - _leftMaxLetters : 0;
+        int rightBorder = pos + _rightMaxLetters > _inputText.length()-1 ? pos + _rightMaxLetters : _inputText.length()-1;
+        return _inputText.substring(leftBorder, rightBorder);
     }
     public void set_inputText(String _inputText) {
         this._inputText = _inputText;

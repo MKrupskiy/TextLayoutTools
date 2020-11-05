@@ -1,0 +1,24 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/pref_h2_save_settings_to_file">
+        <Preference
+            android:key="@string/setting_save_settings_to_file"
+            android:title="@string/pref_title_save_settings_to_file"/>
+
+        <Preference
+            android:key="@string/setting_restore_settings_from_file"
+            android:title="@string/pref_title_restore_settings_from_file"/>
+
+        <Preference
+            android:selectable="false"
+            android:enabled="true"
+            android:key="dummy_key"
+            android:summary="@string/pref_description_storage_permissions" />
+        <Preference android:title="@string/setting_open_app_settings"
+            android:icon="@drawable/ic_chevron_right_black_24dp">
+            <intent android:action="android.settings.APPLICATION_DETAILS_SETTINGS"
+                android:data="package:by.mkr.blackberry.textlayouttools" />
+        </Preference>
+    </PreferenceCategory>
+
+</PreferenceScreen>

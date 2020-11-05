@@ -34,6 +34,14 @@
                 android:layout_height="wrap_content"
                 android:text="RU/EN"
                 android:visibility="visible"/>
+            <ImageView
+                android:id="@+id/collapsed_flag_status"
+                android:layout_width="80px"
+                android:layout_height="wrap_content"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
+                android:src="@drawable/ic_flag_status_autocorrect"
+                android:visibility="gone" />
         </RelativeLayout>
 
         <!-- this is the expanded layout -->

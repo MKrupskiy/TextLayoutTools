@@ -2,6 +2,7 @@ package by.mkr.blackberry.textlayouttools;
 
 
 import android.annotation.TargetApi;
+import android.app.Instrumentation;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
@@ -14,8 +15,10 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
+import android.view.inputmethod.BaseInputConnection;
 import android.view.inputmethod.InputMethodManager;
 import android.view.inputmethod.InputMethodSubtype;
+import android.widget.EditText;
 import android.widget.Toast;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -35,7 +38,9 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
             "by.tlt.dummyapp",
             "com.android.systemui",
             //"com.blackberry.blackberrylauncher",
-            "com.blackberry.keyboard"
+            "com.blackberry.keyboard",
+            "com.google.android.inputmethod.latin", // Gboard
+            "ru.androidteam.rukeyboard" // rukeyboard
     );
 
     private static int[] _notHandleInputs = {
@@ -76,6 +81,9 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
 
     private long _lastSymPressed;
 
+    //private boolean _isSkipApplication;
+    private BlacklistItemBlockState _currentState;
+
 
 
     @Override
@@ -110,6 +118,13 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
         // mod 129 - BB right ctrl key, 65 - left ctrl
         // key code = 45 - Q
         try {
+            // Do not act if blacklisted All
+            if (_currentState == BlacklistItemBlockState.None) {
+                Log.d(LOG_TAG, "blacklisted All");
+                return super.onKeyEvent(event);
+            }
+
+
             boolean isHandled = false;
 
             int pressAction = event.getAction();
@@ -135,12 +150,14 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
 
             // Change Text Layout
             if (_appSettings.isEnabled && pressAction == KeyEvent.ACTION_DOWN) {
-                boolean isAltEnter = (keyMod == 18 && keyCode == KeyEvent.KEYCODE_ENTER);
+                boolean isAltEnter = keyMod == 18 && keyCode == KeyEvent.KEYCODE_ENTER;
                 boolean isCtrlSpace = (keyMod == 12288 && keyCode == KeyEvent.KEYCODE_SPACE) // Ctrl // 20480 - right ctrl
                                     || (keyMod == 327680 && keyCode == KeyEvent.KEYCODE_SPACE) // Win key
                                     || (event.isShiftPressed() && keyCode == KeyEvent.KEYCODE_SPACE); // Shift+Space
 
 
+                log("isAltEnter: " + isAltEnter + "; isCtrlSpace: " + isCtrlSpace);
+                log("keyMod: " + keyMod + "; keyCode: " + keyCode);
 
 
                 if (_appSettings.isShowInfo) {
@@ -161,8 +178,8 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
 
 
                 if ( (keyMod == _appSettings.selectedCtrlMod && keyCode == _appSettings.selectedShortCut)
-                        || isAltEnter
-                        || isCtrlSpace
+                        || (isAltEnter && _appSettings.isReplaceAltEnter)
+                        || (isCtrlSpace && _appSettings.isReplaceAltEnter)
                 ) {
                     _isProgramChange = true;
                     log("_isProgramChange3:" + _isProgramChange);
@@ -182,8 +199,6 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
 
                             // Do not change via Alt+Enter
                             if (!isAltEnter && !isCtrlSpace) {
-
-
                                 // Lang change
                                 int cursorAt = _replacerSelect.get_endSelection();
                                 int wordEnd = LanguageDetector.getNearestWordEnd(_replacerSelect.get_inputText(), _replacerSelect.get_endSelection(), _currentLanguage);
@@ -220,21 +235,30 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                         String locale = ims.getLocale();
                         String locale2 = ims.getLanguageTag();
                         log("locale: " + locale + "; locale2: " + locale2);
-                        boolean isRussian = locale.toLowerCase().contains("ru");
-                        _currentLanguage = Language.getByInputMethod(isRussian ? Language.Ru : Language.En, _appSettings.inputMethod);
+                        if ( (locale != null && locale != "") || (locale2 != null && locale2 != "") ) {
+                            boolean isRussian = locale.toLowerCase().contains("ru") || locale2.toLowerCase().contains("ru");
+                            _currentLanguage = Language.getByInputMethod(isRussian ? Language.Ru : Language.En, _appSettings.inputMethod);
+                        } else {
+                            log("locale not detected: " + _currentLanguage);
+                        }
                     } else {
                         // Can't detect input method (e.g. Russian KB)
-                        log("locale not detected: " + _currentLanguage);
+                        log("InputMethodSubtype not detected: " + _currentLanguage);
                         //_currentLanguage = Language.getByInputMethod(_currentLanguage, _appSettings.inputMethod);
                     }
+
                     if (_appSettings.isShowIcon) {
+                        log("isCtrlSpace updateNotification: " + _currentLanguage);
                         _notifyManager.updateNotification(_currentLanguage);
                     } else {
+                        log("isCtrlSpace clearNotifications");
                         _notifyManager.clearNotifications();
                     }
                     if (_appSettings.isShowFloatingIcon) {
                         _floatingIndicatorManager.setLanguage(_currentLanguage);
+                        log("isCtrlSpace updateNotification fl: " + _currentLanguage);
                     } else {
+                        log("isCtrlSpace clearNotifications fl");
                         _floatingIndicatorManager.clearLanguage();
                     }
                     notify(_currentLanguage, ActionType.CtrlSpace);
@@ -326,9 +350,7 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
             }
 
         } catch (Exception ex) {
-            log("! Ex2: " + ex.getMessage());
             log("! Ex2: " + ex);
-            //logToToast("! Ex: " + ex.getMessage());
         }
 
         _isProgramChange = false;
@@ -349,6 +371,12 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                 // Fix double letters in Russian
                 case AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED: {
                     if (_notHandlePackages.contains(event.getPackageName())) {
+                        break;
+                    }
+
+                    if (_currentState == BlacklistItemBlockState.Autocorrect) {
+                        // App from black list
+                        log("Blacklisted autocorrect");
                         break;
                     }
 
@@ -447,13 +475,17 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                         if (_currentLanguage != newLang) {
                             _currentLanguage = newLang;
                             if (_appSettings.isShowIcon) {
+                                log("isDetectLanguageByText updateNotification: " + _currentLanguage);
                                 _notifyManager.updateNotification(_currentLanguage);
                             } else {
+                                log("isDetectLanguageByText clearNotifications");
                                 _notifyManager.clearNotifications();
                             }
                             if (_appSettings.isShowFloatingIcon) {
+                                log("isDetectLanguageByText updateNotification fl: " + _currentLanguage);
                                 _floatingIndicatorManager.setLanguage(_currentLanguage);
                             } else {
+                                log("isDetectLanguageByText clearNotifications fl");
                                 _floatingIndicatorManager.clearLanguage();
                             }
                             notify(_currentLanguage, ActionType.AltEnter);
@@ -539,7 +571,7 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                     //log(text);
 
                     boolean isRussian = text.contains("Русск") || text.contains("Russ");
-                    boolean isEnglish = text.contains("Англ") || text.contains("Eng");
+                    boolean isEnglish = text.contains("Англ") || text.contains("Eng") || text.contains("Буквы (АБВ)") || text.contains("Латиница");
                     boolean isUkr = text.contains("Украин") || text.contains("Ukrain");
 
                     if (!isRussian && !isEnglish && !isUkr) {
@@ -554,22 +586,50 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                     }
 
                     if (_appSettings.isShowIcon) {
+                        log("NOTIFICATION updateNotification: " + _currentLanguage);
                         _notifyManager.updateNotification(_currentLanguage);
                     } else {
+                        log("NOTIFICATION clearNotifications");
                         _notifyManager.clearNotifications();
                     }
                     if (_appSettings.isShowFloatingIcon) {
+                        log("NOTIFICATION updateNotification fl: " + _currentLanguage);
                         _floatingIndicatorManager.setLanguage(_currentLanguage);
                     } else {
+                        log("NOTIFICATION clearNotifications fl");
                         _floatingIndicatorManager.clearLanguage();
                     }
-                    notify(_currentLanguage, ActionType.AltEnter);
 
+                    notify(_currentLanguage, ActionType.AltEnter);
                     break;
                 }
 
                 // Track input field change
                 case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED: {
+                    CharSequence packageName = event.getPackageName();
+                    if (_notHandlePackages.contains(packageName)) {
+                        break;
+                    }
+                    //Log.d(LOG_TAG+1, "TYPE_WINDOW_STATE_CHANGED: " + event.getPackageName());
+                    BlacklistItemBlockState newState;
+                    if (_appSettings.appsBlackListAutocorrect.contains(packageName)) {
+                        log("block autocorrect: " + packageName);
+                        newState = BlacklistItemBlockState.Autocorrect;
+                    } else {
+                        if (_appSettings.appsBlackListAll.contains(packageName)) {
+                            log("block all: " + packageName);
+                            newState = BlacklistItemBlockState.None;
+                        } else {
+                            log("start handling: " + packageName);
+                            newState = BlacklistItemBlockState.All;
+                        }
+                    }
+                    if (newState != _currentState) {
+                        _currentState = newState;
+                        _floatingIndicatorManager.setStatus(newState);
+                    }
+
+
                     if (_appSettings.isKey2EmulationEnabled && !_notHandlePackages.contains(event.getPackageName())) {
                         log("TYPE_WINDOW_STATE_CHANGED: ");
                         if (event.getSource() != null) {
@@ -696,7 +756,6 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                 }
             }
         } catch (Exception ex) {
-            log("! Ex: " + ex.getMessage());
             log("! Ex: " + ex);
         }
         log("-----");
@@ -771,6 +830,9 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
         if (actionType != ActionType.AutoChange) {
             addToTempDictionary(replacedText, selectedText);
         }
+
+        // Update Statistics
+        updateStatistics(actionType);
     }
     private void replaceSelectedText(TextSelection textSelect, InputMethod inputMethod, boolean isSelectReplaced, ActionType actionType) {
         replaceSelectedText(textSelect, inputMethod, isSelectReplaced, -1, actionType);
@@ -786,6 +848,10 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
         log("CHECK _isProgramChange:" + _isProgramChange);
         if (!_isProgramChange && _appSettings.isAutoCorrect && isReplaceable && !isBlockedByUser) {
             Character lastChar = textSelect.getLastEnteredChar();
+            if (lastChar == null) {
+                log("getLastEnteredChar is null");
+                return;
+            }
             boolean isWordLetter = LanguageDetector.isWordLetter(lastChar, _currentLanguage);
 
             log("^^^^^^^^^^^^^");
@@ -843,6 +909,16 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                     textSelect.set_startSelection(currentWord.Begin);
                     textSelect.set_endSelection(currentWord.End);
                     replaceSelectedText(textSelect, _appSettings.inputMethod, false, cursorAt, ActionType.AutoChange);
+
+
+
+                    try {
+                        log("!GC:");
+                        System.gc();
+                    } catch (Exception ex) {
+                        log("!EX GC:");
+                    }
+
                 }
             } else {
                 _lastAutoReplaced = -1;
@@ -891,6 +967,15 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
     }
 
 
+    private void updateStatistics(ActionType actionType) {
+        if (actionType.isAuto()) {
+            _appSettings.increseStatisticsAutoChange();
+        } else {
+            _appSettings.increseStatisticsManualChange();
+        }
+    }
+
+
     private static boolean isReplaceableInput(int inputType) {
         // Check if any of Not Proceeding Types
         for (int notHandling : _notHandleInputs) {
@@ -922,9 +1007,9 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
 
 
     private static void logToFile(String text) {
-        File sdCard = Environment.getExternalStorageDirectory();
+        File appFolder = App.createAppFolder();
         try {
-            File file = new File(sdCard, "tlt_log.txt");
+            File file = new File(appFolder, "tlt_log.txt");
             if (!file.exists())
             {
                 file.createNewFile();
@@ -1128,7 +1213,6 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
 
         // Floating Icon settings
         if (getString(R.string.setting_floating_icon_flag_size).equals(key)
-                || getString(R.string.setting_floating_icon_text_size).equals(key)
                 || getString(R.string.setting_is_show_floating_icon).equals(key)
                 || getString(R.string.setting_floating_icon_is_unlocked).equals(key)
                 || getString(R.string.setting_floating_icon_style_ru).equals(key)

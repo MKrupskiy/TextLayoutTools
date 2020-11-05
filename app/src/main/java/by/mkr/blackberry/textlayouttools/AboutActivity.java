@@ -12,7 +12,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
-
 public class AboutActivity extends AppCompatActivity {
     private int _pressedCount = 0;
 
@@ -42,6 +41,7 @@ public class AboutActivity extends AppCompatActivity {
                 _pressedCount++;
                 if (_pressedCount == 5) {
                     Animation animBlink = AnimationUtils.loadAnimation(iconImage.getContext(), R.anim.blink);
+                    animBlink.setDuration(1000);
                     iconImage.startAnimation(animBlink);
                     _pressedCount = 0;
                 }

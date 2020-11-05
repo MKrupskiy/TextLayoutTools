@@ -132,8 +132,8 @@ public class CorrectionAdapter extends RecyclerView.Adapter<CorrectionAdapter.My
 
         // Open dialog for created correction
         /*
-        Log.d("ReplacerLog", "text=" + myViewHolder.itemFromText.getText().toString());
-        if (myViewHolder.itemFromText.getText().toString().equals("")) {
+        Log.d("ReplacerLog", "text=" + myViewHolder.packageName.getText().toString());
+        if (myViewHolder.packageName.getText().toString().equals("")) {
             Log.d("ReplacerLog", "call click");
             myViewHolder.layoutView.callOnClick();
         }

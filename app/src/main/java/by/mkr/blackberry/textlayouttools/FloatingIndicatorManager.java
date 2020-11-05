@@ -24,6 +24,8 @@ import static by.mkr.blackberry.textlayouttools.ReplacerService.LOG_TAG;
 enum FloatingIconStyle {
     Flag,
     FlagAlt1,
+    FlagBw,
+    FlagAlt1Bw,
     TextCustom;
 
     public static FloatingIconStyle fromString(String x) {
@@ -32,6 +34,10 @@ enum FloatingIconStyle {
                 return Flag;
             case "FlagAlt1":
                 return FlagAlt1;
+            case "FlagBw":
+                return FlagBw;
+            case "FlagAlt1Bw":
+                return FlagAlt1Bw;
             case "TextCustom":
                 return TextCustom;
             default:
@@ -113,6 +119,8 @@ public class FloatingIndicatorManager implements View.OnClickListener {
     private TextView _textViewExpanded;
     private ImageView _flagViewCollapsed;
     private ImageView _flagViewExpanded;
+    private ImageView _flagViewStatus;
+    private BlacklistItemBlockState _currentState;
 
 
     FloatingIndicatorManager(Context context) {
@@ -142,6 +150,14 @@ public class FloatingIndicatorManager implements View.OnClickListener {
                         showFlag(R.drawable.ic_flag_russia_col);
                         break;
                     }
+                    case FlagBw: {
+                        showFlag(R.drawable.ic_flag_russia_bw);
+                        break;
+                    }
+                    case FlagAlt1Bw: {
+                        showFlag(R.drawable.ic_flag_russia_bw);
+                        break;
+                    }
                     case TextCustom: {
                         showText(appSettings.floatingIconTextRu);
                         break;
@@ -160,6 +176,14 @@ public class FloatingIndicatorManager implements View.OnClickListener {
                         showFlag(R.drawable.ic_flag_us_col);
                         break;
                     }
+                    case FlagBw: {
+                        showFlag(R.drawable.ic_flag_gb_bw);
+                        break;
+                    }
+                    case FlagAlt1Bw: {
+                        showFlag(R.drawable.ic_flag_us_bw);
+                        break;
+                    }
                     case TextCustom: {
                         showText(appSettings.floatingIconTextEn);
                         break;
@@ -172,15 +196,42 @@ public class FloatingIndicatorManager implements View.OnClickListener {
     }
 
     public void clearLanguage() {
-        _flagViewCollapsed.setVisibility(View.GONE);
-        _flagViewExpanded.setVisibility(View.GONE);
-        _textViewCollapsed.setVisibility(View.GONE);
-        _textViewExpanded.setVisibility(View.GONE);
+        if (_flagViewCollapsed != null
+            && _textViewCollapsed != null
+        ) {
+            _flagViewCollapsed.setVisibility(View.GONE);
+            _flagViewExpanded.setVisibility(View.GONE);
+            _textViewCollapsed.setVisibility(View.GONE);
+            _textViewExpanded.setVisibility(View.GONE);
+        }
     }
 
     public void updateSettings() {
         initView();
     }
+
+    public void setStatus(BlacklistItemBlockState state) {
+        if (_currentState != state) {
+            if (_flagViewStatus != null) {
+                switch (state) {
+                    case None:
+                        _flagViewStatus.setVisibility(View.VISIBLE);
+                        _flagViewStatus.setImageResource(R.drawable.ic_flag_status_off);
+                        break;
+                    case Autocorrect:
+                        _flagViewStatus.setVisibility(View.VISIBLE);
+                        _flagViewStatus.setImageResource(R.drawable.ic_flag_status_autocorrect);
+                        break;
+                    case All:
+                    default:
+                        _flagViewStatus.setVisibility(View.GONE);
+                        break;
+                }
+            }
+            _currentState = state;
+        }
+    }
+
 
 
     private void showFlag(int flagResource) {
@@ -192,7 +243,7 @@ public class FloatingIndicatorManager implements View.OnClickListener {
         _textViewExpanded.setVisibility(View.GONE);
 
         AppSettings appSettings = ReplacerService.getAppSettings();
-        startAnimation(_flagViewCollapsed, appSettings.floatingIconAnimation);
+        startAnimation(_collapsedView, appSettings.floatingIconAnimation);
     }
     private void showText(String text) {
         _textViewCollapsed.setText(text);
@@ -203,7 +254,7 @@ public class FloatingIndicatorManager implements View.OnClickListener {
         _textViewExpanded.setVisibility(View.VISIBLE);
 
         AppSettings appSettings = ReplacerService.getAppSettings();
-        startAnimation(_textViewCollapsed, appSettings.floatingIconAnimation);
+        startAnimation(_collapsedView, appSettings.floatingIconAnimation);
     }
 
     private void startAnimation(View view, FloatingIconAnimation floatingIconAnimation){
@@ -287,13 +338,17 @@ public class FloatingIndicatorManager implements View.OnClickListener {
             _flagViewExpanded.requestLayout();
             // Text
             _textViewCollapsed = _mFloatingView.findViewById(R.id.collapsed_text_view);
-            _textViewCollapsed.setTextSize(appSettings.floatingIconTextSize);
+            _textViewCollapsed.setTextSize(appSettings.floatingIconFlagSize / 5.4f + 3);
             _textViewCollapsed.setTextColor(appSettings.floatingIconTextColor);
             _textViewCollapsed.requestLayout();
             _textViewExpanded = _mFloatingView.findViewById(R.id.expanded_text_view);
-            _textViewExpanded.setTextSize(appSettings.floatingIconTextSize);
+            _textViewExpanded.setTextSize(appSettings.floatingIconFlagSize / 5.4f + 3);
             _textViewExpanded.setTextColor(appSettings.floatingIconTextColor);
             _textViewExpanded.requestLayout();
+            // App Status
+            _flagViewStatus = _mFloatingView.findViewById(R.id.collapsed_flag_status);
+            _flagViewStatus.getLayoutParams().width = appSettings.floatingIconFlagSize;
+            _flagViewStatus.requestLayout();
 
             //adding click listener to expanded view
             _expandedView.setOnClickListener(this);

@@ -13,6 +13,13 @@
         android:title="@string/pref_header_shortcut" />
 
     <header
+        android:icon="@drawable/ic_remove_circle_outline_black_24dp"
+        android:title="@string/pref_title_apps_black_list" >
+        <intent android:targetPackage="by.mkr.blackberry.textlayouttools"
+            android:targetClass="by.mkr.blackberry.textlayouttools.AppsBlackListActivity"/>
+    </header>
+
+    <header
         android:fragment="by.mkr.blackberry.textlayouttools.SettingsActivity$AutocorrectPreferenceFragment"
         android:icon="@drawable/ic_g_translate_black_24dp"
         android:title="@string/pref_header_autocorrect" />
@@ -38,6 +45,11 @@
         android:fragment="by.mkr.blackberry.textlayouttools.SettingsActivity$AdditionalPreferenceFragment"
         android:icon="@drawable/ic_widgets_black_24dp"
         android:title="@string/pref_header_additional" />
+
+    <header
+        android:fragment="by.mkr.blackberry.textlayouttools.SettingsActivity$BackupPreferenceFragment"
+        android:icon="@drawable/ic_backup_black_24dp"
+        android:title="@string/pref_header_backup" />
 
     <header
         android:fragment="by.mkr.blackberry.textlayouttools.SettingsActivity$ExperimentalPreferenceFragment"

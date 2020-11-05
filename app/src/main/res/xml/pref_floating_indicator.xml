@@ -3,7 +3,7 @@
 
     <PreferenceCategory android:title="@string/pref_h2_floating_icon">
         <SwitchPreference
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:key="@string/setting_is_show_floating_icon"
             android:summary="@string/pref_description_is_show_floating_icon"
             android:title="@string/pref_title_is_show_floating_icon" />
@@ -76,9 +76,7 @@
             android:key="@string/setting_floating_icon_animation"
             android:dependency="@string/setting_is_show_floating_icon"
             android:title="@string/pref_title_floating_icon_animation" />
-    </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_h2_floating_icon_flag">
         <SeekBarPreference
             android:defaultValue="40"
             android:min="0"
@@ -101,6 +99,7 @@
             android:dependency="@string/setting_is_show_floating_icon"
             android:title="@string/pref_title_floating_icon_text_en" />
 
+        <!--
         <SeekBarPreference
             android:defaultValue="4"
             android:min="0"
@@ -108,6 +107,7 @@
             android:key="@string/setting_floating_icon_text_size"
             android:dependency="@string/setting_is_show_floating_icon"
             android:title="@string/pref_title_floating_icon_text_size"/>
+        -->
 
         <yuku.ambilwarna.widget.AmbilWarnaPreference
             android:key="@string/setting_floating_icon_text_color"
