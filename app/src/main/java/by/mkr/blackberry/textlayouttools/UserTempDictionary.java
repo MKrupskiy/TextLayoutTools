@@ -1,12 +1,9 @@
 package by.mkr.blackberry.textlayouttools;
 
 import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 import static by.mkr.blackberry.textlayouttools.ReplacerService.LOG_TAG;
 

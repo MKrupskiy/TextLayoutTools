@@ -402,15 +402,18 @@
 
     <!-- Statistics: -->
     <string name="title_activity_statistics">Статистика</string>
+    <string name="setting_statistics_should_track" translatable="false">Setting_Statistics_Should_Track</string>
     <string name="setting_statistics_manual_changes" translatable="false">Setting_Statistics_Manual_Changes</string>
     <string name="setting_statistics_auto_changes" translatable="false">Setting_Statistics_Auto_Changes</string>
 
-    <string name="about_text_manual_changes">Ручных исправлений:</string>
-    <string name="about_text_auto_changes">Автоматических исправлений:</string>
-    <string name="about_text_dictionary_words">Слов в словаре:</string>
-    <string name="about_text_clear_statistics">Обнулить</string>
+    <string name="statistics_text_description">Статистика хранится ТОЛЬКО на устройстве.</string>
+    <string name="statistics_text_manual_changes">Ручных исправлений:</string>
+    <string name="statistics_text_auto_changes">Автоматических исправлений:</string>
+    <string name="statistics_text_dictionary_words">Слов в словаре:</string>
+    <string name="statistics_text_clear_statistics">Обнулить</string>
 
 
+    <!-- Other: -->
     <string name="setting_when_enable_notifications" translatable="false">Setting_When_Enable_Notifications</string>
     <string name="text_btn_mute_1h">Без звука 1ч</string>
     <string name="text_btn_mute_8h">Без звука 8ч</string>

@@ -139,11 +139,12 @@
     <string name="text_toast_settings_restored">Settings restored</string>
     <string name="pref_description_storage_permissions">Write Permission to memory is needed:</string>
     <string name="action_statistics">Statistics</string>
-    <string name="about_text_manual_changes">Manual changes:</string>
-    <string name="about_text_auto_changes">Auto changes:</string>
-    <string name="about_text_dictionary_words">Words in dictionary:</string>
-    <string name="about_text_clear_statistics">Reset</string>
+    <string name="statistics_text_manual_changes">Manual changes:</string>
+    <string name="statistics_text_auto_changes">Auto changes:</string>
+    <string name="statistics_text_dictionary_words">Words in dictionary:</string>
+    <string name="statistics_text_clear_statistics">Reset</string>
     <string name="text_toast_pick_file">Pick a file</string>
     <string name="text_toast_settings_restored_failed">Error! Settings are NOT restored</string>
     <string name="title_activity_statistics">Statistics</string>
+    <string name="statistics_text_description">Statistics is being saved ONLY on the device.</string>
 </resources>

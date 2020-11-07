@@ -2,10 +2,8 @@ package by.mkr.blackberry.textlayouttools;
 
 
 import android.annotation.TargetApi;
-import android.app.Instrumentation;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
@@ -15,10 +13,8 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
-import android.view.inputmethod.BaseInputConnection;
 import android.view.inputmethod.InputMethodManager;
 import android.view.inputmethod.InputMethodSubtype;
-import android.widget.EditText;
 import android.widget.Toast;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -610,7 +606,7 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                     if (_notHandlePackages.contains(packageName)) {
                         break;
                     }
-                    //Log.d(LOG_TAG+1, "TYPE_WINDOW_STATE_CHANGED: " + event.getPackageName());
+                    //Log.d(LOG_TAG, "TYPE_WINDOW_STATE_CHANGED: " + event.getPackageName());
                     BlacklistItemBlockState newState;
                     if (_appSettings.appsBlackListAutocorrect.contains(packageName)) {
                         log("block autocorrect: " + packageName);
@@ -831,8 +827,10 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
             addToTempDictionary(replacedText, selectedText);
         }
 
-        // Update Statistics
-        updateStatistics(actionType);
+        // Update Statistics if needed
+        if (_appSettings.isTrackStatistics) {
+            updateStatistics(actionType);
+        }
     }
     private void replaceSelectedText(TextSelection textSelect, InputMethod inputMethod, boolean isSelectReplaced, ActionType actionType) {
         replaceSelectedText(textSelect, inputMethod, isSelectReplaced, -1, actionType);
@@ -1161,6 +1159,12 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         //log(LOG_TAG, "Setting changed: " + key);
+        // Skip if stats update. No need to reload settings
+        if (getString(R.string.setting_statistics_manual_changes).equals(key)
+            || getString(R.string.setting_statistics_auto_changes).equals(key)){
+            return;
+        }
+
         _appSettings.bindSettings(sharedPreferences);
 
 

@@ -2,10 +2,12 @@ package by.mkr.blackberry.textlayouttools;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
 
 public class StatisticsActivity extends AppCompatActivity {
@@ -19,6 +21,16 @@ public class StatisticsActivity extends AppCompatActivity {
 
 
         AppSettings appSettings = ReplacerService.getAppSettings();
+
+        // Enabled switch
+        Switch switchEnable = findViewById(R.id.switchEnableStats);
+        switchEnable.setChecked(appSettings.isTrackStatistics);
+        switchEnable.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                AppSettings appSettings = ReplacerService.getAppSettings();
+                appSettings.toggleStatistics(isChecked);
+            }
+        });
 
         // Manual
         updateValue(R.id.text_stats_manual_changes_val, appSettings.manualChangesCount);

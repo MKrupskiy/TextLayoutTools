@@ -48,6 +48,7 @@ public class AppSettings {
     public boolean isFloatingIconUnlocked;
     public boolean isDetectLanguageByText;
     public boolean isFloatingIconShowLangPicker;
+    public boolean isTrackStatistics;
     public String floatingIconTextRu;
     public String floatingIconTextEn;
     public String[] userDict;
@@ -177,6 +178,8 @@ public class AppSettings {
 
         isFloatingIconShowLangPicker = sharedPrefs.getBoolean(_context.getString(R.string.setting_floating_icon_is_show_lang_picker), true);
 
+        isTrackStatistics = sharedPrefs.getBoolean(_context.getString(R.string.setting_statistics_should_track), true);
+
         String floatingIconAnimationStr = sharedPrefs.getString(_context.getString(R.string.setting_floating_icon_animation), "FadeIn");
         floatingIconAnimation = FloatingIconAnimation.fromString(floatingIconAnimationStr);
 
@@ -214,6 +217,14 @@ public class AppSettings {
 
     public void updateAppsBlackListAll(List<String> newBlackList) {
         updateLinedStringSetting(R.string.setting_apps_black_list_all, newBlackList);
+    }
+
+    public void toggleStatistics(boolean enabled) {
+        isTrackStatistics = enabled;
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(_context);
+        SharedPreferences.Editor edit = sharedPrefs.edit();
+        edit.putBoolean(getString(R.string.setting_statistics_should_track), enabled);
+        edit.apply();
     }
 
     public void increseStatisticsManualChange() {
@@ -391,13 +402,14 @@ public class AppSettings {
             edit.putBoolean(getString(R.string.setting_floating_icon_is_unlocked), newSettings.isFloatingIconUnlocked);
             edit.putBoolean(getString(R.string.setting_check_text_for_language), newSettings.isDetectLanguageByText);
             edit.putBoolean(getString(R.string.setting_floating_icon_is_show_lang_picker), newSettings.isFloatingIconShowLangPicker);
+            edit.putBoolean(getString(R.string.setting_statistics_should_track), newSettings.isTrackStatistics);
             if (newSettings.floatingIconAnimation != null) {
                 edit.putString(getString(R.string.setting_floating_icon_animation), "" + newSettings.floatingIconAnimation);
             }
 
 
             edit.apply();
-            Log.d(LOG_TAG, "replaceSettings: " + newSettings.floatingIconStyleEn);
+            Log.d(LOG_TAG, "replaceSettings: " + newSettings.version);
 
             return true;
         } catch (Exception ex) {
