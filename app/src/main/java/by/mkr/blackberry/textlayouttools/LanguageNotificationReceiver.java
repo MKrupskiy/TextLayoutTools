@@ -82,26 +82,26 @@ public class LanguageNotificationReceiver extends BroadcastReceiver {
     public static NotificationCompat.Action createNotificationAction(@NotNull Context context, @NotNull String actionString) {
         int requestCode = 1001;
         String text = context.getString(R.string.text_btn_mute_1h);
-        int drawableId = R.drawable.ic_chevron_right_black_24dp;
+        int drawableId = R.drawable.ic_open_in_new_24dp;
 
 
         switch (actionString) {
             case LanguageNotificationReceiver.ACTION_MUTE_1H: {
                 requestCode = 1001;
                 text = context.getString(R.string.text_btn_mute_1h);
-                drawableId = R.drawable.ic_chevron_right_black_24dp;
+                drawableId = R.drawable.ic_open_in_new_24dp;
                 break;
             }
             case LanguageNotificationReceiver.ACTION_MUTE_8H: {
                 requestCode = 1002;
                 text = context.getString(R.string.text_btn_mute_8h);
-                drawableId = R.drawable.ic_chevron_right_black_24dp;
+                drawableId = R.drawable.ic_open_in_new_24dp;
                 break;
             }
             case LanguageNotificationReceiver.ACTION_SOUND_ENABLE: {
                 requestCode = 1003;
                 text = context.getString(R.string.text_btn_mute_enable);
-                drawableId = R.drawable.ic_chevron_right_black_24dp;
+                drawableId = R.drawable.ic_open_in_new_24dp;
                 break;
             }
             case LanguageNotificationReceiver.ACTION_MUTE_SWITCH: {
@@ -110,7 +110,7 @@ public class LanguageNotificationReceiver extends BroadcastReceiver {
                     ? context.getString(R.string.text_btn_on_check)
                     : context.getString(R.string.text_btn_off_check))
                     + " " + context.getString(R.string.text_btn_mute_switch);
-                drawableId = R.drawable.ic_chevron_right_black_24dp;
+                drawableId = R.drawable.ic_open_in_new_24dp;
                 break;
             }
             case LanguageNotificationReceiver.ACTION_MANUAL_SWITCH: {
@@ -119,7 +119,7 @@ public class LanguageNotificationReceiver extends BroadcastReceiver {
                         ? context.getString(R.string.text_btn_on_check)
                         : context.getString(R.string.text_btn_off_check))
                         + " " + context.getString(R.string.text_btn_manual_change_switch);
-                drawableId = R.drawable.ic_chevron_right_black_24dp;
+                drawableId = R.drawable.ic_open_in_new_24dp;
                 break;
             }
             case LanguageNotificationReceiver.ACTION_AUTOCORRECT_SWITCH: {
@@ -128,7 +128,7 @@ public class LanguageNotificationReceiver extends BroadcastReceiver {
                         ? context.getString(R.string.text_btn_on_check)
                         : context.getString(R.string.text_btn_off_check))
                         + " " + context.getString(R.string.text_btn_autocorrect_switch);
-                drawableId = R.drawable.ic_chevron_right_black_24dp;
+                drawableId = R.drawable.ic_open_in_new_24dp;
                 break;
             }
             default: {
@@ -275,7 +275,7 @@ public class LanguageNotificationReceiver extends BroadcastReceiver {
         Notification notif = new NotificationCompat.Builder(context, NotifyManager.CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_grasshopper)
                 .setContentTitle("К"+"узнечик н"+"айден!")
-                .setVisibility(Notification.VISIBILITY_PUBLIC)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setColor(Color.GREEN)
                 .build();
 

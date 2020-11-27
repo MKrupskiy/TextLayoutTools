@@ -24,6 +24,7 @@
             android:layout_marginLeft="8dp"
             android:layout_toEndOf="@+id/imageViewIcon"
             android:textSize="20sp"
+            android:textColor="?android:attr/textColorPrimary"
             android:text="Label" />
 
         <TextView
@@ -36,6 +37,7 @@
             android:layout_toEndOf="@+id/imageViewIcon"
             android:text="package.name"
             android:alpha="0.6"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="12sp" />
 
         <by.mkr.controls.ThreeStateToggleView
@@ -57,6 +59,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginRight="66dp"
             android:text="state"
+            android:textColor="?android:attr/textColorPrimary"
             android:alpha="0.4"
             android:textSize="12sp" />
 

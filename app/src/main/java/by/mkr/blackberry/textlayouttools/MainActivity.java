@@ -23,11 +23,12 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AppThemeHelper.setTheme(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        AppThemeHelper.setMenuTheme(this, R.id.toolbar);
 
         // Floating Action Button
         final FloatingActionButton fab = findViewById(R.id.fab);
@@ -53,10 +54,19 @@ public class MainActivity extends AppCompatActivity {
 
         initMuteButtons();
 
+        //boolean isDarkMode = isDarkMode();
+        //Log.d(LOG_TAG+1, "isDarkMode: " + isDarkMode);
+
         // Check if service running
         if (!isServiceRunning(ReplacerService.class)) {
             showServiceDialog();
         }
+
+
+        //Intent intent = new Intent(this, SettingsActivity.class);
+        //intent.putExtra(PreferenceActivity.EXTRA_SHOW_FRAGMENT, SettingsActivity.ExperimentalPreferenceFragment.class.getName());
+        //intent.putExtra(PreferenceActivity.EXTRA_NO_HEADERS, true);
+        //startActivity(intent);
     }
 
     @Override
@@ -104,9 +114,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showServiceDialog() {
-        AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+        AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this, AppTheme.getThemeResId(this.getApplicationContext())).create();
         alertDialog.setTitle(getString(R.string.main_service_not_running_alert));
-        alertDialog.setIcon(R.drawable.ic_keyboard_google_black_24dp);
+        alertDialog.setIcon(R.drawable.ic_keyboard_google_24dp);
         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.dialog_cancel),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
@@ -173,4 +183,56 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    /*private boolean isDarkMode() {
+        int flags = getApplicationContext().getResources().getConfiguration().uiMode &
+                Configuration.UI_MODE_NIGHT_MASK;
+        boolean isNight = false;
+        switch (flags) {
+            case Configuration.UI_MODE_NIGHT_YES:
+                isNight = true;
+                break;
+            case Configuration.UI_MODE_NIGHT_NO:
+                break;
+            default:
+                break;
+        }
+        //AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        return isNight;
+    }*/
+/*
+    private void setTheme() {
+        String themeStr = AppSettings.getSetting(R.string.setting_application_theme, AppTheme.getDefault(), this.getApplicationContext());
+        AppTheme theme = AppTheme.fromString(themeStr);
+        switch (theme) {
+            case Light:
+                break;
+            case Dark:
+                setTheme(R.style.AppThemeDark);
+                break;
+            case Blue:
+                setTheme(R.style.AppThemeBlue);
+                break;
+            default:
+                break;
+        }
+    }
+    private void setMenuTheme() {
+        String themeStr = AppSettings.getSetting(R.string.setting_application_theme, AppTheme.getDefault(), this.getApplicationContext());
+        AppTheme theme = AppTheme.fromString(themeStr);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        switch (theme) {
+            case Light:
+                toolbar.setPopupTheme(R.style.AppTheme_PopupOverlay);
+                break;
+            case Dark:
+                toolbar.setPopupTheme(R.style.AppTheme_PopupOverlay_Dark);
+                break;
+            case Blue:
+                toolbar.setPopupTheme(R.style.AppTheme_PopupOverlay_Blue);
+                break;
+            default:
+                break;
+        }
+    }*/
 }

@@ -78,7 +78,7 @@ public class CorrectionAdapter extends RecyclerView.Adapter<CorrectionAdapter.My
             btnItemDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(layoutView.getContext());
+                    AlertDialog.Builder builder = new AlertDialog.Builder(layoutView.getContext(), AppTheme.getThemeResId(v.getContext()));
                     builder
                             .setCancelable(true)
                             .setTitle(builder.getContext().getString(R.string.dialog_delete_title))
@@ -168,7 +168,7 @@ public class CorrectionAdapter extends RecyclerView.Adapter<CorrectionAdapter.My
         LayoutInflater inflater = LayoutInflater.from(context);
         View promptsView = inflater.inflate(R.layout.content_correction_prompt, null);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, AppTheme.getThemeResId(context));
         builder.setView(promptsView);
 
         final EditText inputFrom = promptsView.findViewById(R.id.editText);

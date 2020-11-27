@@ -11,12 +11,14 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import java.util.Calendar;
 
 public class AboutActivity extends AppCompatActivity {
     private int _pressedCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AppThemeHelper.setTheme(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -35,11 +37,12 @@ public class AboutActivity extends AppCompatActivity {
 
 
         final ImageView iconImage = findViewById(R.id.iconView);
+        updImg(iconImage);
         iconImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 _pressedCount++;
-                if (_pressedCount == 5) {
+                if (_pressedCount == 3) {
                     Animation animBlink = AnimationUtils.loadAnimation(iconImage.getContext(), R.anim.blink);
                     animBlink.setDuration(1000);
                     iconImage.startAnimation(animBlink);
@@ -49,6 +52,21 @@ public class AboutActivity extends AppCompatActivity {
         });
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    private void updImg(ImageView icnImg) {
+        int month = Calendar.getInstance().get(Calendar.MONTH);
+        int day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+        int resId = 0;
+        if (day == 31 && month == 11) resId = R.drawable.ic_icon_new_year;
+        else if (day == 1 && month == 0) resId = R.drawable.ic_icon_new_year;
+        else if (day == 7 && month == 0) resId = R.drawable.ic_icon_christmas_2;
+        else if (day == 23 && month == 1) resId = R.drawable.ic_icon_defenders;
+        else if (day == 8 && month == 2) resId = R.drawable.ic_icon_women;
+        else if (day == 9 && month == 4) resId = R.drawable.ic_icon_victory;
+        else if (day == 31 && month == 9) resId = R.drawable.ic_icon_halloween;
+        else if (day == 25 && month == 11) resId = R.drawable.ic_icon_christmas_1;
+        if (resId != 0) { icnImg.setImageResource(resId); }
     }
 
 }

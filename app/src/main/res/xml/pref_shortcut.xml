@@ -1,5 +1,17 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <PreferenceCategory android:title="@string/pref_h2_input_type">
+        <ListPreference
+            android:defaultValue="Qwerty"
+            android:entries="@array/pref_input_method_titles"
+            android:entryValues="@array/pref_input_method_values"
+            android:key="@string/setting_input_method"
+            android:title="@string/pref_title_input_method" />
+
+        <Preference android:title="@string/pref_title_keyboard_input_settings" android:icon="@drawable/ic_open_in_new_24dp">
+            <intent android:action="android.settings.INPUT_METHOD_SUBTYPE_SETTINGS" />
+        </Preference>
+    </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_h2_shortcut">
         <SwitchPreference
             android:defaultValue="true"
@@ -31,7 +43,7 @@
             android:dependency="@string/setting_shortcut_enabled_key"
             android:title="@string/pref_title_shortcut" />
         <Preference android:title="@string/pref_title_system_accessibility_settings"
-            android:icon="@drawable/ic_chevron_right_black_24dp"
+            android:icon="@drawable/ic_open_in_new_24dp"
             android:dependency="@string/setting_shortcut_enabled_key">
             <intent android:action="android.settings.ACCESSIBILITY_SETTINGS" />
         </Preference>

@@ -15,7 +15,7 @@
             android:key="dummy_key"
             android:summary="@string/pref_description_storage_permissions" />
         <Preference android:title="@string/setting_open_app_settings"
-            android:icon="@drawable/ic_chevron_right_black_24dp">
+            android:icon="@drawable/ic_open_in_new_24dp">
             <intent android:action="android.settings.APPLICATION_DETAILS_SETTINGS"
                 android:data="package:by.mkr.blackberry.textlayouttools" />
         </Preference>

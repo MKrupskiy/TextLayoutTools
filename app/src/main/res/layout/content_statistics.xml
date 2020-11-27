@@ -10,106 +10,143 @@
     tools:context=".AboutActivity"
     tools:showIn="@layout/activity_statistics">
 
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".StatisticsActivity"
-    tools:showIn="@layout/activity_statistics">
-
-    <TextView
-        android:id="@+id/text_stats_description"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:text="@string/statistics_text_description"
-        android:padding="4dp"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TableLayout
-        android:id="@+id/stats_table"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="8dp"
-        android:stretchColumns="1"
-        app:layout_constraintTop_toBottomOf="@+id/text_stats_description">
-
-        <TableRow android:paddingLeft="32dp">
-
-            <TextView
-                android:id="@+id/text_stats_manual_changes"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="right"
-                android:padding="4dp"
-                android:text="@string/statistics_text_manual_changes" />
-
-            <TextView
-                android:id="@+id/text_stats_manual_changes_val"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="left"
-                android:padding="4dp"
-                android:text="0" />
-        </TableRow>
-
-        <TableRow android:paddingLeft="32dp">
-
-            <TextView
-                android:id="@+id/text_stats_auto_changes"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="right"
-                android:padding="4dp"
-                android:text="@string/statistics_text_auto_changes" />
-
-            <TextView
-                android:id="@+id/text_stats_auto_changes_val"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="left"
-                android:padding="4dp"
-                android:text="0" />
-        </TableRow>
-
-        <TableRow android:paddingLeft="32dp">
-
-            <TextView
-                android:id="@+id/text_stats_dictionary_words"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="right"
-                android:padding="4dp"
-                android:text="@string/statistics_text_dictionary_words" />
-
-            <TextView
-                android:id="@+id/text_stats_dictionary_words_val"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="left"
-                android:padding="4dp"
-                android:text="0" />
-        </TableRow>
-    </TableLayout>
-
-    <Button
-        android:id="@+id/btn_clear_stats"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/statistics_text_clear_statistics"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/stats_table" />
+        tools:context=".StatisticsActivity"
+        tools:showIn="@layout/activity_statistics">
+
+        <TextView
+            android:id="@+id/text_stats_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:padding="4dp"
+            android:text="@string/statistics_text_description"
+            android:textColor="?android:attr/textColorPrimary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TableLayout
+            android:id="@+id/stats_table"
+            android:layout_width="360dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:stretchColumns="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_stats_description">
+
+            <TableRow android:paddingLeft="32dp">
+                <TextView
+                    android:id="@+id/text_stats_manual_changes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="right"
+                    android:padding="4dp"
+                    android:text="@string/statistics_text_manual_changes"
+                    android:textColor="?android:attr/textColorPrimary" />
+
+                <TextView
+                    android:id="@+id/text_stats_manual_changes_val"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="left"
+                    android:padding="4dp"
+                    android:text="0"
+                    android:textColor="?android:attr/textColorPrimary" />
+            </TableRow>
+
+            <TableRow android:paddingLeft="32dp">
+                <TextView
+                    android:id="@+id/text_stats_auto_changes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="right"
+                    android:padding="4dp"
+                    android:text="@string/statistics_text_auto_changes"
+                    android:textColor="?android:attr/textColorPrimary" />
+
+                <TextView
+                    android:id="@+id/text_stats_auto_changes_val"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="left"
+                    android:padding="4dp"
+                    android:text="0"
+                    android:textColor="?android:attr/textColorPrimary" />
+            </TableRow>
+
+            <TableRow
+                android:paddingLeft="32dp"
+                android:paddingTop="8dp">
+                <TextView
+                    android:id="@+id/text_stats_dictionary_words"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="right"
+                    android:padding="4dp"
+                    android:text="@string/statistics_text_dictionary_words"
+                    android:textColor="?android:attr/textColorPrimary" />
+
+                <TextView
+                    android:id="@+id/text_stats_dictionary_words_val"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="left"
+                    android:padding="4dp"
+                    android:text="0"
+                    android:textColor="?android:attr/textColorPrimary" />
+            </TableRow>
+
+            <TableRow android:paddingLeft="32dp">
+                <TextView
+                    android:id="@+id/text_stats_blacklist_union"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="right"
+                    android:padding="4dp"
+                    android:text="@string/statistics_text_blacklisted"
+                    android:textColor="?android:attr/textColorPrimary" />
+
+                <TextView
+                    android:id="@+id/text_stats_blacklist_union_val"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="left"
+                    android:padding="4dp"
+                    android:text="0"
+                    android:textColor="?android:attr/textColorPrimary" />
+            </TableRow>
+        </TableLayout>
+
+        <Button
+            android:id="@+id/btn_clear_stats"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="?android:attr/android:buttonTint"
+            android:text="@string/statistics_text_clear_statistics"
+            android:textColor="?android:attr/textColorPrimary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/stats_table" />
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>

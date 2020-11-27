@@ -8,7 +8,6 @@ import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -16,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import com.google.gson.Gson;
@@ -69,6 +69,7 @@ public class AppSettings {
     public SoundPattern soundCorrectRus;
     public SoundPattern soundCorrectEng;
     public FloatingIconAnimation floatingIconAnimation;
+    public AppTheme appTheme;
 
     public transient long whenEnableNotifications;
     public float opacity;
@@ -102,23 +103,30 @@ public class AppSettings {
         isShowIcon = sharedPrefs.getBoolean(_context.getString(R.string.setting_is_show_icon), true);
         isLogToFile = sharedPrefs.getBoolean(_context.getString(R.string.setting_is_log_to_sd), false);
         isSelectReplaced = sharedPrefs.getBoolean(_context.getString(R.string.setting_select_replaced), false);
-        userDict = sharedPrefs
-                .getString(_context.getString(R.string.setting_user_dictionary), "")
+        String userDictStr = sharedPrefs.getString(_context.getString(R.string.setting_user_dictionary), "");
+        userDict = !TextUtils.isEmpty(userDictStr)
+            ? userDictStr
                 .toLowerCase()
                 .replaceAll("\n{2,}", "\n")
                 .replaceAll("\n+$", "")
                 .replaceAll("^\n+", "")
-                .split("\n");
+                .split("\n")
+            : new String[0];
 
         String userTempDictionaryStr = sharedPrefs.getString(_context.getString(R.string.setting_user_temp_dictionary), "");
         userTempDict = new UserTempDictionary(userTempDictionaryStr);
 
-        appsBlackListAutocorrect = Arrays.asList(sharedPrefs
+        String appsBlackListAutocorrectStr = sharedPrefs.getString(_context.getString(R.string.setting_apps_black_list_autocorrect), "");
+        appsBlackListAutocorrect = !TextUtils.isEmpty(appsBlackListAutocorrectStr)
+            ? Arrays.asList(appsBlackListAutocorrectStr.split("\n"))
+            : new ArrayList<String>();
+        /*appsBlackListAutocorrect = Arrays.asList(sharedPrefs
                 .getString(_context.getString(R.string.setting_apps_black_list_autocorrect), "")
-                .split("\n"));
-        appsBlackListAll = Arrays.asList(sharedPrefs
-                .getString(_context.getString(R.string.setting_apps_black_list_all), "")
-                .split("\n"));
+                .split("\n"));*/
+        String appsBlackListAllStr = sharedPrefs.getString(_context.getString(R.string.setting_apps_black_list_all), "");
+        appsBlackListAll = !TextUtils.isEmpty(appsBlackListAllStr)
+            ? Arrays.asList(appsBlackListAllStr.split("\n"))
+            : new ArrayList<String>();
 
 
         vibrationIntensity = sharedPrefs.getInt(_context.getString(R.string.setting_vibration_intensity), 5) * 10; // 100%
@@ -156,6 +164,9 @@ public class AppSettings {
 
         String FloatingIconStyleEnStr = sharedPrefs.getString(_context.getString(R.string.setting_floating_icon_style_en), "Flag");
         floatingIconStyleEn = FloatingIconStyle.fromString(FloatingIconStyleEnStr);
+
+        String appThemeStr = sharedPrefs.getString(_context.getString(R.string.setting_application_theme), AppTheme.getDefault());
+        appTheme = AppTheme.fromString(appThemeStr);
 
         floatingIconTextRu = sharedPrefs.getString(_context.getString(R.string.setting_floating_icon_text_ru), "RUS");
         floatingIconTextEn = sharedPrefs.getString(_context.getString(R.string.setting_floating_icon_text_en), "ENG");
@@ -201,7 +212,6 @@ public class AppSettings {
         SharedPreferences.Editor edit = sharedPrefs.edit();
         edit.putString(getString(R.string.setting_user_dictionary), newUserDictStr);
         edit.apply();
-        updateLinedStringSetting(R.string.setting_apps_black_list_autocorrect, Arrays.asList(newUserDict));
     }
 
     public void updateUserTempDict(UserTempDictionary newUserDict) {
@@ -306,6 +316,38 @@ public class AppSettings {
         }
     }
 
+    public static void setSetting(int settingId, boolean value, Context context) {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor edit = sharedPrefs.edit();
+        edit.putBoolean(context.getString(settingId), value);
+        edit.apply();
+    }
+    public static void setSetting(int settingId, String value, Context context) {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor edit = sharedPrefs.edit();
+        edit.putString(context.getString(settingId), value);
+        edit.apply();
+    }
+    public static void setSetting(int settingId, int value, Context context) {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor edit = sharedPrefs.edit();
+        edit.putInt(context.getString(settingId), value);
+        edit.apply();
+    }
+    public static boolean getSetting(int settingId, boolean defaultVal, Context context) {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPrefs.getBoolean(context.getString(settingId), defaultVal);
+    }
+    public static String getSetting(int settingId, String defaultVal, Context context) {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPrefs.getString(context.getString(settingId), defaultVal);
+    }
+    public static int getSetting(int settingId, int defaultVal, Context context) {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPrefs.getInt(context.getString(settingId), defaultVal);
+    }
+
+
     private boolean replaceSettings(AppSettings newSettings) {
         try {
             SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(_context);
@@ -405,6 +447,9 @@ public class AppSettings {
             edit.putBoolean(getString(R.string.setting_statistics_should_track), newSettings.isTrackStatistics);
             if (newSettings.floatingIconAnimation != null) {
                 edit.putString(getString(R.string.setting_floating_icon_animation), "" + newSettings.floatingIconAnimation);
+            }
+            if (newSettings.appTheme != null) {
+                edit.putString(getString(R.string.setting_application_theme), "" + newSettings.appTheme);
             }
 
 

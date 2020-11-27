@@ -45,6 +45,7 @@ public class ReplacerActivity extends AppCompatActivity {
             Log.d(LOG_TAG, "original=" + text + "; replaced=" + replacedText);
 
             if (!readonly) {
+                appSettings.increseStatisticsManualChange();
                 intent.putExtra(Intent.EXTRA_PROCESS_TEXT, replacedText);
                 setResult(RESULT_OK, intent);
             } else {

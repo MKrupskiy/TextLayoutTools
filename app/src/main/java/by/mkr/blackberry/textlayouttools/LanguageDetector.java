@@ -1,7 +1,6 @@
 package by.mkr.blackberry.textlayouttools;
 
 import android.util.Log;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

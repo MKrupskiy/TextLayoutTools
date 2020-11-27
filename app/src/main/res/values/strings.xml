@@ -9,7 +9,7 @@
     <string name="title_activity_settings">Настройки</string>
 
     <!-- Strings related to Main Activity -->
-    <string name="main_app_name_version" translatable="false">Text Layout Tools 1.14</string>
+    <string name="main_app_name_version" translatable="false">Text Layout Tools 1.15</string>
     <string name="main_description">Приложение для смены раскладки текста.</string>
     <string name="main_examples">Автоматическая смена\nCtrl+Q - смена раскладки\nAlt+Enter - смена раскладки со сменой языка</string>
     <!--<string name="main_service_description">Переключение также возможно при помощи комбинации клавиш. Для этого требуется включить поддержку в меню настроек Специальные Возможности</string>-->
@@ -27,6 +27,23 @@
 
 
     <!-- Strings related to Settings -->
+
+    <!-- Example Application settings -->
+    <string name="pref_header_application">Настройки Приложения</string>
+    <string name="pref_h2_application_theme">Внешний вид</string>
+    <string name="setting_application_theme" translatable="false">Setting_Application_Theme</string>
+    <string name="pref_title_application_theme">Тема (необходим перезапуск)</string>
+    <string-array name="pref_application_theme_titles">
+        <item>Светлая</item>
+        <item>Тёмная</item>
+        <item>Синяя</item>
+    </string-array>
+    <string-array name="pref_application_theme_values">
+        <item>Light</item>
+        <item>Dark</item>
+        <item>Blue</item>
+    </string-array>
+
 
     <!-- Example General settings -->
     <string name="pref_header_languages">Язык Ввода</string>
@@ -398,6 +415,7 @@
     <string name="text_toast_settings_restored">Настройки восстановлены</string>
     <string name="text_toast_settings_restored_failed">Ошибка! Настройки не восстановлены</string>
     <string name="text_toast_pick_file">Выберите файл</string>
+    <string name="text_toast_sd_permission_required">Некоторые функции могут не работать</string>
 
 
     <!-- Statistics: -->
@@ -405,12 +423,15 @@
     <string name="setting_statistics_should_track" translatable="false">Setting_Statistics_Should_Track</string>
     <string name="setting_statistics_manual_changes" translatable="false">Setting_Statistics_Manual_Changes</string>
     <string name="setting_statistics_auto_changes" translatable="false">Setting_Statistics_Auto_Changes</string>
+    <string name="setting_statistics_easter_eggs" translatable="false">Setting_Statistics_Easter_Eggs</string>
 
     <string name="statistics_text_description">Статистика хранится ТОЛЬКО на устройстве.</string>
     <string name="statistics_text_manual_changes">Ручных исправлений:</string>
     <string name="statistics_text_auto_changes">Автоматических исправлений:</string>
     <string name="statistics_text_dictionary_words">Слов в словаре:</string>
+    <string name="statistics_text_blacklisted">Программ в исключениях:</string>
     <string name="statistics_text_clear_statistics">Обнулить</string>
+
 
 
     <!-- Other: -->

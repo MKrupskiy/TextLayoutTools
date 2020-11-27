@@ -7,10 +7,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import DataBase.AppDatabase;
 import DataBase.Correction;
 import DataBase.CorrectionDao;
@@ -21,6 +19,7 @@ public class CorrectionsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AppThemeHelper.setSettingsTheme(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_corrections);
 

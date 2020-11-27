@@ -21,6 +21,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:textColor="?android:attr/textColorPrimary"
+            android:backgroundTint="?android:attr/android:buttonTint"
             android:text="@string/text_btn_mute_1h"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -30,6 +32,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:textColor="?android:attr/textColorPrimary"
+            android:backgroundTint="?android:attr/android:buttonTint"
             android:text="@string/text_btn_mute_8h"
             app:layout_constraintBottom_toBottomOf="@+id/btnMute1h"
             app:layout_constraintStart_toEndOf="@+id/btnMute1h" />
@@ -39,6 +43,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:textColor="?android:attr/textColorPrimary"
+            android:backgroundTint="?android:attr/android:buttonTint"
             android:text="@string/text_btn_mute_enable"
             app:layout_constraintBottom_toBottomOf="@+id/btnMute24h"
             app:layout_constraintStart_toEndOf="@+id/btnMute24h" />
@@ -49,6 +55,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
+            android:textColor="?android:attr/textColorPrimary"
             android:text="@string/main_description"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -84,6 +91,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="0dp"
+            android:textColor="?android:attr/textColorPrimary"
             android:text="@string/main_service_description"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView2" />
@@ -94,6 +102,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:textColor="?android:attr/textColorPrimary"
             android:text="@string/main_examples"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
@@ -105,6 +114,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:textColor="?android:attr/textColorPrimary"
+            android:backgroundTint="?android:attr/android:buttonTint"
             android:text="@string/main_button_accessibility"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/text_examples" />

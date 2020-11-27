@@ -10,17 +10,24 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
+
 public class StatisticsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AppThemeHelper.setTheme(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistics);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
         AppSettings appSettings = ReplacerService.getAppSettings();
+        if (appSettings == null) {
+            return;
+        }
 
         // Enabled switch
         Switch switchEnable = findViewById(R.id.switchEnableStats);
@@ -33,11 +40,13 @@ public class StatisticsActivity extends AppCompatActivity {
         });
 
         // Manual
-        updateValue(R.id.text_stats_manual_changes_val, appSettings.manualChangesCount);
+        updateValue(R.id.text_stats_manual_changes_val, appSettings.manualChangesCount,0);
         // Auto
-        updateValue(R.id.text_stats_auto_changes_val, appSettings.autoChangesCount);
+        updateValue(R.id.text_stats_auto_changes_val, appSettings.autoChangesCount, 0);
         // Dictionary words
-        updateValue(R.id.text_stats_dictionary_words_val, appSettings.userDict.length);
+        updateValue(R.id.text_stats_dictionary_words_val, appSettings.userDict.length, 0);
+        // Blacklisted apps union
+        updateValue(R.id.text_stats_blacklist_union_val, appSettings.appsBlackListAll.size() + appSettings.appsBlackListAutocorrect.size(), 0);
 
         // Clear button
         final Activity that = this;
@@ -50,13 +59,15 @@ public class StatisticsActivity extends AppCompatActivity {
                 that.recreate();
             }
         });
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    private void updateValue(int resId, int value) {
+    private void updateValue(int resId, int value, int total) {
         TextView tvValue = findViewById(resId);
-        tvValue.setText("" + value);
+        if (total == 0) {
+            tvValue.setText("" + value);
+        } else {
+            tvValue.setText(value + " / " + total);
+        }
     }
 
 }

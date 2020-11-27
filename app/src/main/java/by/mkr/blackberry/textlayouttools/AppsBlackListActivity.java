@@ -44,6 +44,7 @@ public class AppsBlackListActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AppThemeHelper.setSettingsTheme(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_appblacklist);
 
@@ -347,7 +348,7 @@ public class AppsBlackListActivity extends AppCompatActivity {
         LayoutInflater inflater = LayoutInflater.from(context);
         View promptsView = inflater.inflate(R.layout.content_blacklist_help, null);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, AppTheme.getThemeResId(context));
         builder.setView(promptsView);
 
         builder

@@ -3,6 +3,7 @@
     <PreferenceCategory android:title="@string/pref_h2_ctrl_emulation">
         <SwitchPreference
             android:defaultValue="false"
+
             android:key="@string/setting_key2emulation_enabled"
             android:summary="@string/pref_description_key2emulation_enabled"
             android:title="@string/pref_title_key2emulation_enabled" />
@@ -29,9 +30,11 @@
             android:summary="@string/pref_description_is_log_to_sd"
             android:title="@string/pref_title_is_log_to_sd" />
 
-        <Preference android:title="@string/setting_open_app_settings"
-            android:icon="@drawable/ic_chevron_right_black_24dp">
-            <intent android:action="android.settings.APPLICATION_DETAILS_SETTINGS"
+        <Preference
+            android:icon="@drawable/ic_open_in_new_24dp"
+            android:title="@string/setting_open_app_settings">
+            <intent
+                android:action="android.settings.APPLICATION_DETAILS_SETTINGS"
                 android:data="package:by.mkr.blackberry.textlayouttools" />
         </Preference>
     </PreferenceCategory>

@@ -8,7 +8,7 @@
             android:summary="@string/pref_description_is_show_floating_icon"
             android:title="@string/pref_title_is_show_floating_icon" />
 
-        <Preference android:title="@string/pref_title_overlay_settings" android:icon="@drawable/ic_chevron_right_black_24dp">
+        <Preference android:title="@string/pref_title_overlay_settings" android:icon="@drawable/ic_open_in_new_24dp">
             <intent android:action="android.settings.action.MANAGE_OVERLAY_PERMISSION"
                 android:data="package:by.mkr.blackberry.textlayouttools" />
         </Preference>
@@ -18,7 +18,7 @@
             android:enabled="true"
             android:key="dummy_key"
             android:summary="@string/pref_description_floating_icon_notificationsIntent" />
-        <Preference android:title="@string/pref_title_notification_settings" android:icon="@drawable/ic_chevron_right_black_24dp">
+        <Preference android:title="@string/pref_title_notification_settings" android:icon="@drawable/ic_open_in_new_24dp">
             <intent android:action="android.settings.APP_NOTIFICATION_SETTINGS" >
                 <extra android:name="android.provider.extra.APP_PACKAGE" android:value="android" />
             </intent>

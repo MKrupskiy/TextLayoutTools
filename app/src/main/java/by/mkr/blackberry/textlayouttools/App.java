@@ -3,7 +3,6 @@ package by.mkr.blackberry.textlayouttools;
 import android.app.Application;
 import android.os.Environment;
 import android.util.Log;
-
 import java.io.File;
 import java.util.List;
 import DataBase.AppDatabase;

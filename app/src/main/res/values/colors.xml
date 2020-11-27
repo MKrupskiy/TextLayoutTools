@@ -3,4 +3,29 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+    <color name="color">#000000</color>
+    <color name="textColorPrimary">#333333</color>
+    <color name="textColorSecondary">#555555</color>
+    <color name="windowBackground">#FFFFFF</color>
+    <color name="buttonBackground">#DDDDDD</color>
+
+    <!-- Dark theme -->
+    <color name="dark_colorPrimary">#00443B</color>
+    <color name="dark_colorPrimaryDark">#00221B</color>
+    <color name="dark_colorAccent">#723183</color>
+    <color name="dark_color">#CCCCCC</color>
+    <color name="dark_textColorPrimary">#BBBBBB</color>
+    <color name="dark_textColorSecondary">#777777</color>
+    <color name="dark_windowBackground">#242424</color>
+    <color name="dark_buttonBackground">#555555</color>
+
+    <!-- Blue theme -->
+    <color name="blue_colorPrimary">#3949AB</color>
+    <color name="blue_colorPrimaryDark">#1135EC</color>
+    <color name="blue_colorAccent">#1135EC</color>
+    <color name="blue_color">#000000</color>
+    <color name="blue_textColorPrimary">#333333</color>
+    <color name="blue_textColorSecondary">#555555</color>
+    <color name="blue_windowBackground">#EEF9FD</color>
+    <color name="blue_buttonBackground">#DDDDDD</color>
 </resources>

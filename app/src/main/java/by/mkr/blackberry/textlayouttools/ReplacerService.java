@@ -763,6 +763,7 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
         log("Interrupt");
         _notifyManager.clearNotifications();
         _floatingIndicatorManager.clearLanguage();
+        PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
     }
 
     private void sendTextToInput(TextSelection textSelect, String replacedText, boolean isSelectReplaced, int newCursor) {
@@ -1158,7 +1159,7 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        //log(LOG_TAG, "Setting changed: " + key);
+        //Log.d(LOG_TAG+1, "Setting changed: " + key);
         // Skip if stats update. No need to reload settings
         if (getString(R.string.setting_statistics_manual_changes).equals(key)
             || getString(R.string.setting_statistics_auto_changes).equals(key)){

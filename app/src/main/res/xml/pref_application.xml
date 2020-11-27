@@ -1,0 +1,13 @@
+<PreferenceScreen xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/pref_h2_application_theme">
+        <ListPreference
+            android:defaultValue="Light"
+            android:entries="@array/pref_application_theme_titles"
+            android:entryValues="@array/pref_application_theme_values"
+            android:key="@string/setting_application_theme"
+            android:title="@string/pref_title_application_theme" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

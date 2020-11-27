@@ -147,4 +147,9 @@
     <string name="text_toast_settings_restored_failed">Error! Settings are NOT restored</string>
     <string name="title_activity_statistics">Statistics</string>
     <string name="statistics_text_description">Statistics is being saved ONLY on the device.</string>
+    <string name="pref_header_application">Application</string>
+    <string name="pref_h2_application_theme">Appearance</string>
+    <string name="pref_title_application_theme">Theme (requires app restart)</string>
+    <string name="statistics_text_blacklisted">Blacklisted apps:</string>
+    <string name="text_toast_sd_permission_required">Some features may not work</string>
 </resources>

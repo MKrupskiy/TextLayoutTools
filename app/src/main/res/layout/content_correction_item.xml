@@ -16,6 +16,7 @@
             android:layout_marginLeft="8dp"
             android:layout_marginTop="4dp"
             android:textSize="24dp"
+            android:textColor="?android:attr/textColorPrimary"
             android:text="FromStr" />
 
         <TextView
@@ -26,6 +27,7 @@
             android:layout_marginLeft="8dp"
             android:layout_marginTop="12dp"
             android:layout_toEndOf="@+id/textViewItemFrom"
+            android:textColor="?android:attr/textColorPrimary"
             android:text="=>" />
 
         <TextView
@@ -36,6 +38,7 @@
             android:layout_marginLeft="8dp"
             android:layout_marginTop="4dp"
             android:layout_toEndOf="@+id/textViewItemMiddle"
+            android:textColor="?android:attr/textColorPrimary"
             android:text="ToStr"
             android:textSize="24dp" />
 
@@ -46,6 +49,7 @@
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="4dp"
             android:layout_weight="1"
+            android:backgroundTint="?android:attr/android:buttonTint"
             app:srcCompat="@android:drawable/ic_menu_delete" />
 
         <View style="@style/Divider"

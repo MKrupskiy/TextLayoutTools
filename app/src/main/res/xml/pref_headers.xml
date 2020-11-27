@@ -3,17 +3,17 @@
     <!-- These settings headers are only used on tablets. -->
 
     <header
-        android:fragment="by.mkr.blackberry.textlayouttools.SettingsActivity$LanguagesPreferenceFragment"
-        android:icon="@drawable/ic_keyboard_black_24dp"
-        android:title="@string/pref_header_languages" />
+        android:fragment="by.mkr.blackberry.textlayouttools.SettingsActivity$ApplicationPreferenceFragment"
+        android:icon="@drawable/ic_settings_24dp"
+        android:title="@string/pref_header_application" />
 
     <header
         android:fragment="by.mkr.blackberry.textlayouttools.SettingsActivity$ShortcutPreferenceFragment"
-        android:icon="@drawable/ic_keyboard_google_black_24dp"
+        android:icon="@drawable/ic_keyboard_google_24dp"
         android:title="@string/pref_header_shortcut" />
 
     <header
-        android:icon="@drawable/ic_remove_circle_outline_black_24dp"
+        android:icon="@drawable/ic_remove_circle_outline_24dp"
         android:title="@string/pref_title_apps_black_list" >
         <intent android:targetPackage="by.mkr.blackberry.textlayouttools"
             android:targetClass="by.mkr.blackberry.textlayouttools.AppsBlackListActivity"/>
@@ -21,11 +21,11 @@
 
     <header
         android:fragment="by.mkr.blackberry.textlayouttools.SettingsActivity$AutocorrectPreferenceFragment"
-        android:icon="@drawable/ic_g_translate_black_24dp"
+        android:icon="@drawable/ic_g_translate_24dp"
         android:title="@string/pref_header_autocorrect" />
 
     <header
-        android:icon="@drawable/ic_sync_black_24dp"
+        android:icon="@drawable/ic_sync_24dp"
         android:title="@string/pref_header_corrections" >
         <intent android:targetPackage="by.mkr.blackberry.textlayouttools"
             android:targetClass="by.mkr.blackberry.textlayouttools.CorrectionsActivity"/>
@@ -33,27 +33,27 @@
 
     <header
         android:fragment="by.mkr.blackberry.textlayouttools.SettingsActivity$NotificationPreferenceFragment"
-        android:icon="@drawable/ic_notifications_active_black_24dp"
+        android:icon="@drawable/ic_notifications_active_24dp"
         android:title="@string/pref_header_notification" />
 
     <header
         android:fragment="by.mkr.blackberry.textlayouttools.SettingsActivity$FloatingIndicatorPreferenceFragment"
-        android:icon="@drawable/ic_photo_size_select_small_black_24dp"
+        android:icon="@drawable/ic_photo_size_select_small_24dp"
         android:title="@string/pref_header_floating_indicator" />
 
     <header
         android:fragment="by.mkr.blackberry.textlayouttools.SettingsActivity$AdditionalPreferenceFragment"
-        android:icon="@drawable/ic_widgets_black_24dp"
+        android:icon="@drawable/ic_widgets_24dp"
         android:title="@string/pref_header_additional" />
 
     <header
         android:fragment="by.mkr.blackberry.textlayouttools.SettingsActivity$BackupPreferenceFragment"
-        android:icon="@drawable/ic_backup_black_24dp"
+        android:icon="@drawable/ic_backup_24dp"
         android:title="@string/pref_header_backup" />
 
     <header
         android:fragment="by.mkr.blackberry.textlayouttools.SettingsActivity$ExperimentalPreferenceFragment"
-        android:icon="@drawable/ic_extension_black_24dp"
+        android:icon="@drawable/ic_extension_24dp"
         android:title="@string/pref_header_experimental" />
 
 </preference-headers>
