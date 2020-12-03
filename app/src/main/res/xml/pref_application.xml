@@ -10,4 +10,18 @@
             android:title="@string/pref_title_application_theme" />
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/pref_h2_application_updates">
+        <ListPreference
+            android:defaultValue="WiFi"
+            android:entries="@array/pref_updates_check_titles"
+            android:entryValues="@array/pref_updates_check_values"
+            android:key="@string/setting_application_updates_check"
+            android:title="@string/pref_title_application_updates_check" />
+        <Preference
+            android:selectable="false"
+            android:enabled="true"
+            android:key="dummy_key"
+            android:summary="@string/pref_description_application_updates_check" />
+    </PreferenceCategory>
+
 </PreferenceScreen>

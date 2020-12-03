@@ -62,7 +62,7 @@
     <string name="pref_title_key2emulation_enabled">Ctrl button emulation (for Key2)</string>
     <string name="pref_description_key2emulation_enabled">"Ctrl+A/C/V/X emulation "</string>
     <string name="pref_title_is_log_to_sd">Log to file</string>
-    <string name="pref_description_is_log_to_sd">Log to file \'tlt_log.txt\' in the root folder. USB and Storage permissions required.\nATTENTION! The file will contain your entered text.</string>
+    <string name="pref_description_is_log_to_sd">Log to file \'TextLayoutTools\\tlt_log.txt\' in the root folder. USB and Storage permissions required.\nATTENTION! The file will contain your entered text.</string>
     <string name="main_description">Application for switching text layout.</string>
     <string name="pref_title_vibration_pattern_rus">To Russian</string>
     <string name="pref_title_vibration_pattern_eng">To English</string>
@@ -152,4 +152,12 @@
     <string name="pref_title_application_theme">Theme (requires app restart)</string>
     <string name="statistics_text_blacklisted">Blacklisted apps:</string>
     <string name="text_toast_sd_permission_required">Some features may not work</string>
+    <string name="pref_h2_application_updates">Updates</string>
+    <string name="pref_title_application_updates_check">Check for updates</string>
+    <string name="about_text_update_no_internet">Server is not responding</string>
+    <string name="notification_text_update_available">Update is available</string>
+    <string name="notification_text_update_available_desc">Tap to download</string>
+    <string name="pref_description_application_updates_check">Manual check is available on \'About\' screen</string>
+    <string name="about_text_update_not_available">No updates</string>
+    <string name="about_text_update_available">☆ Update is available. \nTap to download</string>
 </resources>

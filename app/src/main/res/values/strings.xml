@@ -9,7 +9,7 @@
     <string name="title_activity_settings">Настройки</string>
 
     <!-- Strings related to Main Activity -->
-    <string name="main_app_name_version" translatable="false">Text Layout Tools 1.15</string>
+    <string name="main_app_name_version" translatable="false">Text Layout Tools 1.16</string>
     <string name="main_description">Приложение для смены раскладки текста.</string>
     <string name="main_examples">Автоматическая смена\nCtrl+Q - смена раскладки\nAlt+Enter - смена раскладки со сменой языка</string>
     <!--<string name="main_service_description">Переключение также возможно при помощи комбинации клавиш. Для этого требуется включить поддержку в меню настроек Специальные Возможности</string>-->
@@ -21,9 +21,14 @@
 
     <!-- Strings related to About Activity -->
     <string name="title_activity_about">О программе</string>
+    <string name="about_text_update_available">☆ Доступно обновление. \nНажмите, чтобы скачать</string>
+    <string name="about_text_update_not_available">Обновлений нет</string>
+    <string name="about_text_update_no_internet">Нет ответа от сервера</string>
     <string name="about_text_support">Создано при поддержке форумчан 4pda.\nПожелания и идеи можно отправлять на 4pda или на электронный ящик.</string>
     <string name="about_text_profile_link">Мой профиль на 4pda:\nhttps://4pda.ru/forum/index.php?showuser=1974942</string>
     <string name="about_text_app_link">Обсуждение программы:\nhttps://4pda.ru/forum/index.php?showtopic=965434</string>
+    <string name="notification_text_update_available">Доступно обновление</string>
+    <string name="notification_text_update_available_desc">Коснитесь, чтобы скачать</string>
 
 
     <!-- Strings related to Settings -->
@@ -43,6 +48,22 @@
         <item>Dark</item>
         <item>Blue</item>
     </string-array>
+    <string name="pref_h2_application_updates">Обновления</string>
+    <string name="pref_title_application_updates_check">Проверять на наличие обновлений</string>
+    <string name="setting_application_updates_check" translatable="false">Setting_Application_Updates_Check</string>
+    <string-array name="pref_updates_check_titles">
+        <item>Wi-Fi и мобильный интернет</item>
+        <item>Только Wi-Fi</item>
+        <item>Отключено</item>
+    </string-array>
+    <string-array name="pref_updates_check_values">
+        <item>Any</item>
+        <item>WiFi</item>
+        <item>None</item>
+    </string-array>
+    <string name="pref_description_application_updates_check">Проверить вручную можно на экране \'О программе\'</string>
+    <string name="setting_application_updates_available" translatable="false">Setting_Application_Updates_Available</string>
+    <string name="setting_application_updates_link" translatable="false">Setting_Application_Updates_Link</string>
 
 
     <!-- Example General settings -->
@@ -287,7 +308,7 @@
     <string name="pref_h2_floating_icon_text">Параметры Текста</string>
 
     <string name="setting_is_show_floating_icon" translatable="false">Setting_Show_Floating_Icon</string>
-    <string name="pref_title_is_show_floating_icon">Показывать Иконку</string>
+    <string name="pref_title_is_show_floating_icon">Показывать иконку</string>
     <string name="pref_description_is_show_floating_icon">Показывать иконку-флаг на экране (Требуется разрешение на отображение поверх других приложений):</string>
 
     <string name="pref_description_floating_icon_notificationsIntent">В настройках уведомлений можно отключить системное сообщение \'TLT отображается поверх других приложений\':</string>
@@ -394,7 +415,7 @@
     <string name="pref_title_check_text_for_language">Определять язык по тексту</string>
 
     <string name="setting_is_log_to_sd" translatable="false">Setting_Auto_Log_To_SD</string>
-    <string name="pref_description_is_log_to_sd">Записывать логи событий в файл \'TextLayoutTools\tlt_log.txt\' во внутренней памяти. Необхожимо предоставить разрешение на запись в Память и USB.\nВНИМАНИЕ! В файле будет содержаться введённый текст.</string>
+    <string name="pref_description_is_log_to_sd">Записывать логи событий в файл \'TextLayoutTools\\tlt_log.txt\' во внутренней памяти. Необхожимо предоставить разрешение на запись в Память и USB.\nВНИМАНИЕ! В файле будет содержаться введённый текст.</string>
     <string name="pref_title_is_log_to_sd">Записывать логи событий в файл</string>
 
     <string name="setting_open_app_settings">Открыть настройки приложения</string>

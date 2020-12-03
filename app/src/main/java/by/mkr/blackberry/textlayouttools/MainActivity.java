@@ -200,39 +200,4 @@ public class MainActivity extends AppCompatActivity {
         //AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         return isNight;
     }*/
-/*
-    private void setTheme() {
-        String themeStr = AppSettings.getSetting(R.string.setting_application_theme, AppTheme.getDefault(), this.getApplicationContext());
-        AppTheme theme = AppTheme.fromString(themeStr);
-        switch (theme) {
-            case Light:
-                break;
-            case Dark:
-                setTheme(R.style.AppThemeDark);
-                break;
-            case Blue:
-                setTheme(R.style.AppThemeBlue);
-                break;
-            default:
-                break;
-        }
-    }
-    private void setMenuTheme() {
-        String themeStr = AppSettings.getSetting(R.string.setting_application_theme, AppTheme.getDefault(), this.getApplicationContext());
-        AppTheme theme = AppTheme.fromString(themeStr);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        switch (theme) {
-            case Light:
-                toolbar.setPopupTheme(R.style.AppTheme_PopupOverlay);
-                break;
-            case Dark:
-                toolbar.setPopupTheme(R.style.AppTheme_PopupOverlay_Dark);
-                break;
-            case Blue:
-                toolbar.setPopupTheme(R.style.AppTheme_PopupOverlay_Blue);
-                break;
-            default:
-                break;
-        }
-    }*/
 }

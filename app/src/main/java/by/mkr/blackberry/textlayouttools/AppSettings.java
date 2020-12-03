@@ -25,7 +25,7 @@ import static by.mkr.blackberry.textlayouttools.ReplacerService.LOG_TAG;
 
 
 public class AppSettings {
-    public int version = 1;
+    public int version = 2;
     public int selectedCtrlMod;
     public int selectedShortCut;
     public Language autocorrectDirection;
@@ -70,15 +70,19 @@ public class AppSettings {
     public SoundPattern soundCorrectEng;
     public FloatingIconAnimation floatingIconAnimation;
     public AppTheme appTheme;
+    public NetworkState checkForUpdates;
 
     public transient long whenEnableNotifications;
     public float opacity;
 
     public transient UserTempDictionary userTempDict;
 
-    private transient Context _context;
     public transient int manualChangesCount;
     public transient int autoChangesCount;
+    public transient boolean isUpdateAvailable;
+    public transient String updateLink;
+
+    private transient Context _context;
 
 
     public AppSettings(Context context) {
@@ -194,6 +198,11 @@ public class AppSettings {
         String floatingIconAnimationStr = sharedPrefs.getString(_context.getString(R.string.setting_floating_icon_animation), "FadeIn");
         floatingIconAnimation = FloatingIconAnimation.fromString(floatingIconAnimationStr);
 
+        String checkForUpdatesStr = sharedPrefs.getString(_context.getString(R.string.setting_application_updates_check), NetworkState.getDefault());
+        checkForUpdates = NetworkState.fromString(checkForUpdatesStr);
+
+        isUpdateAvailable = sharedPrefs.getBoolean(_context.getString(R.string.setting_application_updates_available), false);
+        updateLink = sharedPrefs.getString(_context.getString(R.string.setting_application_updates_link), "");
 
 
         manualChangesCount = sharedPrefs.getInt(_context.getString(R.string.setting_statistics_manual_changes), 0);
@@ -445,6 +454,9 @@ public class AppSettings {
             edit.putBoolean(getString(R.string.setting_check_text_for_language), newSettings.isDetectLanguageByText);
             edit.putBoolean(getString(R.string.setting_floating_icon_is_show_lang_picker), newSettings.isFloatingIconShowLangPicker);
             edit.putBoolean(getString(R.string.setting_statistics_should_track), newSettings.isTrackStatistics);
+            if (newSettings.checkForUpdates != null) {
+                edit.putString(getString(R.string.setting_application_updates_check), "" + newSettings.checkForUpdates);
+            }
             if (newSettings.floatingIconAnimation != null) {
                 edit.putString(getString(R.string.setting_floating_icon_animation), "" + newSettings.floatingIconAnimation);
             }

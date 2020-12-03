@@ -2,7 +2,9 @@ package by.mkr.blackberry.textlayouttools;
 
 
 import android.annotation.TargetApi;
+import android.content.ComponentName;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -74,6 +76,7 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
     private VibrationManager _vibrationManager;
     private SoundManager _soundManager;
     private FloatingIndicatorManager _floatingIndicatorManager;
+    private CheckVersionReceiver _checkVersionReceiver;
 
     private long _lastSymPressed;
 
@@ -104,6 +107,8 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
         _soundManager = new SoundManager(getApplicationContext());
 
         _floatingIndicatorManager = new FloatingIndicatorManager(getApplicationContext());
+
+        toggleVersionChecker(_appSettings.checkForUpdates.isOn());
     }
 
 
@@ -908,16 +913,6 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                     textSelect.set_startSelection(currentWord.Begin);
                     textSelect.set_endSelection(currentWord.End);
                     replaceSelectedText(textSelect, _appSettings.inputMethod, false, cursorAt, ActionType.AutoChange);
-
-
-
-                    try {
-                        log("!GC:");
-                        System.gc();
-                    } catch (Exception ex) {
-                        log("!EX GC:");
-                    }
-
                 }
             } else {
                 _lastAutoReplaced = -1;
@@ -1153,6 +1148,23 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
         }
     }
 
+    private void toggleVersionChecker(boolean isEnabled) {
+        Log.d(LOG_TAG, "toggleVersionChecker: " + isEnabled);
+        this.getPackageManager().setComponentEnabledSetting(
+                new ComponentName(this, CheckVersionReceiver.class),
+                isEnabled ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED : PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                PackageManager.DONT_KILL_APP);
+        if (isEnabled) {
+            _checkVersionReceiver = new CheckVersionReceiver(this.getApplicationContext(), isEnabled);
+            _checkVersionReceiver.setAlarm(this.getApplicationContext());
+        } else {
+            if (_checkVersionReceiver != null) {
+                _checkVersionReceiver.cancelAlarm(this.getApplicationContext());
+                _checkVersionReceiver = null;
+            }
+        }
+    }
+
     public static AppSettings getAppSettings() {
         return _appSettings;
     }
@@ -1207,6 +1219,8 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                 || getString(R.string.setting_when_enable_notifications).equals(key)
                 || getString(R.string.setting_shortcut_enabled_key).equals(key)
                 || getString(R.string.setting_is_show_icon).equals(key)
+                || getString(R.string.setting_application_updates_available).equals(key)
+                || getString(R.string.setting_application_updates_link).equals(key)
         ) {
             if (_notifyManager == null) {
                 _notifyManager = new NotifyManager(this);
@@ -1237,6 +1251,13 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
             _floatingIndicatorManager.updateSettings();
             _floatingIndicatorManager.setLanguage(_currentLanguage);
         }
+
+        // Updates settings
+        if (getString(R.string.setting_application_updates_check).equals(key)
+        ) {
+            toggleVersionChecker(_appSettings.checkForUpdates.isOn());
+        }
+
     }
 }
 

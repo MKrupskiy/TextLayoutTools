@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import androidx.core.app.NotificationCompat;
 import android.util.Log;
@@ -63,6 +64,7 @@ public class NotifyManager {
     private Notification _notificationUkr;
     private android.accessibilityservice.AccessibilityService _service;
     private android.app.NotificationManager _notifyManager;
+    private Language _currentLang;
 
     public NotifyManager(android.accessibilityservice.AccessibilityService service) {
         _service = service;
@@ -95,6 +97,11 @@ public class NotifyManager {
     }
 
     public void updateNotification(Language lang) {
+        AppSettings appSettings = ReplacerService.getAppSettings();
+        if (!appSettings.isShowIcon) {
+            return;
+        }
+        _currentLang = lang;
         switch (lang) {
             case Ru:
             case RuTrans:
@@ -133,6 +140,21 @@ public class NotifyManager {
         int[] iconStyles = getIconStyles();
 
 
+        PendingIntent actionIntent = PendingIntent.getActivity(service, 0, new Intent(service, SettingsActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+        String subText = null;
+        String contentText = null;
+
+
+        AppSettings appSettings = ReplacerService.getAppSettings();
+        if (appSettings != null && appSettings.checkForUpdates.isOn() && appSettings.isUpdateAvailable) {
+            subText = service.getString(R.string.notification_text_update_available);
+            contentText = service.getString(R.string.notification_text_update_available_desc);
+            actionIntent = PendingIntent.getActivity(
+                    service,
+                    0,
+                    new Intent(Intent.ACTION_VIEW, Uri.parse(appSettings.updateLink)),
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+        }
 
         // Actions
         /*
@@ -156,7 +178,6 @@ public class NotifyManager {
                 .createNotificationAction(_service, LanguageNotificationReceiver.ACTION_AUTOCORRECT_SWITCH);
 
 
-        PendingIntent settingsIntent = PendingIntent.getActivity(service, 0, new Intent(service, SettingsActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
 
 
@@ -164,6 +185,8 @@ public class NotifyManager {
             _notificationRu = new NotificationCompat.Builder(_service, CHANNEL_ID)
                     .setSmallIcon(iconStyles[0])
                     .setContentTitle("Русский")
+                    .setSubText(subText)
+                    .setContentText(contentText)
                     .setVisibility(NotificationCompat.VISIBILITY_SECRET)
                     .setOngoing(true)
                     //.addAction(action1h)
@@ -175,12 +198,14 @@ public class NotifyManager {
                     .setShowWhen(false)
                     .setOnlyAlertOnce(true)
                     .setColor(Color.parseColor(_service.getString(R.color.colorPrimary)))
-                    .setContentIntent(settingsIntent)
+                    .setContentIntent(actionIntent)
                     .build();
 
             _notificationEn = new NotificationCompat.Builder(_service, CHANNEL_ID)
                     .setSmallIcon(iconStyles[1])
                     .setContentTitle("English")
+                    .setSubText(subText)
+                    .setContentText(contentText)
                     .setVisibility(NotificationCompat.VISIBILITY_SECRET)
                     .setOngoing(true)
                     //.addAction(action1h)
@@ -192,12 +217,14 @@ public class NotifyManager {
                     .setShowWhen(false)
                     .setOnlyAlertOnce(true)
                     .setColor(Color.parseColor(_service.getString(R.color.colorPrimary)))
-                    .setContentIntent(settingsIntent)
+                    .setContentIntent(actionIntent)
                     .build();
 
             _notificationUkr = new NotificationCompat.Builder(_service, CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_flag_ukraine)
                     .setContentTitle("Українська")
+                    .setSubText(subText)
+                    .setContentText(contentText)
                     .setVisibility(NotificationCompat.VISIBILITY_SECRET)
                     .setOngoing(true)
                     //.addAction(action1h)
@@ -209,25 +236,29 @@ public class NotifyManager {
                     .setShowWhen(false)
                     .setOnlyAlertOnce(true)
                     .setColor(Color.parseColor(_service.getString(R.color.colorPrimary)))
-                    .setContentIntent(settingsIntent)
+                    .setContentIntent(actionIntent)
                     .build();
         } else {
             _notificationRu = new Notification.Builder(_service)
                     .setSmallIcon(iconStyles[0])
                     .setContentTitle("Русский")
+                    .setSubText(subText)
+                    .setContentText(contentText)
                     .setVisibility(Notification.VISIBILITY_SECRET)
                     .setOngoing(true)
                     .setPriority(Notification.PRIORITY_DEFAULT)
-                    .setContentIntent(settingsIntent)
+                    .setContentIntent(actionIntent)
                     .build();
 
             _notificationEn = new Notification.Builder(_service)
                     .setSmallIcon(iconStyles[1])
                     .setContentTitle("English")
+                    .setSubText(subText)
+                    .setContentText(contentText)
                     .setVisibility(Notification.VISIBILITY_SECRET)
                     .setOngoing(true)
                     .setPriority(Notification.PRIORITY_DEFAULT)
-                    .setContentIntent(settingsIntent)
+                    .setContentIntent(actionIntent)
                     .build();
         }
     }

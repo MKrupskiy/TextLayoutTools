@@ -2,16 +2,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory android:title="@string/pref_h2_floating_icon">
+        <Preference android:title="@string/pref_title_overlay_settings" android:icon="@drawable/ic_open_in_new_24dp">
+            <intent android:action="android.settings.action.MANAGE_OVERLAY_PERMISSION"
+                android:data="package:by.mkr.blackberry.textlayouttools" />
+        </Preference>
+
         <SwitchPreference
             android:defaultValue="false"
             android:key="@string/setting_is_show_floating_icon"
             android:summary="@string/pref_description_is_show_floating_icon"
             android:title="@string/pref_title_is_show_floating_icon" />
-
-        <Preference android:title="@string/pref_title_overlay_settings" android:icon="@drawable/ic_open_in_new_24dp">
-            <intent android:action="android.settings.action.MANAGE_OVERLAY_PERMISSION"
-                android:data="package:by.mkr.blackberry.textlayouttools" />
-        </Preference>
 
         <Preference
             android:selectable="false"

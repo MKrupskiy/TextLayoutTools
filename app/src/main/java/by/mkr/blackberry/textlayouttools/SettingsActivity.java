@@ -250,6 +250,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // updated to reflect the new value, per the Android Design
             // guidelines.
             bindPreferenceSummaryToValue(findPreference(getString(R.string.setting_application_theme)));
+            bindPreferenceSummaryToValue(findPreference(getString(R.string.setting_application_updates_check)));
         }
 
         @Override
