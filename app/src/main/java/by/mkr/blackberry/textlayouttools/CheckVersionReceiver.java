@@ -9,10 +9,11 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.PowerManager;
-import android.util.Log;
-import java.util.Date;
 
-import static by.mkr.blackberry.textlayouttools.ReplacerService.LOG_TAG;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.util.Date;
 
 
 enum NetworkState {
@@ -70,7 +71,7 @@ public class CheckVersionReceiver extends BroadcastReceiver {
         wl.acquire();
 
         String action = intent.getAction();
-        Log.d(LOG_TAG, "CheckVersionReceiver: " + new Date());
+        ReplacerService.log("CheckVersionReceiver: " + new Date());
 
         switch (action) {
             case ACTION_CHECK_UPDATE: {
@@ -82,6 +83,7 @@ public class CheckVersionReceiver extends BroadcastReceiver {
                 if ((ns == NetworkState.WiFi && isWiFiAllowed) || (ns == NetworkState.Mobile && isMobileAllowed)) {
                     checkNewVersion(context);
                 }
+                //logToFile("CheckVersionReceiver ns:" + ns);
                 break;
             }
             default: {
@@ -143,14 +145,33 @@ public class CheckVersionReceiver extends BroadcastReceiver {
             @Override
             public void execute(final String[] text) {
                 if (text == null || text.length < 2) {
-                    Log.d(LOG_TAG, "checkNewVersion error: No info");
+                    ReplacerService.log("checkNewVersion error: No info");
                     return;
                 }
-                Log.d(LOG_TAG, "CheckVersionReceiver: Version: " + BuildConfig.VERSION_NAME +  "; Available: " + text[0] + "; comp: " + (BuildConfig.VERSION_NAME.compareTo(text[0])));
+                ReplacerService.log("CheckVersionReceiver: Version: " + BuildConfig.VERSION_NAME +  "; Available: " + text[0] + "; comp: " + (BuildConfig.VERSION_NAME.compareTo(text[0])));
                 boolean isNewVersionAvailable = BuildConfig.VERSION_NAME.compareTo(text[0]) < 0;
-                AppSettings.setSetting(R.string.setting_application_updates_available, isNewVersionAvailable, context);
+                AppSettings.setSetting(R.string.setting_application_updates_available_ver, text[0], context);
                 AppSettings.setSetting(R.string.setting_application_updates_link, text[1], context);
             }
         });
+    }
+
+    private static void logToFile(String text) {
+        File appFolder = App.createAppFolder();
+        try {
+            File file = new File(appFolder, "upd_log.txt");
+            if (!file.exists())
+            {
+                file.createNewFile();
+            }
+            FileOutputStream fOut = new FileOutputStream(file, true);
+            OutputStreamWriter osw = new OutputStreamWriter(fOut);
+
+            osw.write(text + "\n");
+            osw.flush();
+            osw.close();
+        } catch (Exception ex) {
+            //Log.d(LOG_TAG, "Ex: " + ex.getMessage());
+        }
     }
 }

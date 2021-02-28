@@ -10,9 +10,6 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import androidx.core.app.NotificationCompat;
-import android.util.Log;
-
-import static by.mkr.blackberry.textlayouttools.ReplacerService.LOG_TAG;
 
 
 enum IconStyle {
@@ -34,6 +31,10 @@ enum IconStyle {
             default:
                 return null;
         }
+    }
+
+    public static String getDefault() {
+        return Flag.toString();
     }
 
     public static int getResource(IconStyle style, Language lang) {
@@ -77,7 +78,7 @@ public class NotifyManager {
             try {
                 notifyChannel = _notifyManager.getNotificationChannel(CHANNEL_ID);
             } catch (Exception e) {
-                Log.d(LOG_TAG, "notifyChannel is null");
+                ReplacerService.log("notifyChannel is null");
             }
             if (notifyChannel == null || notifyChannel != null) {
                 notifyChannel = new NotificationChannel(
@@ -131,7 +132,7 @@ public class NotifyManager {
         if(_service != null) {
             createNotifications(_service);
         } else {
-            Log.d(LOG_TAG, "NotifyManager->updateNotificationButtons: service is null");
+            ReplacerService.log("NotifyManager->updateNotificationButtons: service is null");
         }
     }
 
@@ -144,9 +145,12 @@ public class NotifyManager {
         String subText = null;
         String contentText = null;
 
-
+        // If update is available
         AppSettings appSettings = ReplacerService.getAppSettings();
-        if (appSettings != null && appSettings.checkForUpdates.isOn() && appSettings.isUpdateAvailable) {
+        if (appSettings != null
+                && appSettings.checkForUpdates.isOn()
+                && appSettings.isUpdateAvailable()
+        ) {
             subText = service.getString(R.string.notification_text_update_available);
             contentText = service.getString(R.string.notification_text_update_available_desc);
             actionIntent = PendingIntent.getActivity(

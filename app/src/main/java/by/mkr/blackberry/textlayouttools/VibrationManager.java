@@ -5,9 +5,6 @@ import android.media.AudioManager;
 import android.os.Build;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.util.Log;
-
-import static by.mkr.blackberry.textlayouttools.ReplacerService.LOG_TAG;
 
 
 enum VibrationPattern {
@@ -42,6 +39,10 @@ enum VibrationPattern {
             default:
                 return None;
         }
+    }
+
+    public static String getDefault() {
+        return SingleShort.toString();
     }
 }
 
@@ -109,7 +110,6 @@ public class VibrationManager {
             default:
                 break;
         }
-        Log.d(LOG_TAG, "Vibration ON: " + isVibroOn);
         return isVibroOn;
     }
 

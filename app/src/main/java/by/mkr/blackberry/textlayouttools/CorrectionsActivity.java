@@ -5,15 +5,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import java.util.ArrayList;
 import java.util.List;
-import DataBase.AppDatabase;
-import DataBase.Correction;
-import DataBase.CorrectionDao;
-
-import static by.mkr.blackberry.textlayouttools.ReplacerService.LOG_TAG;
 
 public class CorrectionsActivity extends AppCompatActivity {
 
@@ -23,10 +17,9 @@ public class CorrectionsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_corrections);
 
-        final AppDatabase db = AppDatabase.getInstance(this);
-        final CorrectionDao correctionDao = db.correctionDao();
+        final AppSettings appSettings = ReplacerService.getAppSettings();
 
-        final List<CorrectionItem> values = mapDbToViewItems(correctionDao.getAll());
+        final List<CorrectionViewItem> values = mapSettingToViewItems(appSettings.corrections);
 
         RecyclerView correctionsView = findViewById(R.id.corrections_view);
         correctionsView.setHasFixedSize(true);
@@ -35,12 +28,11 @@ public class CorrectionsActivity extends AppCompatActivity {
         correctionAdapter.setListener(new CorrectionAdapter.CorrectionsListener() {
             @Override
             public void onItemAdded(int itemIndex, String newFromText, String newToText) {
-                Correction corr = new Correction(0, newFromText, newToText);
-                // update the repo and get actual id
-                long actualId = correctionDao.insert(corr);
-                values.add(new CorrectionItem(actualId, newFromText, newToText));
+                appSettings.corrections.add(new CorrectionItem(newFromText, newToText));
+                values.add(new CorrectionViewItem(itemIndex, newFromText, newToText));
                 correctionAdapter.notifyDataSetChanged();
-                App.updateCorrections(correctionDao.getAll());
+                // update the repo
+                appSettings.updateCorrections(appSettings.corrections);
             }
 
             @Override
@@ -48,22 +40,23 @@ public class CorrectionsActivity extends AppCompatActivity {
                 values.get(itemIndex).fromText = newFromText;
                 values.get(itemIndex).toText = newToText;
                 correctionAdapter.notifyDataSetChanged();
-                Log.d(LOG_TAG, "edited: " + values.get(itemIndex).fromText + " => " + values.get(itemIndex).toText);
+                ReplacerService.log("edited: " + values.get(itemIndex).fromText + " => " + values.get(itemIndex).toText);
                 // update the repo
-                Correction corr = new Correction(values.get(itemIndex).id, newFromText, newToText);
-                correctionDao.update(corr);
-                App.updateCorrections(correctionDao.getAll());
+                CorrectionItem corrItem = appSettings.corrections.get(itemIndex);
+                corrItem.from = newFromText;
+                corrItem.to = newToText;
+                appSettings.updateCorrections(appSettings.corrections);
             }
 
             @Override
             public void onItemDeleted(int itemIndex) {
-                Log.d(LOG_TAG, "deleted: " + values.get(itemIndex).fromText + " => " + values.get(itemIndex).toText);
+                ReplacerService.log("deleted: " + values.get(itemIndex).fromText + " => " + values.get(itemIndex).toText);
                 long itemId = values.get(itemIndex).id;
                 values.remove(itemIndex);
                 correctionAdapter.notifyDataSetChanged();
                 // update the repo
-                correctionDao.deleteById(itemId);
-                App.updateCorrections(correctionDao.getAll());
+                appSettings.corrections.remove(itemIndex);
+                appSettings.updateCorrections(appSettings.corrections);
             }
         });
         correctionsView.setAdapter(correctionAdapter);
@@ -75,7 +68,7 @@ public class CorrectionsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 correctionAdapter.addItem(view.getContext());
-                Log.d(LOG_TAG, "added new");
+                ReplacerService.log("added new");
             }
         });
     }
@@ -83,13 +76,12 @@ public class CorrectionsActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        AppDatabase.releaseDB();
     }
 
-    private List<CorrectionItem> mapDbToViewItems(List<DataBase.Correction> items) {
-        List<CorrectionItem> mappedItems = new ArrayList<>();
-        for (DataBase.Correction item : items) {
-            mappedItems.add(new CorrectionItem(item.id, item.fromText, item.toText));
+    private List<CorrectionViewItem> mapSettingToViewItems(List<CorrectionItem> items) {
+        List<CorrectionViewItem> mappedItems = new ArrayList<>();
+        for (int i = 0; i < items.size(); i++) {
+            mappedItems.add(new CorrectionViewItem(i, items.get(i).from, items.get(i).to));
         }
         return mappedItems;
     }

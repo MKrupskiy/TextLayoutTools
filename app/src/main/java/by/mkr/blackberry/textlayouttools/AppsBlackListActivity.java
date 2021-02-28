@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.SearchView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,8 +19,6 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-
-import static by.mkr.blackberry.textlayouttools.ReplacerService.LOG_TAG;
 
 
 
@@ -104,13 +101,13 @@ public class AppsBlackListActivity extends AppCompatActivity {
                         });
 
                     } catch (Exception ex) {
-                        Log.d(LOG_TAG, "! Ex Thread: " + ex.toString());
+                        ReplacerService.log("! Ex Thread: " + ex.toString());
                         _swipeContainer.setRefreshing(false);
                     }
                 }
             }).start();
         } catch (Exception ex) {
-            Log.d(LOG_TAG, "! Ex: " + ex.toString());
+            ReplacerService.log("! Ex: " + ex.toString());
         }
     }
 
@@ -246,7 +243,7 @@ public class AppsBlackListActivity extends AppCompatActivity {
                     Drawable ico = pm.getApplicationIcon(packageInfo.packageName);
                     runningApps.add(new AppsBlackListItem(packageInfo.packageName, appLabel, ico, getPackageState(packageInfo.packageName)));
                 } catch (Exception ex) {
-                    Log.e(LOG_TAG, "! Ex: " + packageInfo.packageName + "; " + ex.getMessage());
+                    ReplacerService.log("! Ex: " + packageInfo.packageName + "; " + ex.getMessage());
                 }
             }
         }
@@ -316,7 +313,7 @@ public class AppsBlackListActivity extends AppCompatActivity {
             ApplicationInfo applicationInfo = pm.getApplicationInfo(packageName, 0);
             return pm.getApplicationLabel(applicationInfo).toString();
         } catch (Exception ex) {
-            Log.e(LOG_TAG, "! Ex: Can't get label for " + packageName);
+            ReplacerService.log("! Ex: Can't get label for " + packageName);
         }
         return "";
     }
@@ -326,7 +323,7 @@ public class AppsBlackListActivity extends AppCompatActivity {
             Drawable ico = getPackageManager().getApplicationIcon(packageName);
             return ico;
         } catch (Exception ex) {
-            Log.e(LOG_TAG, "! Ex: Can't get icon for " + packageName);
+            ReplacerService.log("! Ex: Can't get icon for " + packageName);
         }
         return null;
     }

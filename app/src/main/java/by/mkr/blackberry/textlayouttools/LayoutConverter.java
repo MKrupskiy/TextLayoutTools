@@ -2,7 +2,7 @@ package by.mkr.blackberry.textlayouttools;
 
 import android.util.Log;
 import java.util.HashMap;
-import DataBase.Correction;
+import java.util.List;
 
 import static by.mkr.blackberry.textlayouttools.ReplacerService.LOG_TAG;
 
@@ -17,8 +17,11 @@ enum Language {
     EnFull,
     RuQwertz,
     EnQwertz,
-
     Ukr;
+
+    public static String getDefault() {
+        return Unknown.toString();
+    }
 
     public static Language fromString(String x) {
         switch (x) {
@@ -135,6 +138,10 @@ enum InputMethod {
         }
         return null;
     }
+
+    public static String getDefault() {
+        return Qwerty.toString();
+    }
 }
 
 
@@ -154,9 +161,9 @@ public class LayoutConverter {
     */
 
 
-    public static String getReplacedText(CharSequence textToReplace, Language fromLanguage) {
+    public static String getReplacedText(CharSequence textToReplace, Language fromLanguage, List<CorrectionItem> corrections) {
         StringBuilder text = new StringBuilder();
-        Log.d(LOG_TAG, textToReplace.toString() + "; lang=" + fromLanguage);
+        ReplacerService.log(textToReplace.toString() + "; lang=" + fromLanguage);
 
         switch (fromLanguage) {
             case En: {
@@ -297,8 +304,10 @@ public class LayoutConverter {
         }
         */
 
-        for (Correction corr : App.getCorrections()) {
-            text = new StringBuilder(text.toString().replaceAll("(?i)" + corr.fromText, corr.toText));
+        String replacedText = text.toString();
+
+        for (CorrectionItem corr : corrections) {
+            replacedText = replacedText.replaceAll("(?i)" + corr.from, corr.to);
         }
 
 
@@ -311,7 +320,7 @@ public class LayoutConverter {
 
 
         //Log.d(LOG_TAG, text);
-        return text.toString();
+        return replacedText;
     }
 
     public static Language getTextLanguage(CharSequence text, InputMethod inputMethod) {

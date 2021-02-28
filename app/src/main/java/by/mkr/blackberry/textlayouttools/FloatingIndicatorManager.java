@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.graphics.PixelFormat;
 import android.os.Build;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -18,7 +17,6 @@ import android.widget.TextView;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
 import static android.content.Context.WINDOW_SERVICE;
-import static by.mkr.blackberry.textlayouttools.ReplacerService.LOG_TAG;
 
 
 enum FloatingIconStyle {
@@ -43,6 +41,10 @@ enum FloatingIconStyle {
             default:
                 return null;
         }
+    }
+
+    public static String getDefault() {
+        return Flag.toString();
     }
 }
 
@@ -80,6 +82,10 @@ enum FloatingIconAnimation {
             default:
                 return null;
         }
+    }
+
+    public static String getDefault() {
+        return FadeIn.toString();
     }
 
     public int getAnimationResource() {
@@ -276,7 +282,7 @@ public class FloatingIndicatorManager implements View.OnClickListener {
 
     private void initView() {
         try {
-            Log.d(LOG_TAG, "FloatingIndicator: initView");
+            ReplacerService.log("FloatingIndicator: initView");
             AppSettings appSettings = ReplacerService.getAppSettings();
             if (appSettings == null) {
                 return;
@@ -287,7 +293,7 @@ public class FloatingIndicatorManager implements View.OnClickListener {
             if (!appSettings.isShowFloatingIcon) {
                 windowManager.removeView(_mFloatingView);
                 _mFloatingView = null;
-                Log.d(LOG_TAG, "FloatingIndicator: removeView");
+                ReplacerService.log("FloatingIndicator: removeView");
                 return;
             }
 
@@ -414,7 +420,7 @@ public class FloatingIndicatorManager implements View.OnClickListener {
                 }
             });
         } catch (Exception ex) {
-            Log.d(LOG_TAG, "EX FloatingIndicator: " + ex.toString());
+            ReplacerService.log("EX FloatingIndicator: " + ex.toString());
         }
     }
 

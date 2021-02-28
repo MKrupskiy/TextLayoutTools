@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import java.io.BufferedReader;
 import java.io.File;
@@ -18,14 +17,13 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 
-import static by.mkr.blackberry.textlayouttools.ReplacerService.LOG_TAG;
-
 
 public class AppSettings {
-    public int version = 2;
+    public int version = 3;
     public int selectedCtrlMod;
     public int selectedShortCut;
     public Language autocorrectDirection;
@@ -71,15 +69,16 @@ public class AppSettings {
     public FloatingIconAnimation floatingIconAnimation;
     public AppTheme appTheme;
     public NetworkState checkForUpdates;
-
-    public transient long whenEnableNotifications;
     public float opacity;
 
+    public List<CorrectionItem> corrections;
+
+    public transient long whenEnableNotifications;
     public transient UserTempDictionary userTempDict;
 
     public transient int manualChangesCount;
     public transient int autoChangesCount;
-    public transient boolean isUpdateAvailable;
+    public transient String availableUpdateVersion;
     public transient String updateLink;
 
     private transient Context _context;
@@ -95,7 +94,7 @@ public class AppSettings {
         selectedCtrlMod = Integer.parseInt(selectedCtrlModStr);
         String selectedShortCutStr = sharedPrefs.getString(_context.getString(R.string.setting_shortcut_key), "" + KeyEvent.KEYCODE_Q);
         selectedShortCut = Integer.parseInt(selectedShortCutStr);
-        String autocorrectDirectionStr = sharedPrefs.getString(_context.getString(R.string.setting_autocorrect_direction), "Unknown");
+        String autocorrectDirectionStr = sharedPrefs.getString(_context.getString(R.string.setting_autocorrect_direction), Language.getDefault());
         autocorrectDirection = Language.fromString(autocorrectDirectionStr);
         isEnabled = sharedPrefs.getBoolean(_context.getString(R.string.setting_shortcut_enabled_key), true);
         isKey2EmulationEnabled = sharedPrefs.getBoolean(_context.getString(R.string.setting_key2emulation_enabled), false);
@@ -135,14 +134,14 @@ public class AppSettings {
 
         vibrationIntensity = sharedPrefs.getInt(_context.getString(R.string.setting_vibration_intensity), 5) * 10; // 100%
 
-        String vibrationPatternRusStr = sharedPrefs.getString(_context.getString(R.string.setting_vibration_pattern_rus), "SingleShort");
+        String vibrationPatternRusStr = sharedPrefs.getString(_context.getString(R.string.setting_vibration_pattern_rus), VibrationPattern.getDefault());
         vibrationPatternRus = VibrationPattern.fromString(vibrationPatternRusStr);
         String vibrationPatternEngStr = sharedPrefs.getString(_context.getString(R.string.setting_vibration_pattern_eng), "DoubleShort");
         vibrationPatternEng = VibrationPattern.fromString(vibrationPatternEngStr);
 
-        String soundInputRusStr = sharedPrefs.getString(_context.getString(R.string.setting_sound_input_rus), "Switch");
+        String soundInputRusStr = sharedPrefs.getString(_context.getString(R.string.setting_sound_input_rus), SoundPattern.getDefault());
         soundInputRus = SoundPattern.fromString(soundInputRusStr);
-        String soundInputEngStr = sharedPrefs.getString(_context.getString(R.string.setting_sound_input_eng), "Switch");
+        String soundInputEngStr = sharedPrefs.getString(_context.getString(R.string.setting_sound_input_eng), SoundPattern.getDefault());
         soundInputEng = SoundPattern.fromString(soundInputEngStr);
 
         String soundCorrectRusStr = sharedPrefs.getString(_context.getString(R.string.setting_sound_correct_rus), "Ru");
@@ -152,21 +151,21 @@ public class AppSettings {
 
         whenEnableNotifications = sharedPrefs.getLong(_context.getString(R.string.setting_when_enable_notifications), 0);
 
-        String InputMethodStr = sharedPrefs.getString(_context.getString(R.string.setting_input_method), "Qwerty");
+        String InputMethodStr = sharedPrefs.getString(_context.getString(R.string.setting_input_method), InputMethod.getDefault());
         inputMethod = InputMethod.fromString(InputMethodStr);
 
-        String IconStyleRuStr = sharedPrefs.getString(_context.getString(R.string.setting_icon_style_ru), "Flag");
+        String IconStyleRuStr = sharedPrefs.getString(_context.getString(R.string.setting_icon_style_ru), IconStyle.getDefault());
         iconStyleRu = IconStyle.fromString(IconStyleRuStr);
 
-        String IconStyleEnStr = sharedPrefs.getString(_context.getString(R.string.setting_icon_style_en), "Flag");
+        String IconStyleEnStr = sharedPrefs.getString(_context.getString(R.string.setting_icon_style_en), IconStyle.getDefault());
         iconStyleEn = IconStyle.fromString(IconStyleEnStr);
 
         isShowFloatingIcon = sharedPrefs.getBoolean(_context.getString(R.string.setting_is_show_floating_icon), false);
 
-        String FloatingIconStyleRuStr = sharedPrefs.getString(_context.getString(R.string.setting_floating_icon_style_ru), "Flag");
+        String FloatingIconStyleRuStr = sharedPrefs.getString(_context.getString(R.string.setting_floating_icon_style_ru), FloatingIconStyle.getDefault());
         floatingIconStyleRu = FloatingIconStyle.fromString(FloatingIconStyleRuStr);
 
-        String FloatingIconStyleEnStr = sharedPrefs.getString(_context.getString(R.string.setting_floating_icon_style_en), "Flag");
+        String FloatingIconStyleEnStr = sharedPrefs.getString(_context.getString(R.string.setting_floating_icon_style_en), FloatingIconStyle.getDefault());
         floatingIconStyleEn = FloatingIconStyle.fromString(FloatingIconStyleEnStr);
 
         String appThemeStr = sharedPrefs.getString(_context.getString(R.string.setting_application_theme), AppTheme.getDefault());
@@ -195,13 +194,15 @@ public class AppSettings {
 
         isTrackStatistics = sharedPrefs.getBoolean(_context.getString(R.string.setting_statistics_should_track), true);
 
-        String floatingIconAnimationStr = sharedPrefs.getString(_context.getString(R.string.setting_floating_icon_animation), "FadeIn");
+        String floatingIconAnimationStr = sharedPrefs.getString(_context.getString(R.string.setting_floating_icon_animation), FloatingIconAnimation.getDefault());
         floatingIconAnimation = FloatingIconAnimation.fromString(floatingIconAnimationStr);
+
+        corrections = getCorrections();
 
         String checkForUpdatesStr = sharedPrefs.getString(_context.getString(R.string.setting_application_updates_check), NetworkState.getDefault());
         checkForUpdates = NetworkState.fromString(checkForUpdatesStr);
 
-        isUpdateAvailable = sharedPrefs.getBoolean(_context.getString(R.string.setting_application_updates_available), false);
+        availableUpdateVersion = sharedPrefs.getString(_context.getString(R.string.setting_application_updates_available_ver), "");
         updateLink = sharedPrefs.getString(_context.getString(R.string.setting_application_updates_link), "");
 
 
@@ -272,12 +273,35 @@ public class AppSettings {
         edit.apply();
     }
 
+    public void updateCorrections(List<CorrectionItem> correctionItems) {
+        String value = TextUtils.join(CorrectionItem.ITEMS_DELIMITER, correctionItems);
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(_context);
+        SharedPreferences.Editor edit = sharedPrefs.edit();
+        edit.putString(getString(R.string.setting_corrections), value);
+        edit.apply();
+    }
+
+    public List<CorrectionItem> getCorrections() {
+        List<CorrectionItem> corrItems = new ArrayList<CorrectionItem>();
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(_context);
+        String value = sharedPrefs.getString(_context.getString(R.string.setting_corrections), CorrectionItem.DEFAULT_VALUE);
+        try {
+            String[] stringItems = value.split(CorrectionItem.ITEMS_DELIMITER);
+            for (int i = 0; i < stringItems.length; i++) {
+                corrItems.add(new CorrectionItem(stringItems[i]));
+            }
+        } catch (Exception ex) {
+            ReplacerService.log("getCorrections(): Can't parse saved value: '" + value + "'");
+        }
+        return corrItems;
+    }
+
     public boolean saveToFile() {
         try {
             Gson gson = new Gson();
             SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(_context);
             String json = gson.toJson(/*sharedPrefs*/this);
-            Log.d(LOG_TAG, "saveToFile: " + json);
+            ReplacerService.log("saveToFile: " + json);
 
             File appFolder = App.createAppFolder();
 
@@ -295,7 +319,7 @@ public class AppSettings {
 
             return true;
         } catch (Exception ex) {
-            Log.d(LOG_TAG, "Ex saveToFile: " + ex.getMessage());
+            ReplacerService.log("Ex saveToFile: " + ex.getMessage());
             return false;
         }
     }
@@ -311,7 +335,7 @@ public class AppSettings {
             Gson gson = new Gson();
             JsonReader reader = new JsonReader(new BufferedReader(new InputStreamReader(inputStream)));
             AppSettings data = gson.fromJson(reader, AppSettings.class);
-            Log.d(LOG_TAG, "Loaded settings version: " + data.version);
+            ReplacerService.log("Loaded settings version: " + data.version);
             if (data.version == 0) {
                 throw new Exception("Wrong settings file");
             }
@@ -320,9 +344,13 @@ public class AppSettings {
 
             return this.replaceSettings(data);
         } catch (Exception ex) {
-            Log.d(LOG_TAG, "Ex loadFromFile: " + ex.getMessage());
+            ReplacerService.log("Ex loadFromFile: " + ex.getMessage());
             return false;
         }
+    }
+
+    public boolean isUpdateAvailable() {
+        return BuildConfig.VERSION_NAME.compareTo(this.availableUpdateVersion) < 0;
     }
 
     public static void setSetting(int settingId, boolean value, Context context) {
@@ -463,14 +491,17 @@ public class AppSettings {
             if (newSettings.appTheme != null) {
                 edit.putString(getString(R.string.setting_application_theme), "" + newSettings.appTheme);
             }
+            if (newSettings.corrections != null) {
+                this.updateCorrections(newSettings.corrections);
+            }
 
 
             edit.apply();
-            Log.d(LOG_TAG, "replaceSettings: " + newSettings.version);
+            ReplacerService.log("replaceSettings: " + newSettings.version);
 
             return true;
         } catch (Exception ex) {
-            Log.d(LOG_TAG, "Ex replaceSettings: " + ex.getMessage());
+            ReplacerService.log("Ex replaceSettings: " + ex.getMessage());
             return false;
         }
     }

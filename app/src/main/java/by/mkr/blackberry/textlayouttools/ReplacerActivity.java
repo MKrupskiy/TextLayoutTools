@@ -36,13 +36,13 @@ public class ReplacerActivity extends AppCompatActivity {
         */
         boolean isEnabled = true;
 
-        Log.d(LOG_TAG, (readonly ? "ReadOnly": "Editable") + "; " + (isEnabled ? "Enabled": "Disabled"));
+        ReplacerService.log((readonly ? "ReadOnly": "Editable") + "; " + (isEnabled ? "Enabled": "Disabled"));
 
         if (isEnabled) {
             // process the text
             Language textLanguage = LayoutConverter.getTextLanguage(text, inputMethod);
-            String replacedText = LayoutConverter.getReplacedText(text, textLanguage);
-            Log.d(LOG_TAG, "original=" + text + "; replaced=" + replacedText);
+            String replacedText = LayoutConverter.getReplacedText(text, textLanguage, appSettings.corrections);
+            ReplacerService.log("original=" + text + "; replaced=" + replacedText);
 
             if (!readonly) {
                 appSettings.increseStatisticsManualChange();

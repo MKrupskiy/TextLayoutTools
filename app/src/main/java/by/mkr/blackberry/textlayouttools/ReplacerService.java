@@ -121,7 +121,7 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
         try {
             // Do not act if blacklisted All
             if (_currentState == BlacklistItemBlockState.None) {
-                Log.d(LOG_TAG, "blacklisted All");
+                log("blacklisted All");
                 return super.onKeyEvent(event);
             }
 
@@ -399,6 +399,7 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                         log("Lang=" + _currentLanguage + "; len=" + event.getText().toString().length());
 
                         String input = event.getText().toString();
+                        int currentCursor = event.getSource().getTextSelectionStart();
                         boolean isSystemReplace = false;
 
                         // Do not change upon deletion
@@ -420,7 +421,7 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                         if (!isSystemReplace
                                 && (_currentLanguage == Language.Ru || _currentLanguage == Language.RuTrans)
                         ) {
-                            char currentLetter = input.charAt(_textLength - 2);
+                            char currentLetter = input.charAt(currentCursor);
                             log("TEXT_CHANGED; text=" + input +
                                     "; prev=" + _replacerSelect.get_inputText() +
                                     "; len=" + _textLength +
@@ -436,13 +437,19 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                                 ) {
 
                                     // Replace double letter with single equivalent
-                                    input = input.substring(1, input.length() - 3) + LayoutConverter.getSpareLetter(_lastTypedLetter, _currentLanguage);
+                                    input = input.substring(1, currentCursor-1) + LayoutConverter.getSpareLetter(_lastTypedLetter, _currentLanguage) + input.substring(currentCursor+1, input.length() - 1);
                                     Bundle replaceArguments = new Bundle();
                                     replaceArguments.putCharSequence(
                                             AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE,
                                             input
                                     );
+                                    // Set cursor
+                                    Bundle selectArguments = new Bundle();
+                                    selectArguments.putInt(AccessibilityNodeInfo.ACTION_ARGUMENT_SELECTION_START_INT, currentCursor-1);
+                                    selectArguments.putInt(AccessibilityNodeInfo.ACTION_ARGUMENT_SELECTION_END_INT, currentCursor-1);
+                                    // Execure actions
                                     event.getSource().performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, replaceArguments);
+                                    event.getSource().performAction(AccessibilityNodeInfo.ACTION_SET_SELECTION, selectArguments);
 
                                     _lastTypedTime = 0;
                                     _lastTypedLetter = ' ';
@@ -812,7 +819,7 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
 
         // Get converted text
         _currentLanguage = LayoutConverter.getTextLanguage(selectedText, inputMethod);
-        String replacedText = LayoutConverter.getReplacedText(selectedText, _currentLanguage);
+        String replacedText = LayoutConverter.getReplacedText(selectedText, _currentLanguage, _appSettings.corrections);
 
         // Correct doubled capitals
         replacedText = LayoutConverter.getTextWithoutDoubledCapital(replacedText);
@@ -882,7 +889,7 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                 _lastAutoReplaced = currentWord.Begin;
                 log("_lastAutoReplaced: " + _lastAutoReplaced);
 
-                Language lang = _languageDetector.getTargetLanguage(currentWord.Word, _appSettings.inputMethod, _wordsListRu, _wordsListEn, _appSettings.userDict);
+                Language lang = _languageDetector.getTargetLanguage(currentWord.Word, _appSettings.inputMethod, _wordsListRu, _wordsListEn, _appSettings.userDict, _appSettings.corrections);
 
                 Language textEnteredLang = LayoutConverter.getTextLanguage(currentWord.Word, _appSettings.inputMethod);
 
@@ -904,7 +911,7 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                     }
                 } else {
                     // Need to change layout
-                    String replacedWord = LayoutConverter.getReplacedText(currentWord.Word, textEnteredLang);
+                    String replacedWord = LayoutConverter.getReplacedText(currentWord.Word, textEnteredLang, _appSettings.corrections);
                     log("***From: " + textEnteredLang +
                             "; To: " + lang +
                             "; '" + currentWord.Word +
@@ -982,7 +989,7 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
 
 
 
-    private static void log(String message) {
+    public static void log(String message) {
         Log.d(LOG_TAG, message);
         if (_appSettings != null && _appSettings.isLogToFile) {
             logToFile(message);
@@ -1149,7 +1156,7 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
     }
 
     private void toggleVersionChecker(boolean isEnabled) {
-        Log.d(LOG_TAG, "toggleVersionChecker: " + isEnabled);
+        log("toggleVersionChecker: " + isEnabled);
         this.getPackageManager().setComponentEnabledSetting(
                 new ComponentName(this, CheckVersionReceiver.class),
                 isEnabled ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED : PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
@@ -1219,7 +1226,7 @@ public class ReplacerService extends android.accessibilityservice.AccessibilityS
                 || getString(R.string.setting_when_enable_notifications).equals(key)
                 || getString(R.string.setting_shortcut_enabled_key).equals(key)
                 || getString(R.string.setting_is_show_icon).equals(key)
-                || getString(R.string.setting_application_updates_available).equals(key)
+                || getString(R.string.setting_application_updates_available_ver).equals(key)
                 || getString(R.string.setting_application_updates_link).equals(key)
         ) {
             if (_notifyManager == null) {

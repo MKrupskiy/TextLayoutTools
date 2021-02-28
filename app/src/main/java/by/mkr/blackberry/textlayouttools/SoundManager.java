@@ -38,6 +38,10 @@ enum SoundPattern {
                 return None;
         }
     }
+
+    public static String getDefault() {
+        return Switch.toString();
+    }
 }
 
 public class SoundManager {
@@ -56,7 +60,7 @@ public class SoundManager {
     }
 
     public void play(int soundResId) {
-        MediaPlayer mp;
+        /*MediaPlayer mp;
         mp = MediaPlayer.create(_context, soundResId);
         mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
@@ -66,7 +70,8 @@ public class SoundManager {
                 mp = null;
             }
         });
-        mp.start();
+        mp.start();*/
+        SoundManager.play(_context, soundResId);
     }
 
     public boolean isSoundOn() {
@@ -98,32 +103,46 @@ public class SoundManager {
     private int getPatternValue(SoundPattern pattern) {
         switch (pattern) {
             case En: {
-                return R.raw.en_ps;
+                return R.raw.sound_en_ps;
             }
             case Ru: {
-                return R.raw.ru_ps;
+                return R.raw.sound_ru_ps;
             }
             case Switch: {
-                return R.raw.switch_ps;
+                return R.raw.sound_switch_ps;
             }
             case Reverse: {
-                return R.raw.reverse_ps;
+                return R.raw.sound_reverse_ps;
             }
             case Misprint: {
-                return R.raw.misprint_ps;
+                return R.raw.sound_misprint_ps;
             }
             case ClickXP: {
-                return R.raw.click_xp;
+                return R.raw.sound_click_xp;
             }
             case Exclamation: {
-                return R.raw.exclamation;
+                return R.raw.sound_exclamation;
             }
             case Stop: {
-                return R.raw.stop;
+                return R.raw.sound_stop;
             }
             default: {
-                return R.raw.switch_ps;
+                return R.raw.sound_switch_ps;
             }
         }
+    }
+
+    public static void play(Context ctx, int soundResId) {
+        MediaPlayer mp;
+        mp = MediaPlayer.create(ctx, soundResId);
+        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mp.reset();
+                mp.release();
+                mp = null;
+            }
+        });
+        mp.start();
     }
 }

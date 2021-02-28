@@ -1,6 +1,8 @@
 package by.mkr.blackberry.textlayouttools;
 
 import android.util.Log;
+
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -8,10 +10,16 @@ import static by.mkr.blackberry.textlayouttools.ReplacerService.LOG_TAG;
 
 
 public class LanguageDetector {
-    public Language getTargetLanguage(String text, InputMethod inputMethod, WordsList wordsListRu, WordsList wordsListEn, String[] userDict) {
+    public Language getTargetLanguage(String text,
+                                      InputMethod inputMethod,
+                                      WordsList wordsListRu,
+                                      WordsList wordsListEn,
+                                      String[] userDict,
+                                      List<CorrectionItem> corrections)
+    {
         text = text.toLowerCase();
         Language currentLang = LayoutConverter.getTextLanguage(text, inputMethod);
-        String replacedWord = LayoutConverter.getReplacedText(text, currentLang);
+        String replacedWord = LayoutConverter.getReplacedText(text, currentLang, corrections);
         Language targetLanguage = currentLang;
         boolean isFoundRu = false;
         boolean isFoundEn = false;

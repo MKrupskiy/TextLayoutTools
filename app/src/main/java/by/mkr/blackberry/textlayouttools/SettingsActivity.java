@@ -22,15 +22,11 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NavUtils;
 import androidx.appcompat.app.ActionBar;
 import androidx.core.content.ContextCompat;
-
 import android.preference.SwitchPreference;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 import java.util.List;
-
-import static by.mkr.blackberry.textlayouttools.ReplacerService.LOG_TAG;
 
 
 /**
@@ -367,10 +363,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             Preference showIcon = findPreference(getString(R.string.setting_is_show_floating_icon));
             if (Settings.canDrawOverlays(this.getContext())) {
                 // OK
-                Log.d(LOG_TAG, "canDrawOverlays: OK");
+                ReplacerService.log("canDrawOverlays: OK");
                 showIcon.setEnabled(true);
             } else {
-                Log.d(LOG_TAG, "canDrawOverlays: denied. Disabling setting");
+                ReplacerService.log("canDrawOverlays: denied. Disabling setting");
                 showIcon.setEnabled(false);
                 // Need to recreate to see the updated setting
                 if (((SwitchPreference)showIcon).isChecked()) {
@@ -544,7 +540,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
     public static void checkPermission(Activity activity, String permissionName) {
         if (ContextCompat.checkSelfPermission(activity, permissionName) == PackageManager.PERMISSION_GRANTED) {
-            Log.d(LOG_TAG, "permission granted: " + permissionName);
+            ReplacerService.log("permission granted: " + permissionName);
         } else {
             ActivityCompat.requestPermissions(activity, new String[]{ permissionName }, 1);
         }
@@ -552,9 +548,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            Log.d(LOG_TAG, "permission granted");
+            ReplacerService.log("permission granted");
         } else {
-            Log.d(LOG_TAG, "permission denied");
+            ReplacerService.log("permission denied");
             Toast.makeText(this.getApplicationContext(), getString(R.string.text_toast_sd_permission_required), Toast.LENGTH_SHORT).show();
         }
     }

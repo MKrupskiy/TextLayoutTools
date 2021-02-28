@@ -9,9 +9,9 @@
     <string name="title_activity_settings">Настройки</string>
 
     <!-- Strings related to Main Activity -->
-    <string name="main_app_name_version" translatable="false">Text Layout Tools 1.16</string>
+    <string name="main_app_name_version" translatable="false">Text Layout Tools 1.17</string>
     <string name="main_description">Приложение для смены раскладки текста.</string>
-    <string name="main_examples">Автоматическая смена\nCtrl+Q - смена раскладки\nAlt+Enter - смена раскладки со сменой языка</string>
+    <string name="main_examples">- Автоматическая смена\n- Ctrl+Q - смена раскладки\n- Alt+Enter - смена раскладки со сменой языка\nИз-за ограничений Android невозможно программно сменить язык ввода для новых слов</string>
     <!--<string name="main_service_description">Переключение также возможно при помощи комбинации клавиш. Для этого требуется включить поддержку в меню настроек Специальные Возможности</string>-->
     <string name="main_service_description">Для работы приложения необходимо включить поддержку в меню настроек Специальные Возможности</string>
     <string name="main_button_accessibility">Открыть Специальные Возможности</string>
@@ -33,7 +33,7 @@
 
     <!-- Strings related to Settings -->
 
-    <!-- Example Application settings -->
+    <!-- Application settings -->
     <string name="pref_header_application">Настройки Приложения</string>
     <string name="pref_h2_application_theme">Внешний вид</string>
     <string name="setting_application_theme" translatable="false">Setting_Application_Theme</string>
@@ -62,11 +62,11 @@
         <item>None</item>
     </string-array>
     <string name="pref_description_application_updates_check">Проверить вручную можно на экране \'О программе\'</string>
-    <string name="setting_application_updates_available" translatable="false">Setting_Application_Updates_Available</string>
+    <string name="setting_application_updates_available_ver" translatable="false">Setting_Application_Updates_Available_Ver</string>
     <string name="setting_application_updates_link" translatable="false">Setting_Application_Updates_Link</string>
 
 
-    <!-- Example General settings -->
+    <!-- General settings -->
     <string name="pref_header_languages">Язык Ввода</string>
     <string name="pref_h2_input_type">Ввод</string>
 
@@ -88,7 +88,7 @@
     <string name="pref_title_keyboard_input_settings">Открыть Настройки Ввода</string>
 
 
-    <!-- Example General settings -->
+    <!-- General settings -->
     <string name="pref_header_shortcut">Быстрая Клавиша</string>
     <string name="pref_h2_shortcut">Комбинация Клавиш</string>
     <string name="pref_h2_text_selection">Выделение</string>
@@ -155,7 +155,9 @@
     <string name="pref_title_select_replaced">Выделять заменённый текст</string>
     <string name="pref_description_select_replaced">Выделять заменённый текст в поле ввода после смены раскладки</string>
 
-    <!-- Example settings for Corrections -->
+    <!-- Settings for Corrections -->
+    <string name="setting_corrections" translatable="false">Setting_Corrections</string>
+
     <string name="pref_header_corrections">Слова-Исключения</string>
     <string name="dialog_ok">Сохранить</string>
     <string name="dialog_cancel">Отменить</string>
@@ -166,7 +168,7 @@
     <string name="dialog_no">Нет</string>
 
 
-    <!-- Example settings Autocorrect -->
+    <!-- Settings Autocorrect -->
     <string name="pref_header_autocorrect">Автоисправление</string>
     <string name="pref_h2_autocorrect">Автоматическое Исправление</string>
 

@@ -18,19 +18,50 @@ import android.widget.TextView;
 import java.util.List;
 
 
-class CorrectionItem {
+class CorrectionViewItem {
     public long id;
     public String fromText;
     public String toText;
 
-    public CorrectionItem() {
+    public CorrectionViewItem() {
         this(0, "", "");
     }
 
-    public CorrectionItem(long id, String from, String to) {
+    public CorrectionViewItem(long id, String from, String to) {
         this.id = id;
         this.fromText = from;
         this.toText = to;
+    }
+}
+
+class CorrectionItem {
+    public static final String FROM_TO_DELIMITER = "»";
+    public static final String ITEMS_DELIMITER = "¦";
+    public static final String DEFAULT_VALUE =
+            "ожон"+FROM_TO_DELIMITER+"оддон"+ITEMS_DELIMITER
+            +"ожан"+FROM_TO_DELIMITER+"оддан"+ITEMS_DELIMITER
+            +"ожерж"+FROM_TO_DELIMITER+"оддерж"+ITEMS_DELIMITER
+            +"ожуб"+FROM_TO_DELIMITER+"оддуб"+ITEMS_DELIMITER
+            +"уюот"+FROM_TO_DELIMITER+"уббот"+ITEMS_DELIMITER
+            +"стрэ"+FROM_TO_DELIMITER+"стрее";
+
+    public String from;
+    public String to;
+
+    public CorrectionItem(String from, String to) {
+        this.from = from;
+        this.to = to;
+    }
+
+    public CorrectionItem(String stringValue) {
+        String[] values = stringValue.split(CorrectionItem.FROM_TO_DELIMITER);
+        this.from = values[0];
+        this.to = values[1];
+    }
+
+    @Override
+    public String toString() {
+        return this.from + FROM_TO_DELIMITER + this.to;
     }
 }
 
@@ -96,7 +127,7 @@ public class CorrectionAdapter extends RecyclerView.Adapter<CorrectionAdapter.My
             });
         }
 
-        public void bind(CorrectionItem value) {
+        public void bind(CorrectionViewItem value) {
             Log.d("ReplacerLog", "bind MyViewHolder");
             itemFromText.setText(value.fromText);
             itemToText.setText(value.toText);
@@ -106,10 +137,10 @@ public class CorrectionAdapter extends RecyclerView.Adapter<CorrectionAdapter.My
 
 
 
-    private final List<CorrectionItem> _values;
+    private final List<CorrectionViewItem> _values;
     private CorrectionsListener _listener;
 
-    public CorrectionAdapter(List<CorrectionItem> values) {
+    public CorrectionAdapter(List<CorrectionViewItem> values) {
         _values = values;
         Log.d("ReplacerLog", "values set; " + values.size());
     }
