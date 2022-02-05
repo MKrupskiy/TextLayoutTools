@@ -78,12 +78,14 @@
         <item>translit</item>
         <item>USB-клавиатура</item>
         <item>qwertz</item>
+        <item>F(x)tec Pro1</item>
     </string-array>
     <string-array name="pref_input_method_values">
         <item>Qwerty</item>
         <item>Translit</item>
         <item>UsbKb</item>
         <item>Qwertz</item>
+        <item>FxtecPro1</item>
     </string-array>
     <string name="pref_title_keyboard_input_settings">Открыть Настройки Ввода</string>
 

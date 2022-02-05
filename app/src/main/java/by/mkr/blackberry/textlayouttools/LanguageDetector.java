@@ -30,7 +30,8 @@ public class LanguageDetector {
             case Ru:
             case RuTrans:
             case RuFull:
-            case RuQwertz: {
+            case RuQwertz:
+            case RuFxtecPro1: {
                 // Check user's dict, both languages
                 isFoundRu = checkInDict(text, userDict);
                 if (isFoundRu) {
@@ -51,7 +52,8 @@ public class LanguageDetector {
             case En:
             case EnTrans:
             case EnFull:
-            case EnQwertz: {
+            case EnQwertz:
+            case EnFxtecPro1: {
                 // Check user's dict, both languages
                 isFoundEn = checkInDict(text, userDict);
                 if (isFoundEn) {

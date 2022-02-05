@@ -17,7 +17,9 @@ enum Language {
     EnFull,
     RuQwertz,
     EnQwertz,
-    Ukr;
+    Ukr,
+    RuFxtecPro1,
+    EnFxtecPro1;
 
     public static String getDefault() {
         return Unknown.toString();
@@ -45,6 +47,10 @@ enum Language {
                 return RuQwertz;
             case "Ukr":
                 return Ukr;
+            case "RuFxtecPro1":
+                return RuFxtecPro1;
+            case "EnFxtecPro1":
+                return EnFxtecPro1;
         }
         return null;
     }
@@ -54,7 +60,8 @@ enum Language {
             case Ru:
             case RuTrans:
             case RuFull:
-            case RuQwertz: {
+            case RuQwertz:
+            case RuFxtecPro1: {
                 switch (inputMethod) {
                     case Qwerty:
                         return Ru;
@@ -64,12 +71,15 @@ enum Language {
                         return RuFull;
                     case Qwertz:
                         return RuQwertz;
+                    case FxtecPro1:
+                        return RuFxtecPro1;
                 }
             }
             case En:
             case EnTrans:
             case EnFull:
-            case EnQwertz: {
+            case EnQwertz:
+            case EnFxtecPro1: {
                 switch (inputMethod) {
                     case Qwerty:
                         return En;
@@ -79,6 +89,8 @@ enum Language {
                         return EnFull;
                     case Qwertz:
                         return EnQwertz;
+                    case FxtecPro1:
+                        return EnFxtecPro1;
                 }
             }
         }
@@ -119,7 +131,8 @@ enum InputMethod {
     Qwerty,
     Translit,
     UsbKb,
-    Qwertz;
+    Qwertz,
+    FxtecPro1;
 
     public static InputMethod fromString(String x) {
         switch (x) {
@@ -135,6 +148,8 @@ enum InputMethod {
             case "Qwertz":
             case "3":
                 return Qwertz;
+            case "FxtecPro1":
+                return FxtecPro1;
         }
         return null;
     }
@@ -183,7 +198,6 @@ public class LayoutConverter {
                 }
                 break;
             }
-
             case Ru: {
                 //Log.d(LOG_TAG, textToReplace.toString());
                 for (int i = 0; i < textToReplace.length(); i++) {
@@ -207,7 +221,6 @@ public class LayoutConverter {
                 }
                 break;
             }
-
             case EnTrans: {
                 //Log.d(LOG_TAG, textToReplace.toString());
                 textToReplace = textToReplace.toString().replaceAll("(?i)ww", "Ç");
@@ -236,7 +249,6 @@ public class LayoutConverter {
                 }
                 break;
             }
-
             case EnFull: {
                 //Log.d(LOG_TAG, textToReplace.toString());
                 for (int i = 0; i < textToReplace.length(); i++) {
@@ -248,6 +260,7 @@ public class LayoutConverter {
                 }
                 break;
             }
+
             case EnQwertz: {
                 textToReplace = textToReplace.toString().replaceAll("\\$\\$", "Á");
                 textToReplace = textToReplace.toString().replaceAll("(?i)ll", "Ç");
@@ -265,12 +278,35 @@ public class LayoutConverter {
                 }
                 break;
             }
-
             case RuQwertz: {
                 //Log.d(LOG_TAG, textToReplace.toString());
                 for (int i = 0; i < textToReplace.length(); i++) {
                     if (charsMapRuQwertzEn.containsKey(textToReplace.charAt(i))) {
                         text.append(charsMapRuQwertzEn.get(textToReplace.charAt(i)));
+                    } else {
+                        text.append(textToReplace.charAt(i));
+                    }
+                }
+                break;
+            }
+
+            case RuFxtecPro1: {
+                //Log.d(LOG_TAG, textToReplace.toString());
+                for (int i = 0; i < textToReplace.length(); i++) {
+                    if (charsMapRuFxtecPro1En.containsKey(textToReplace.charAt(i))) {
+                        text.append(charsMapRuFxtecPro1En.get(textToReplace.charAt(i)));
+                    } else {
+                        text.append(textToReplace.charAt(i));
+                    }
+                }
+                break;
+            }
+
+            case EnFxtecPro1: {
+                //Log.d(LOG_TAG, textToReplace.toString());
+                for (int i = 0; i < textToReplace.length(); i++) {
+                    if (charsMapEnRuFxtecPro1.containsKey(textToReplace.charAt(i))) {
+                        text.append(charsMapEnRuFxtecPro1.get(textToReplace.charAt(i)));
                     } else {
                         text.append(textToReplace.charAt(i));
                     }
@@ -342,6 +378,9 @@ public class LayoutConverter {
                     case Qwertz:
                         targetLang = Language.EnQwertz;
                         break;
+                    case FxtecPro1:
+                        targetLang = Language.EnFxtecPro1;
+                        break;
                     default:
                         break;
                 }
@@ -359,6 +398,9 @@ public class LayoutConverter {
                         break;
                     case Qwertz:
                         targetLang = Language.RuQwertz;
+                        break;
+                    case FxtecPro1:
+                        targetLang = Language.RuFxtecPro1;
                         break;
                     default:
                         break;
@@ -735,6 +777,89 @@ public class LayoutConverter {
     }};
 
 
+    // FxtecPro1
+    private static final HashMap<Character, String> charsMapEnRuFxtecPro1 = new HashMap<Character, String>() {{
+        put('`',"ё");                       put('~',"Ё");
+        put('q',"й");                       put('Q',"Й");
+        put('w',"ц");                       put('W',"Ц");
+        put('e',"у");                       put('E',"У");
+        put('r',"к");                       put('R',"К");
+        put('t',"е");                       put('T',"Е");
+        put('y',"н");                       put('Y',"Н");
+        put('u',"г");                       put('U',"Г");
+        put('i',"ш");                       put('I',"Ш");
+        put('o',"щ");                       put('O',"Щ");
+        put('p',"з");                       put('P',"З");
+        put(';',"ж");                       put(':',"Ж");
+
+        put('a',"ф");                       put('A',"Ф");
+        put('s',"ы");                       put('S',"Ы");
+        put('d',"в");                       put('D',"В");
+        put('f',"а");                       put('F',"А");
+        put('g',"п");                       put('G',"П");
+        put('h',"р");                       put('H',"Р");
+        put('j',"о");                       put('J',"О");
+        put('k',"л");                       put('K',"Л");
+        put('l',"д");                       put('L',"Д");
+        put('\'',"э");                      put('"',"Э");
+
+        put('[',"х");                       put('{',"Х");
+        put(']',"ъ");                       put('}',"Ъ");
+        put('z',"я");                       put('Z',"Я");
+        put('x',"ч");                       put('X',"Ч");
+        put('c',"с");                       put('C',"С");
+        put('v',"м");                       put('V',"М");
+        put('b',"и");                       put('B',"И");
+        put('n',"т");                       put('N',"Т");
+        put('m',"ь");                       put('M',"Ь");
+        put(',',"б");                       put('<',"Б");
+        put('.',"ю");                       put('>',"Ю");
+
+        put('/',".");                       put('?',",");
+    }};
+
+    private static final HashMap<Character, String> charsMapRuFxtecPro1En = new HashMap<Character, String>() {{
+        put('ё',"`");                       put('Ё',"~");
+        put('й',"q");                       put('Й',"Q");
+        put('ц',"w");                       put('Ц',"W");
+        put('у',"e");                       put('У',"E");
+        put('к',"r");                       put('К',"R");
+        put('е',"t");                       put('Е',"T");
+        put('н',"y");                       put('Н',"Y");
+        put('г',"u");                       put('Г',"U");
+        put('ш',"i");                       put('Ш',"I");
+        put('щ',"o");                       put('Щ',"O");
+        put('з',"p");                       put('З',"P");
+        put('ж',";");                       put('Ж',":");
+
+        put('ф',"a");                       put('Ф',"A");
+        put('ы',"s");                       put('Ы',"S");
+        put('в',"d");                       put('В',"D");
+        put('а',"f");                       put('А',"F");
+        put('п',"g");                       put('П',"G");
+        put('р',"h");                       put('Р',"H");
+        put('о',"j");                       put('О',"J");
+        put('л',"k");                       put('Л',"K");
+        put('д',"l");                       put('Д',"L");
+        put('э',"'");                       put('Э',"\"");
+
+        put('х',"[");                       put('Х',"{");
+        put('ъ',"]");                       put('Ъ',"}");
+        put('я',"z");                       put('Я',"Z");
+        put('ч',"x");                       put('Ч',"X");
+        put('с',"c");                       put('С',"C");
+        put('м',"v");                       put('М',"V");
+        put('и',"b");                       put('И',"B");
+        put('т',"n");                       put('Т',"N");
+        put('ь',"m");                       put('Ь',"M");
+        put('б',",");                       put('Б',"<");
+        put('ю',".");                       put('Ю',">");
+
+        put('.',"/");                       put(',',"?");
+    }};
+
+
+
 
     public static String getWordRegex(Language lang) {
         String regex = "[\\w\\$\\€]";
@@ -752,11 +877,13 @@ public class LayoutConverter {
             case EnTrans: {
                 break;
             }
-            case RuFull: {
+            case RuFull:
+            case RuFxtecPro1: {
                 regex = "[\\w,\\.~<>{}\\[\\]'\"\\`;:?/]";
                 break;
             }
-            case EnFull: {
+            case EnFull:
+            case EnFxtecPro1: {
                 regex = "[\\w,\\.~<>{}\\[\\]'\"\\`;:?/]";
                 break;
             }
