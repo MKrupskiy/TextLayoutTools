@@ -9,7 +9,7 @@
     <string name="title_activity_settings">Настройки</string>
 
     <!-- Strings related to Main Activity -->
-    <string name="main_app_name_version" translatable="false">Text Layout Tools 1.17</string>
+    <string name="main_app_name_version" translatable="false">Text Layout Tools 1.19</string>
     <string name="main_description">Приложение для смены раскладки текста.</string>
     <string name="main_examples">- Автоматическая смена\n- Ctrl+Q - смена раскладки\n- Alt+Enter - смена раскладки со сменой языка\nИз-за ограничений Android невозможно программно сменить язык ввода для новых слов</string>
     <!--<string name="main_service_description">Переключение также возможно при помощи комбинации клавиш. Для этого требуется включить поддержку в меню настроек Специальные Возможности</string>-->

@@ -1,5 +1,5 @@
 # TextLayoutTools
- 
+
 ### Краткое описание:
 
 Аналог Punto Switcher для телефонов и планшетов на Android.
